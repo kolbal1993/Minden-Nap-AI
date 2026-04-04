@@ -15,15 +15,14 @@ import {
   BookOpen,
   Contact2,
   BarChart3,
-  ThumbsUp,
-  ThumbsDown,
   Bookmark,
   TrendingUp,
   Users,
   Eye,
   Crown,
   Clock,
-  User
+  User,
+  Smile
 } from 'lucide-react';
 import { NEWS_ITEMS } from '../constants/news';
 import { 
@@ -55,13 +54,16 @@ export default function AdminAnalytics() {
     const globalStats = JSON.parse(localStorage.getItem('news_global_stats') || '{}');
     setStats(globalStats);
 
-    const newsWithStats = NEWS_ITEMS.map(item => ({
-      ...item,
-      likes: globalStats[item.id]?.likes || 0,
-      dislikes: globalStats[item.id]?.dislikes || 0,
-      saves: globalStats[item.id]?.saves || 0,
-      totalInteractions: (globalStats[item.id]?.likes || 0) + (globalStats[item.id]?.saves || 0)
-    })).sort((a, b) => b.totalInteractions - a.totalInteractions);
+    const newsWithStats = NEWS_ITEMS.map(item => {
+      const reactions = globalStats[item.id]?.reactions || {};
+      const reactionCount = Object.values(reactions).reduce((a: any, b: any) => a + b, 0) as number;
+      return {
+        ...item,
+        reactions: reactionCount,
+        saves: globalStats[item.id]?.saves || 0,
+        totalInteractions: reactionCount + (globalStats[item.id]?.saves || 0)
+      };
+    }).sort((a, b) => b.totalInteractions - a.totalInteractions);
 
     setSortedNews(newsWithStats);
   }, []);
@@ -71,7 +73,11 @@ export default function AdminAnalytics() {
     localStorage.removeItem('userRole');
   };
 
-  const totalLikes: number = Object.values(stats).reduce((acc: number, curr: any) => acc + (curr.likes || 0), 0) as number;
+  const totalReactions: number = Object.values(stats).reduce((acc: number, curr: any) => {
+    const reactions = curr.reactions || {};
+    const count = Object.values(reactions).reduce((a: any, b: any) => a + b, 0) as number;
+    return acc + count;
+  }, 0) as number;
   const totalSaves: number = Object.values(stats).reduce((acc: number, curr: any) => acc + (curr.saves || 0), 0) as number;
 
   return (
@@ -186,11 +192,11 @@ export default function AdminAnalytics() {
             <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center">
-                  <ThumbsUp className="text-blue-500 w-6 h-6" />
+                  <Smile className="text-blue-500 w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Összes Kedvelés</p>
-                  <h3 className="text-3xl font-bold">{totalLikes}</h3>
+                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Összes Reakció</p>
+                  <h3 className="text-3xl font-bold">{totalReactions}</h3>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-green-500 text-sm font-bold">
@@ -313,7 +319,7 @@ export default function AdminAnalytics() {
                   <tr className="bg-white/5 border-b border-white/5">
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Hír</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Mentések</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Kedvelések</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Reakciók</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Arány</th>
                   </tr>
                 </thead>
@@ -329,12 +335,12 @@ export default function AdminAnalytics() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center font-bold text-orange-400">{news.saves}</td>
-                      <td className="px-6 py-4 text-center font-bold text-blue-400">{news.likes}</td>
+                      <td className="px-6 py-4 text-center font-bold text-blue-400">{news.reactions}</td>
                       <td className="px-6 py-4">
                         <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
                           <div 
                             className="bg-blue-500 h-full rounded-full" 
-                            style={{ width: `${Math.min(100, (Number(news.totalInteractions) / (Number(totalLikes) + Number(totalSaves) || 1)) * 100)}%` }}
+                            style={{ width: `${Math.min(100, (Number(news.totalInteractions) / (Number(totalReactions) + Number(totalSaves) || 1)) * 100)}%` }}
                           />
                         </div>
                       </td>

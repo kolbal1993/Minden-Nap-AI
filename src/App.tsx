@@ -20,6 +20,7 @@ import CoursesPage from './pages/CoursesPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import AdminSettings from './pages/AdminSettings';
 import AdminUsers from './pages/AdminUsers';
+import CommunityPage from './pages/CommunityPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import ScrollToTop from './components/ScrollToTop';
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/news/:id" element={<NewsDetailPage />} />
+        <Route path="/community" element={<CommunityPage />} />
         <Route path="/tudastar" element={<CoursesPage />} />
         <Route path="/tudastar/:id" element={<CourseDetailPage />} />
         <Route path="/terms" element={<TermsPage />} />

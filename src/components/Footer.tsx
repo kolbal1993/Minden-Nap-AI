@@ -15,6 +15,7 @@ export default function Footer() {
           <span className="text-lg font-bold tracking-tighter text-white">Minden Nap AI</span>
         </Link>
         <div className="flex gap-8 text-sm text-gray-500">
+          <Link to="/community" className="hover:text-white transition-colors">Közösség</Link>
           <Link to="/privacy" className="hover:text-white transition-colors">Adatvédelem</Link>
           <Link to="/terms" className="hover:text-white transition-colors">ÁSZF</Link>
           <Link to="/contact" className="hover:text-white transition-colors">Kapcsolat</Link>

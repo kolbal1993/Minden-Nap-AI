@@ -37,14 +37,19 @@ import {
   ListOrdered,
   BarChart3,
   Users,
-  Lock
+  Lock,
+  Smile,
+  Bell
 } from 'lucide-react';
+import EmojiPickerButton from '../components/EmojiPickerButton';
+import { addNotification } from '../utils/notifications';
 
 // --- Types ---
 interface Course {
   id: string;
   title: string;
   level: 'Kezdő' | 'Haladó' | 'Profi';
+  category: 'Alapismeretek' | 'Applikáció bemutatók' | 'Üzlet Automatizációk';
   accessType: 'free' | 'premium';
   date: string;
   description: string;
@@ -60,6 +65,7 @@ const INITIAL_COURSES: Course[] = [
     id: '1',
     title: 'Bevezetés a Prompt Engineering világába',
     level: 'Kezdő',
+    category: 'Alapismeretek',
     accessType: 'free',
     date: '2026-04-01',
     description: 'Tanuld meg a leghatékonyabb technikákat a nagy nyelvi modellek irányításához.',
@@ -72,6 +78,7 @@ const INITIAL_COURSES: Course[] = [
     id: '2',
     title: 'AI Üzleti Alkalmazások',
     level: 'Haladó',
+    category: 'Üzlet Automatizációk',
     accessType: 'premium',
     date: '2026-03-28',
     description: 'Hogyan integráld a mesterséges intelligenciát a vállalati munkafolyamatokba?',
@@ -101,6 +108,7 @@ export default function AdminCourses() {
   const [formData, setFormData] = useState<Partial<Course>>({
     title: '',
     level: 'Kezdő',
+    category: 'Alapismeretek',
     accessType: 'free',
     description: '',
     imageUrl: '',
@@ -136,6 +144,7 @@ export default function AdminCourses() {
       setFormData({
         title: '',
         level: 'Kezdő',
+        category: 'Alapismeretek',
         accessType: 'free',
         description: '',
         imageUrl: '',
@@ -168,6 +177,15 @@ export default function AdminCourses() {
         date: new Date().toISOString().split('T')[0]
       } as Course;
       setCourses([newCourse, ...courses]);
+
+      // Trigger notification
+      addNotification({
+        userId: 'all',
+        type: 'course',
+        title: 'Új kurzus elérhető!',
+        message: newCourse.title,
+        link: `/tudastar/${newCourse.id}`
+      });
     }
     handleCloseModal();
   };
@@ -178,7 +196,8 @@ export default function AdminCourses() {
 
   const filteredCourses = courses.filter(c => 
     c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.level.toLowerCase().includes(searchTerm.toLowerCase())
+    c.level.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleLogout = () => {
@@ -262,6 +281,7 @@ export default function AdminCourses() {
                 <tr className="bg-white/5 border-b border-white/5">
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">ID</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Cím</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Modul</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Szint</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Státusz</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Időzítés</th>
@@ -283,6 +303,9 @@ export default function AdminCourses() {
                         </div>
                         <span className="font-medium text-gray-200">{course.title}</span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs text-blue-400 font-medium">{course.category}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
@@ -399,6 +422,20 @@ export default function AdminCourses() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <BookOpen className="w-4 h-4" /> Modul
+                    </label>
+                    <select 
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="Alapismeretek">Alapismeretek</option>
+                      <option value="Applikáció bemutatók">Applikáció bemutatók</option>
+                      <option value="Üzlet Automatizációk">Üzlet Automatizációk</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                       <LayoutDashboard className="w-4 h-4" /> Szint
                     </label>
                     <select 
@@ -411,6 +448,9 @@ export default function AdminCourses() {
                       <option value="Profi">Profi</option>
                     </select>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                       <Eye className="w-4 h-4" /> Státusz
@@ -439,6 +479,19 @@ export default function AdminCourses() {
                         <EyeOff className="w-4 h-4" /> Inaktív
                       </button>
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <Lock className="w-4 h-4" /> Hozzáférés
+                    </label>
+                    <select 
+                      value={formData.accessType}
+                      onChange={(e) => setFormData({ ...formData, accessType: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="free">Ingyenes</option>
+                      <option value="premium">Prémium</option>
+                    </select>
                   </div>
                 </div>
 
@@ -515,21 +568,7 @@ export default function AdminCourses() {
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                      <Lock className="w-4 h-4" /> Hozzáférés
-                    </label>
-                    <select 
-                      value={formData.accessType}
-                      onChange={(e) => setFormData({ ...formData, accessType: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
-                    >
-                      <option value="free">Ingyenes</option>
-                      <option value="premium">Prémium</option>
-                    </select>
-                  </div>
                 </div>
-
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                     <FileText className="w-4 h-4" /> Leírás
@@ -548,6 +587,8 @@ export default function AdminCourses() {
                       <button type="button" onClick={() => insertText('> ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Idézet"><Quote className="w-4 h-4" /></button>
                       <button type="button" onClick={() => insertText('`', '`')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Kód"><Code className="w-4 h-4" /></button>
                       <button type="button" onClick={() => insertText('[', '](url)')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Link"><LinkIcon className="w-4 h-4" /></button>
+                      <div className="w-px h-5 bg-white/10 mx-1" />
+                      <EmojiPickerButton onEmojiSelect={(emoji) => insertText(emoji, '')} />
                     </div>
                     <textarea 
                       ref={textareaRef}

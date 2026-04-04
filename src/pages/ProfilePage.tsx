@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import EmojiPickerButton from '../components/EmojiPickerButton';
 import { 
   Cpu, 
   User, 
@@ -364,18 +365,25 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                        <FileText className="w-3 h-3" /> Rövid bemutatkozás
-                      </label>
-                      <textarea 
-                        rows={4}
-                        value={tempFormData.bio}
-                        onChange={(e) => setTempFormData({ ...tempFormData, bio: e.target.value })}
-                        placeholder="Írj pár szót magadról..."
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-                      />
-                    </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                          <FileText className="w-3 h-3" /> Rövid bemutatkozás
+                        </label>
+                        <div className="relative">
+                          <textarea 
+                            rows={4}
+                            value={tempFormData.bio}
+                            onChange={(e) => setTempFormData({ ...tempFormData, bio: e.target.value })}
+                            placeholder="Írj pár szót magadról..."
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                          />
+                          <div className="absolute right-3 bottom-3">
+                            <EmojiPickerButton 
+                              onEmojiSelect={(emoji) => setTempFormData({ ...tempFormData, bio: tempFormData.bio + emoji })} 
+                            />
+                          </div>
+                        </div>
+                      </div>
 
                     <div className="pt-4 flex gap-4">
                       <button 

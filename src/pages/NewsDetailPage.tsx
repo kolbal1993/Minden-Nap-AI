@@ -17,23 +17,40 @@ import {
   Bookmark,
   MessageSquare,
   ArrowRight,
-  ThumbsUp,
-  ThumbsDown,
   Check,
-  Zap
+  Zap,
+  Smile,
+  X
 } from 'lucide-react';
 
 import { NEWS_ITEMS } from '../constants/news';
+import Reactions from '../components/Reactions';
+import EmojiPickerButton from '../components/EmojiPickerButton';
+import { addNotification } from '../utils/notifications';
+
+interface Comment {
+  id: string;
+  text: string;
+  date: string;
+  userName: string;
+  userAvatar: string;
+  isPremium: boolean;
+  reactions?: { [emoji: string]: number };
+  userReaction?: string;
+  replies?: Comment[];
+}
 
 export default function NewsDetailPage() {
   const { id } = useParams();
   const news = NEWS_ITEMS.find(item => item.id === id);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [userVote, setUserVote] = useState<'like' | 'dislike' | null>(null);
+  const [userReaction, setUserReaction] = useState<string | undefined>(undefined);
+  const [newsReactions, setNewsReactions] = useState<{ [emoji: string]: number }>({});
   const [showShareTooltip, setShowShareTooltip] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [replyingTo, setReplyingTo] = useState<{ commentId: string; author: string } | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
 
   const refreshProfile = () => {
@@ -56,9 +73,13 @@ export default function NewsDetailPage() {
     const savedNews = JSON.parse(localStorage.getItem('user_saved_news') || '[]');
     setIsBookmarked(savedNews.includes(id));
 
-    // Check user vote
-    const userVotes = JSON.parse(localStorage.getItem('user_news_votes') || '{}');
-    setUserVote(userVotes[id] || null);
+    // Check user reaction
+    const userReactions = JSON.parse(localStorage.getItem('user_news_reactions') || '{}');
+    setUserReaction(userReactions[id] || undefined);
+
+    // Load news reactions
+    const globalStats = JSON.parse(localStorage.getItem('news_global_stats') || '{}');
+    setNewsReactions(globalStats[id]?.reactions || {});
 
     // Load comments
     const savedComments = JSON.parse(localStorage.getItem(`news_comments_${id}`) || '[]');
@@ -75,23 +96,53 @@ export default function NewsDetailPage() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [id]);
 
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddComment = (e: React.FormEvent, parentId?: string) => {
+    if (e) e.preventDefault();
     if (!newComment.trim() || !id) return;
 
-    const comment = {
+    const comment: Comment = {
       id: Date.now().toString(),
       text: newComment,
       date: new Date().toLocaleString('hu-HU'),
       userName: userProfile?.name || 'Vendég',
       userAvatar: userProfile?.avatar || 'https://picsum.photos/seed/guest/200/200',
-      isPremium: userProfile?.isPremium || false
+      isPremium: userProfile?.isPremium || false,
+      reactions: {},
+      replies: []
     };
 
-    const updatedComments = [comment, ...comments];
+    let updatedComments: Comment[];
+    if (parentId) {
+      const addReply = (comments: Comment[]): Comment[] => {
+        return comments.map(c => {
+          if (c.id === parentId) {
+            return { ...c, replies: [...(c.replies || []), comment] };
+          }
+          if (c.replies) {
+            return { ...c, replies: addReply(c.replies) };
+          }
+          return c;
+        });
+      };
+      updatedComments = addReply(comments);
+    } else {
+      updatedComments = [comment, ...comments];
+    }
+
     setComments(updatedComments);
     localStorage.setItem(`news_comments_${id}`, JSON.stringify(updatedComments));
+
+    // Trigger notification for admin
+    addNotification({
+      userId: 'admin',
+      type: 'comment',
+      title: 'Új hozzászólás a hírhez',
+      message: `${userProfile?.name || 'Vendég'} hozzászólt a "${news.title}" hírhez.`,
+      link: `/news/${id}`
+    });
+
     setNewComment('');
+    setReplyingTo(null);
   };
 
   const handleBookmark = () => {
@@ -110,27 +161,75 @@ export default function NewsDetailPage() {
     updateGlobalStats(id, 'saves', isBookmarked ? -1 : 1);
   };
 
-  const handleVote = (type: 'like' | 'dislike') => {
+  const handleReaction = (emoji: string) => {
     if (!id) return;
-    const userVotes = JSON.parse(localStorage.getItem('user_news_votes') || '{}');
-    const currentVote = userVotes[id];
+    const userReactions = JSON.parse(localStorage.getItem('user_news_reactions') || '{}');
+    const currentReaction = userReactions[id];
 
-    if (currentVote === type) {
-      // Remove vote
-      delete userVotes[id];
-      setUserVote(null);
-      updateGlobalStats(id, type === 'like' ? 'likes' : 'dislikes', -1);
+    const stats = JSON.parse(localStorage.getItem('news_global_stats') || '{}');
+    if (!stats[id]) stats[id] = { reactions: {}, saves: 0 };
+    if (!stats[id].reactions) stats[id].reactions = {};
+
+    if (currentReaction === emoji) {
+      // Remove reaction
+      delete userReactions[id];
+      setUserReaction(undefined);
+      stats[id].reactions[emoji] = Math.max(0, (stats[id].reactions[emoji] || 0) - 1);
     } else {
-      // Change or add vote
-      if (currentVote) {
-        // Remove old vote first
-        updateGlobalStats(id, currentVote === 'like' ? 'likes' : 'dislikes', -1);
+      // Change or add reaction
+      if (currentReaction) {
+        stats[id].reactions[currentReaction] = Math.max(0, (stats[id].reactions[currentReaction] || 0) - 1);
       }
-      userVotes[id] = type;
-      setUserVote(type);
-      updateGlobalStats(id, type === 'like' ? 'likes' : 'dislikes', 1);
+      userReactions[id] = emoji;
+      setUserReaction(emoji);
+      stats[id].reactions[emoji] = (stats[id].reactions[emoji] || 0) + 1;
     }
-    localStorage.setItem('user_news_votes', JSON.stringify(userVotes));
+
+    setNewsReactions({ ...stats[id].reactions });
+    localStorage.setItem('user_news_reactions', JSON.stringify(userReactions));
+    localStorage.setItem('news_global_stats', JSON.stringify(stats));
+
+    // Trigger notification for admin if reaction was added
+    if (userReactions[id] === emoji) {
+      addNotification({
+        userId: 'admin',
+        type: 'reaction',
+        title: 'Új reakció a hírre',
+        message: `${userProfile?.name || 'Vendég'} reagált a "${news.title}" hírre: ${emoji}`,
+        link: `/news/${id}`
+      });
+    }
+  };
+
+  const handleCommentReaction = (commentId: string, emoji: string) => {
+    if (!id) return;
+    const updateComments = (comments: Comment[]): Comment[] => {
+      return comments.map(comment => {
+        if (comment.id === commentId) {
+          const reactions = { ...(comment.reactions || {}) };
+          const currentReaction = comment.userReaction;
+
+          if (currentReaction === emoji) {
+            reactions[emoji] = Math.max(0, (reactions[emoji] || 0) - 1);
+            return { ...comment, reactions, userReaction: undefined };
+          } else {
+            if (currentReaction) {
+              reactions[currentReaction] = Math.max(0, (reactions[currentReaction] || 0) - 1);
+            }
+            reactions[emoji] = (reactions[emoji] || 0) + 1;
+            return { ...comment, reactions, userReaction: emoji };
+          }
+        }
+        if (comment.replies) {
+          return { ...comment, replies: updateComments(comment.replies) };
+        }
+        return comment;
+      });
+    };
+
+    const updatedComments = updateComments(comments);
+    setComments(updatedComments);
+    localStorage.setItem(`news_comments_${id}`, JSON.stringify(updatedComments));
   };
 
   const handleShare = () => {
@@ -139,10 +238,10 @@ export default function NewsDetailPage() {
     setTimeout(() => setShowShareTooltip(false), 2000);
   };
 
-  const updateGlobalStats = (newsId: string, field: 'likes' | 'dislikes' | 'saves', delta: number) => {
+  const updateGlobalStats = (newsId: string, field: 'saves', delta: number) => {
     const stats = JSON.parse(localStorage.getItem('news_global_stats') || '{}');
     if (!stats[newsId]) {
-      stats[newsId] = { likes: 0, dislikes: 0, saves: 0 };
+      stats[newsId] = { reactions: {}, saves: 0 };
     }
     stats[newsId][field] = Math.max(0, (stats[newsId][field] || 0) + delta);
     localStorage.setItem('news_global_stats', JSON.stringify(stats));
@@ -261,18 +360,12 @@ export default function NewsDetailPage() {
 
             {/* Interaction Buttons */}
             <div className="flex items-center justify-center gap-6 py-12 border-y border-white/5">
-              <button 
-                onClick={() => handleVote('like')}
-                className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all ${userVote === 'like' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-white/5 hover:bg-white/10 text-gray-300'}`}
-              >
-                <ThumbsUp className={`w-5 h-5 ${userVote === 'like' ? 'fill-current' : ''}`} /> Tetszik
-              </button>
-              <button 
-                onClick={() => handleVote('dislike')}
-                className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all ${userVote === 'dislike' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-white/5 hover:bg-white/10 text-gray-300'}`}
-              >
-                <ThumbsDown className={`w-5 h-5 ${userVote === 'dislike' ? 'fill-current' : ''}`} /> Nem tetszik
-              </button>
+              <Reactions 
+                reactions={newsReactions} 
+                userReaction={userReaction}
+                onReact={handleReaction}
+                variant="news"
+              />
             </div>
           </motion.div>
 
@@ -290,25 +383,53 @@ export default function NewsDetailPage() {
           {/* Comment Section */}
           <div className="space-y-12">
             <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
-              <h3 className="text-xl font-bold mb-8">Szólj hozzá a hírhez</h3>
-              <form onSubmit={handleAddComment} className="space-y-6">
+              <h3 className="text-xl font-bold mb-8">
+                {replyingTo ? `Válasz neki: ${replyingTo.author}` : 'Szólj hozzá a hírhez'}
+              </h3>
+              <form onSubmit={(e) => handleAddComment(e, replyingTo?.commentId)} className="space-y-6">
+                {replyingTo && (
+                  <div className="flex items-center justify-between bg-blue-600/10 px-4 py-2 rounded-xl border border-blue-500/20">
+                    <span className="text-sm text-blue-400 font-medium flex items-center gap-2">
+                      <Smile className="w-4 h-4" /> Válasz neki: <strong>{replyingTo.author}</strong>
+                    </span>
+                    <button type="button" onClick={() => setReplyingTo(null)} className="text-blue-400 hover:text-white">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
                 <div className="flex gap-4">
                   <Link to="/profile" className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-white/10 hover:border-blue-500 transition-colors">
                     <img src={userProfile?.avatar} alt="" className="w-full h-full object-cover" />
                   </Link>
-                  <textarea 
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Írd le a véleményed..."
-                    className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors resize-none min-h-[120px]"
-                  />
+                  <div className="flex-1 relative">
+                    <textarea 
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder={replyingTo ? "Írd le a válaszod..." : "Írd le a véleményed..."}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none min-h-[120px]"
+                    />
+                    <div className="absolute right-3 bottom-3">
+                      <EmojiPickerButton 
+                        onEmojiSelect={(emoji) => setNewComment(prev => prev + emoji)} 
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-4">
+                  {replyingTo && (
+                    <button 
+                      type="button"
+                      onClick={() => setReplyingTo(null)}
+                      className="px-8 py-3 rounded-xl font-bold text-gray-400 hover:text-white transition-all"
+                    >
+                      Mégse
+                    </button>
+                  )}
                   <button 
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20"
                   >
-                    Küldés
+                    {replyingTo ? 'Válasz küldése' : 'Küldés'}
                   </button>
                 </div>
               </form>
@@ -316,39 +437,15 @@ export default function NewsDetailPage() {
 
             <div className="space-y-6">
               {comments.map((comment) => (
-                <motion.div 
-                  key={comment.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`bg-[#0d0d0d] border rounded-3xl p-6 flex gap-4 transition-all ${comment.isPremium ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-transparent' : 'border-white/5'}`}
-                >
-                  <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10 hover:border-blue-500 transition-colors relative">
-                    <img src={comment.userAvatar} alt="" className="w-full h-full object-cover" />
-                    {comment.isPremium && (
-                      <div className="absolute bottom-0 right-0 bg-orange-500 p-0.5 rounded-full border border-[#0d0d0d] z-10">
-                        <Zap className="w-1.5 h-1.5 text-white fill-current" />
-                      </div>
-                    )}
-                  </Link>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Link to="/profile" className={`font-bold transition-colors ${comment.isPremium ? 'text-orange-400 hover:text-orange-300' : 'text-gray-200 hover:text-blue-400'}`}>
-                          {comment.userName}
-                        </Link>
-                        {comment.isPremium && (
-                          <span className="bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border border-orange-500/20 flex items-center gap-1">
-                            <Zap className="w-2 h-2 fill-current" /> Prémium
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-gray-500">{comment.date}</span>
-                    </div>
-                    <p className={`${comment.isPremium ? 'text-gray-200' : 'text-gray-400'} leading-relaxed`}>
-                      {comment.text}
-                    </p>
-                  </div>
-                </motion.div>
+                <CommentItem 
+                  key={comment.id} 
+                  comment={comment} 
+                  onReply={(id, author) => {
+                    setReplyingTo({ commentId: id, author });
+                    window.scrollTo({ top: document.querySelector('form')?.offsetTop ? document.querySelector('form')!.offsetTop - 100 : 0, behavior: 'smooth' });
+                  }}
+                  onReact={handleCommentReaction}
+                />
               ))}
               {comments.length === 0 && (
                 <div className="text-center py-12 bg-white/5 rounded-3xl border border-dashed border-white/10">
@@ -364,3 +461,81 @@ export default function NewsDetailPage() {
     </div>
   );
 }
+
+interface CommentItemProps {
+  comment: Comment;
+  onReply: (id: string, author: string) => void;
+  onReact: (commentId: string, emoji: string) => void;
+  depth?: number;
+}
+
+const CommentItem: React.FC<CommentItemProps> = ({ 
+  comment, 
+  onReply, 
+  onReact, 
+  depth = 0 
+}) => {
+  return (
+    <div className={`space-y-4 ${depth > 0 ? 'ml-12' : ''}`}>
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`bg-[#0d0d0d] border rounded-3xl p-6 flex gap-4 transition-all ${comment.isPremium ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-transparent' : 'border-white/5'}`}
+      >
+        <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10 hover:border-blue-500 transition-colors relative">
+          <img src={comment.userAvatar} alt="" className="w-full h-full object-cover" />
+          {comment.isPremium && (
+            <div className="absolute bottom-0 right-0 bg-orange-500 p-0.5 rounded-full border border-[#0d0d0d] z-10">
+              <Zap className="w-1.5 h-1.5 text-white fill-current" />
+            </div>
+          )}
+        </Link>
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Link to="/profile" className={`font-bold transition-colors ${comment.isPremium ? 'text-orange-400 hover:text-orange-300' : 'text-gray-200 hover:text-blue-400'}`}>
+                {comment.userName}
+              </Link>
+              {comment.isPremium && (
+                <span className="bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border border-orange-500/20 flex items-center gap-1">
+                  <Zap className="w-2 h-2 fill-current" /> Prémium
+                </span>
+              )}
+            </div>
+            <span className="text-xs text-gray-500">{comment.date}</span>
+          </div>
+          <p className={`${comment.isPremium ? 'text-gray-200' : 'text-gray-400'} leading-relaxed mb-4`}>
+            {comment.text}
+          </p>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => onReply(comment.id, comment.userName)}
+              className="text-[10px] font-bold text-blue-500 hover:text-blue-400 flex items-center gap-1 uppercase tracking-wider"
+            >
+              <Smile className="w-3 h-3" /> Válasz
+            </button>
+            <Reactions 
+              reactions={comment.reactions || {}} 
+              userReaction={comment.userReaction}
+              onReact={(emoji) => onReact(comment.id, emoji)}
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="space-y-4">
+          {comment.replies.map((reply) => (
+            <CommentItem 
+              key={reply.id} 
+              comment={reply} 
+              onReply={onReply} 
+              onReact={onReact}
+              depth={depth + 1} 
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};

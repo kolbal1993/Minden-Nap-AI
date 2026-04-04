@@ -39,8 +39,13 @@ import {
   Heading2,
   Code,
   Quote,
-  ListOrdered
+  ListOrdered,
+  Smile,
+  Bell,
+  Zap
 } from 'lucide-react';
+import EmojiPickerButton from '../components/EmojiPickerButton';
+import { addNotification } from '../utils/notifications';
 
 // --- Types ---
 interface Post {
@@ -50,8 +55,7 @@ interface Post {
   date: string;
   content: string;
   imageUrl: string;
-  likes?: number;
-  dislikes?: number;
+  reactions?: { [emoji: string]: number };
   saves?: number;
   status: 'active' | 'inactive';
   publishDate: string;
@@ -90,15 +94,26 @@ export default function AdminDashboard() {
   useEffect(() => {
     // Load global stats from localStorage
     const stats = JSON.parse(localStorage.getItem('news_global_stats') || '{}');
-    const updatedPosts = INITIAL_POSTS.map(post => ({
-      ...post,
-      likes: stats[post.id]?.likes || 0,
-      dislikes: stats[post.id]?.dislikes || 0,
-      saves: stats[post.id]?.saves || 0
-    }));
+    const updatedPosts = INITIAL_POSTS.map(post => {
+      const reactions = stats[post.id]?.reactions || {};
+      const reactionCount = Object.values(reactions).reduce((a: any, b: any) => a + b, 0) as number;
+      return {
+        ...post,
+        reactions: reactions,
+        reactionCount: reactionCount,
+        saves: stats[post.id]?.saves || 0
+      };
+    });
     setPosts(updatedPosts);
   }, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [notificationData, setNotificationData] = useState({
+    title: '',
+    message: '',
+    type: 'admin' as const,
+    link: ''
+  });
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const location = useLocation();
@@ -181,6 +196,15 @@ export default function AdminDashboard() {
         date: new Date().toISOString().split('T')[0]
       } as Post;
       setPosts([newPost, ...posts]);
+
+      // Trigger notification
+      addNotification({
+        userId: 'all',
+        type: 'news',
+        title: 'Új hír érhető el!',
+        message: newPost.title,
+        link: `/news/${newPost.id}`
+      });
     }
     handleCloseModal();
   };
@@ -261,6 +285,12 @@ export default function AdminDashboard() {
               />
             </div>
             <button 
+              onClick={() => setIsNotificationModalOpen(true)}
+              className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-white/10"
+            >
+              <Bell className="w-4 h-4" /> Értesítés küldése
+            </button>
+            <button 
               onClick={() => handleOpenModal()}
               className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all"
             >
@@ -334,13 +364,9 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5 text-blue-400" title="Kedvelések">
-                          <ThumbsUp className="w-3.5 h-3.5" />
-                          <span className="text-xs font-bold">{post.likes || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-red-400" title="Nem tetszik">
-                          <ThumbsDown className="w-3.5 h-3.5" />
-                          <span className="text-xs font-bold">{post.dislikes || 0}</span>
+                        <div className="flex items-center gap-1.5 text-blue-400" title="Reakciók">
+                          <Smile className="w-3.5 h-3.5" />
+                          <span className="text-xs font-bold">{(post as any).reactionCount || 0}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-orange-400" title="Mentések">
                           <Bookmark className="w-3.5 h-3.5" />
@@ -569,6 +595,8 @@ export default function AdminDashboard() {
                       <button type="button" onClick={() => insertText('> ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Idézet"><Quote className="w-4 h-4" /></button>
                       <button type="button" onClick={() => insertText('`', '`')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Kód"><Code className="w-4 h-4" /></button>
                       <button type="button" onClick={() => insertText('[', '](url)')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Link"><LinkIcon className="w-4 h-4" /></button>
+                      <div className="w-px h-5 bg-white/10 mx-1" />
+                      <EmojiPickerButton onEmojiSelect={(emoji) => insertText(emoji, '')} />
                     </div>
                     <textarea 
                       ref={textareaRef}
@@ -597,6 +625,90 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      
+      {/* Custom Notification Modal */}
+      <AnimatePresence>
+        {isNotificationModalOpen && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsNotificationModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
+                <h2 className="text-2xl font-bold flex items-center gap-3">
+                  <Bell className="text-blue-500" /> Rendszerértesítés Küldése
+                </h2>
+                <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-8 space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Értesítés Címe</label>
+                  <input 
+                    type="text" 
+                    value={notificationData.title}
+                    onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
+                    placeholder="Pl: Karbantartás várható..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Üzenet</label>
+                  <textarea 
+                    value={notificationData.message}
+                    onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
+                    placeholder="Az értesítés részletes tartalma..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Link (opcionális)</label>
+                  <input 
+                    type="text" 
+                    value={notificationData.link}
+                    onChange={(e) => setNotificationData({ ...notificationData, link: e.target.value })}
+                    placeholder="Pl: /news/1"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="pt-4 flex gap-4">
+                  <button 
+                    onClick={() => {
+                      if (!notificationData.title || !notificationData.message) return;
+                      addNotification({
+                        userId: 'all',
+                        type: 'admin',
+                        title: notificationData.title,
+                        message: notificationData.message,
+                        link: notificationData.link || undefined
+                      });
+                      setIsNotificationModalOpen(false);
+                      setNotificationData({ title: '', message: '', type: 'admin', link: '' });
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Zap className="w-5 h-5" /> Értesítés Kiküldése Mindenkinek
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}

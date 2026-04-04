@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import EmojiPickerButton from '../components/EmojiPickerButton';
 import { 
   Cpu, 
   Mail, 
@@ -198,14 +199,21 @@ export default function ContactPage() {
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Üzenet</label>
-                    <textarea 
-                      rows={5}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Írd le részletesen a kérdésedet..."
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-                      required
-                    />
+                    <div className="relative">
+                      <textarea 
+                        rows={5}
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        placeholder="Írd le részletesen a kérdésedet..."
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                        required
+                      />
+                      <div className="absolute right-3 bottom-3">
+                        <EmojiPickerButton 
+                          onEmojiSelect={(emoji) => setFormData({ ...formData, message: formData.message + emoji })} 
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <button 

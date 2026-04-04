@@ -12,8 +12,10 @@ import {
   X, 
   User, 
   LogOut,
-  Zap
+  Zap,
+  Bell
 } from 'lucide-react';
+import NotificationCenter from './NotificationCenter';
 
 interface NavbarProps {
   transparent?: boolean;
@@ -84,6 +86,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
           <Link to="/tudastar" className="hover:text-white transition-colors">Tudástár</Link>
           <Link to="/news" className="hover:text-white transition-colors">Hírek</Link>
+          <Link to="/community" className="hover:text-white transition-colors">Közösség</Link>
           <Link to="/contact" className="hover:text-white transition-colors">Kapcsolat</Link>
           
           {!isLoggedIn ? (
@@ -102,6 +105,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                   Admin Panel
                 </Link>
               )}
+              <NotificationCenter />
               <Link 
                 to="/profile"
                 className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full hover:bg-white/10 transition-all group"
@@ -151,6 +155,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
           >
             <Link to="/tudastar" className="text-lg font-medium">Tudástár</Link>
             <Link to="/news" className="text-lg font-medium">Hírek</Link>
+            <Link to="/community" className="text-lg font-medium">Közösség</Link>
             <Link to="/contact" className="text-lg font-medium">Kapcsolat</Link>
             
             {!isLoggedIn ? (
