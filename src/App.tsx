@@ -20,6 +20,7 @@ import CoursesPage from './pages/CoursesPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import AdminSettings from './pages/AdminSettings';
 import AdminUsers from './pages/AdminUsers';
+import AdminCampaigns from './pages/AdminCampaigns';
 import CommunityPage from './pages/CommunityPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
@@ -45,10 +46,12 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminAnalytics />} />
+        <Route path="/admin/posts" element={<AdminDashboard />} />
         <Route path="/admin/tudastar" element={<AdminCourses />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/campaigns" element={<AdminCampaigns />} />
         <Route path="/admin/analytics" element={<AdminAnalytics />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>

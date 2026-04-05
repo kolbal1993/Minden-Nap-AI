@@ -15,7 +15,8 @@ import {
   ArrowRight, 
   Tag,
   Clock,
-  Cpu
+  Cpu,
+  MessageSquare
 } from 'lucide-react';
 
 import { NEWS_ITEMS } from '../constants/news';
@@ -25,6 +26,15 @@ const CATEGORIES = ['Összes', 'Generatív AI', 'Üzleti Automatizáció', 'AI e
 export default function NewsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Összes');
+
+  const getCommentCount = (id: string) => {
+    try {
+      const savedComments = JSON.parse(localStorage.getItem(`news_comments_${id}`) || '[]');
+      return savedComments.length;
+    } catch (e) {
+      return 0;
+    }
+  };
 
   const filteredNews = NEWS_ITEMS.filter(item => {
     const now = new Date();
@@ -132,6 +142,9 @@ export default function NewsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="w-3.5 h-3.5" /> {item.author}
+                      </div>
+                      <div className="flex items-center gap-2 text-blue-400 font-bold">
+                        <MessageSquare className="w-3.5 h-3.5" /> {getCommentCount(item.id)}
                       </div>
                     </div>
                     <h2 className="text-2xl font-bold mb-4 group-hover:text-blue-400 transition-colors leading-tight">

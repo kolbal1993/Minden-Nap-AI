@@ -42,7 +42,9 @@ import {
   ListOrdered,
   Smile,
   Bell,
-  Zap
+  Zap,
+  MessageSquare,
+  Megaphone
 } from 'lucide-react';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { addNotification } from '../utils/notifications';
@@ -155,6 +157,15 @@ export default function AdminDashboard() {
     }, 0);
   };
 
+  const getCommentCount = (id: string) => {
+    try {
+      const savedComments = JSON.parse(localStorage.getItem(`news_comments_${id}`) || '[]');
+      return savedComments.length;
+    } catch (e) {
+      return 0;
+    }
+  };
+
   const handleOpenModal = (post?: Post) => {
     if (post) {
       setEditingPost(post);
@@ -237,7 +248,13 @@ export default function AdminDashboard() {
         </Link>
         
         <nav className="flex-1 p-4 space-y-2">
-          <Link to="/admin" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <BarChart3 className="w-5 h-5" /> Analitika
+          </Link>
+          <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <Megaphone className="w-5 h-5" /> Kampányok
+          </Link>
+          <Link to="/admin/posts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/posts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <FileText className="w-5 h-5" /> Posztok
           </Link>
           <Link to="/admin/tudastar" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/tudastar' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
@@ -248,9 +265,6 @@ export default function AdminDashboard() {
           </Link>
           <Link to="/admin/contacts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/contacts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Contact2 className="w-5 h-5" /> Kapcsolatok
-          </Link>
-          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <BarChart3 className="w-5 h-5" /> Analitika
           </Link>
           <Link to="/admin/settings" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/settings' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Settings className="w-5 h-5" /> Beállítások
@@ -367,6 +381,10 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-1.5 text-blue-400" title="Reakciók">
                           <Smile className="w-3.5 h-3.5" />
                           <span className="text-xs font-bold">{(post as any).reactionCount || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-emerald-400" title="Hozzászólások">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span className="text-xs font-bold">{getCommentCount(post.id)}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-orange-400" title="Mentések">
                           <Bookmark className="w-3.5 h-3.5" />

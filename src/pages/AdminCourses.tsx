@@ -39,7 +39,9 @@ import {
   Users,
   Lock,
   Smile,
-  Bell
+  Bell,
+  Megaphone,
+  CreditCard
 } from 'lucide-react';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { addNotification } from '../utils/notifications';
@@ -51,6 +53,7 @@ interface Course {
   level: 'Kezdő' | 'Haladó' | 'Profi';
   category: 'Alapismeretek' | 'Applikáció bemutatók' | 'Üzlet Automatizációk';
   accessType: 'free' | 'premium';
+  price?: number;
   date: string;
   description: string;
   imageUrl: string;
@@ -67,6 +70,7 @@ const INITIAL_COURSES: Course[] = [
     level: 'Kezdő',
     category: 'Alapismeretek',
     accessType: 'free',
+    price: 0,
     date: '2026-04-01',
     description: 'Tanuld meg a leghatékonyabb technikákat a nagy nyelvi modellek irányításához.',
     imageUrl: 'https://picsum.photos/seed/course1/800/600',
@@ -80,6 +84,7 @@ const INITIAL_COURSES: Course[] = [
     level: 'Haladó',
     category: 'Üzlet Automatizációk',
     accessType: 'premium',
+    price: 14900,
     date: '2026-03-28',
     description: 'Hogyan integráld a mesterséges intelligenciát a vállalati munkafolyamatokba?',
     imageUrl: 'https://picsum.photos/seed/course2/800/600',
@@ -110,6 +115,7 @@ export default function AdminCourses() {
     level: 'Kezdő',
     category: 'Alapismeretek',
     accessType: 'free',
+    price: 0,
     description: '',
     imageUrl: '',
     status: 'active',
@@ -217,7 +223,13 @@ export default function AdminCourses() {
         </Link>
         
         <nav className="flex-1 p-4 space-y-2">
-          <Link to="/admin" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <BarChart3 className="w-5 h-5" /> Analitika
+          </Link>
+          <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <Megaphone className="w-5 h-5" /> Kampányok
+          </Link>
+          <Link to="/admin/posts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/posts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <FileText className="w-5 h-5" /> Posztok
           </Link>
           <Link to="/admin/tudastar" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/tudastar' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
@@ -228,9 +240,6 @@ export default function AdminCourses() {
           </Link>
           <Link to="/admin/contacts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/contacts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Contact2 className="w-5 h-5" /> Kapcsolatok
-          </Link>
-          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <BarChart3 className="w-5 h-5" /> Analitika
           </Link>
           <Link to="/admin/settings" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/settings' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Settings className="w-5 h-5" /> Beállítások
@@ -283,6 +292,7 @@ export default function AdminCourses() {
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Cím</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Modul</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Szint</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Ár</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Státusz</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Időzítés</th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Műveletek</th>
@@ -314,6 +324,11 @@ export default function AdminCourses() {
                         'bg-purple-500/10 text-purple-400 border border-purple-500/20'
                       }`}>
                         {course.level}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm font-bold text-gray-200">
+                        {course.price ? `${course.price.toLocaleString()} Ft` : 'Ingyenes'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -492,6 +507,18 @@ export default function AdminCourses() {
                       <option value="free">Ingyenes</option>
                       <option value="premium">Prémium</option>
                     </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" /> Ár (Ft)
+                    </label>
+                    <input 
+                      type="number" 
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
                   </div>
                 </div>
 

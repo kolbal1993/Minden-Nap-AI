@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -22,9 +22,39 @@ import {
   Crown,
   Clock,
   User,
-  Smile
+  Smile,
+  Megaphone,
+  Plus,
+  Bell,
+  Send,
+  X,
+  Save,
+  Image as ImageIcon,
+  Calendar,
+  Bold,
+  Italic,
+  List,
+  Link as LinkIcon,
+  Heading1,
+  Heading2,
+  Code,
+  Quote,
+  ListOrdered,
+  MessageSquare,
+  Edit2,
+  Trash2,
+  Search,
+  Lock,
+  CreditCard,
+  Percent,
+  Gift,
+  Target,
+  EyeOff,
+  Type
 } from 'lucide-react';
 import { NEWS_ITEMS } from '../constants/news';
+import EmojiPickerButton from '../components/EmojiPickerButton';
+import { addNotification } from '../utils/notifications';
 import { 
   BarChart, 
   Bar, 
@@ -49,6 +79,75 @@ export default function AdminAnalytics() {
   const location = useLocation();
   const [stats, setStats] = useState<any>({});
   const [sortedNews, setSortedNews] = useState<any[]>([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Modal States
+  const [activeModal, setActiveModal] = useState<'campaign' | 'post' | 'course' | 'notification' | null>(null);
+
+  // Form States
+  const [campaignForm, setCampaignForm] = useState<any>({
+    name: '',
+    description: '',
+    type: 'all',
+    discountType: 'percentage',
+    discountValue: undefined,
+    startDate: '',
+    endDate: '',
+    status: 'scheduled'
+  });
+
+  const [postForm, setPostForm] = useState<any>({
+    title: '',
+    type: 'Generatív AI',
+    status: 'active',
+    publishDate: '',
+    expiryDate: '',
+    imageUrl: '',
+    content: ''
+  });
+
+  const [courseForm, setCourseForm] = useState<any>({
+    title: '',
+    description: '',
+    category: 'AI Alapok',
+    level: 'Kezdő',
+    status: 'active',
+    accessType: 'free',
+    price: 0,
+    publishDate: '',
+    expiryDate: '',
+    imageUrl: '',
+    content: ''
+  });
+
+  const [notificationForm, setNotificationForm] = useState<any>({
+    title: '',
+    message: '',
+    type: 'info',
+    target: 'all'
+  });
+
+  const insertText = (before: string, after: string) => {
+    if (!textareaRef.current) return;
+    const start = textareaRef.current.selectionStart;
+    const end = textareaRef.current.selectionEnd;
+    const text = postForm.content;
+    const beforeText = text.substring(0, start);
+    const selectedText = text.substring(start, end);
+    const afterText = text.substring(end);
+    const newContent = beforeText + before + selectedText + after + afterText;
+    setPostForm({ ...postForm, content: newContent });
+    
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(
+          start + before.length,
+          end + before.length
+        );
+      }
+    }, 0);
+  };
 
   useEffect(() => {
     const globalStats = JSON.parse(localStorage.getItem('news_global_stats') || '{}');
@@ -92,7 +191,13 @@ export default function AdminAnalytics() {
         </Link>
         
         <nav className="flex-1 p-4 space-y-2">
-          <Link to="/admin" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <BarChart3 className="w-5 h-5" /> Analitika
+          </Link>
+          <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <Megaphone className="w-5 h-5" /> Kampányok
+          </Link>
+          <Link to="/admin/posts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/posts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <FileText className="w-5 h-5" /> Posztok
           </Link>
           <Link to="/admin/tudastar" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/tudastar' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
@@ -103,9 +208,6 @@ export default function AdminAnalytics() {
           </Link>
           <Link to="/admin/contacts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/contacts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Contact2 className="w-5 h-5" /> Kapcsolatok
-          </Link>
-          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <BarChart3 className="w-5 h-5" /> Analitika
           </Link>
           <Link to="/admin/settings" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/settings' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Settings className="w-5 h-5" /> Beállítások
@@ -127,6 +229,33 @@ export default function AdminAnalytics() {
       <main className="flex-1 flex flex-col overflow-hidden">
         <header className="h-20 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md flex items-center justify-between px-8">
           <h1 className="text-xl font-bold">Analitika</h1>
+          
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setActiveModal('campaign')}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-[11px] font-bold transition-all shadow-lg shadow-blue-600/20"
+            >
+              <Plus className="w-3.5 h-3.5" /> Új Kampány
+            </button>
+            <button 
+              onClick={() => setActiveModal('post')}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[11px] font-bold transition-all"
+            >
+              <FileText className="w-3.5 h-3.5" /> Új Poszt
+            </button>
+            <button 
+              onClick={() => setActiveModal('course')}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[11px] font-bold transition-all"
+            >
+              <BookOpen className="w-3.5 h-3.5" /> Új Kurzus
+            </button>
+            <button 
+              onClick={() => setActiveModal('notification')}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600/10 hover:bg-orange-600/20 text-orange-500 border border-orange-500/20 rounded-xl text-[11px] font-bold transition-all"
+            >
+              <Bell className="w-3.5 h-3.5" /> Értesítés Küldése
+            </button>
+          </div>
         </header>
 
         <div className="flex-1 overflow-auto p-8 space-y-8">
@@ -352,6 +481,570 @@ export default function AdminAnalytics() {
           </div>
         </div>
       </main>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {activeModal === 'campaign' && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveModal(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
+              
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center">
+                  <Megaphone className="text-blue-500 w-6 h-6" />
+                </div>
+                <button 
+                  onClick={() => setActiveModal(null)}
+                  className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-500 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <h2 className="text-2xl font-bold mb-2">Új kampány létrehozása</h2>
+              <p className="text-gray-400 text-sm mb-8">Állíts be kedvezményeket egy meghatározott időszakra.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-6">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kampány neve</label>
+                    <input 
+                      type="text" 
+                      value={campaignForm.name}
+                      onChange={(e) => setCampaignForm({...campaignForm, name: e.target.value})}
+                      placeholder="Pl. Nyári Akció"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Típus</label>
+                    <div className="relative">
+                      <select 
+                        value={campaignForm.type}
+                        onChange={(e) => setCampaignForm({...campaignForm, type: e.target.value as any})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                      >
+                        <option value="all">Teljes oldal</option>
+                        <option value="course">Egyes tananyag</option>
+                        <option value="premium">Prémium tagság</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <Plus className="w-4 h-4 rotate-45" />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Leírás</label>
+                    <textarea 
+                      value={campaignForm.description}
+                      onChange={(e) => setCampaignForm({...campaignForm, description: e.target.value})}
+                      placeholder="Rövid leírás a kampányról..."
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-[1.4fr_0.6fr] gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kedvezmény típusa</label>
+                      <div className="relative">
+                        <select 
+                          value={campaignForm.discountType}
+                          onChange={(e) => setCampaignForm({...campaignForm, discountType: e.target.value as any})}
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                        >
+                          <option value="percentage">Százalék (%)</option>
+                          <option value="fixed">Fix összeg (Ft)</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                          <Plus className="w-4 h-4 rotate-45" />
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Érték</label>
+                      <input 
+                        type="text" 
+                        inputMode="numeric"
+                        value={campaignForm.discountValue ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, '');
+                          setCampaignForm({...campaignForm, discountValue: val === '' ? undefined : parseInt(val)});
+                        }}
+                        placeholder="0"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kezdés</label>
+                      <input 
+                        type="date" 
+                        value={campaignForm.startDate}
+                        onChange={(e) => setCampaignForm({...campaignForm, startDate: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Vége</label>
+                      <input 
+                        type="date" 
+                        value={campaignForm.endDate}
+                        onChange={(e) => setCampaignForm({...campaignForm, endDate: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setActiveModal(null)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                >
+                  Mégse
+                </button>
+                <button 
+                  onClick={() => {
+                    addNotification({
+                      userId: 'all',
+                      type: 'admin',
+                      title: 'Új kampány létrehozva!',
+                      message: `A(z) "${campaignForm.name}" kampány sikeresen létrehozva.`
+                    });
+                    setActiveModal(null);
+                  }}
+                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-blue-600/20"
+                >
+                  Kampány létrehozása
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {activeModal === 'post' && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveModal(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
+                <h2 className="text-2xl font-bold flex items-center gap-3">
+                  <Plus className="text-blue-500" /> Új Poszt Létrehozása
+                </h2>
+                <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-8 space-y-6 max-h-[70vh] overflow-auto custom-scrollbar">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <Type className="w-4 h-4" /> Cím
+                  </label>
+                  <input 
+                    type="text" 
+                    value={postForm.title}
+                    onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
+                    placeholder="A bejegyzés címe..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <LayoutDashboard className="w-4 h-4" /> Típus
+                    </label>
+                    <select 
+                      value={postForm.type}
+                      onChange={(e) => setPostForm({ ...postForm, type: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="Generatív AI">Generatív AI</option>
+                      <option value="Üzleti Automatizáció">Üzleti Automatizáció</option>
+                      <option value="AI eszközök">AI eszközök</option>
+                      <option value="Szabályozás">Szabályozás</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <Eye className="w-4 h-4" /> Státusz
+                    </label>
+                    <div className="flex items-center gap-4 h-[58px]">
+                      <button
+                        onClick={() => setPostForm({ ...postForm, status: 'active' })}
+                        className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
+                          postForm.status === 'active' 
+                            ? 'bg-green-500/10 border-green-500/50 text-green-400' 
+                            : 'bg-white/5 border-white/10 text-gray-500'
+                        }`}
+                      >
+                        <Eye className="w-4 h-4" /> Aktív
+                      </button>
+                      <button
+                        onClick={() => setPostForm({ ...postForm, status: 'inactive' })}
+                        className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
+                          postForm.status === 'inactive' 
+                            ? 'bg-red-500/10 border-red-500/50 text-red-400' 
+                            : 'bg-white/5 border-white/10 text-gray-500'
+                        }`}
+                      >
+                        <EyeOff className="w-4 h-4" /> Inaktív
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4" /> Kép feltöltése
+                  </label>
+                  <div className="relative group/upload">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setPostForm({ ...postForm, imageUrl: reader.result as string });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 flex items-center gap-3 group-hover/upload:border-blue-500/50 transition-colors overflow-hidden">
+                      {postForm.imageUrl ? (
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 shrink-0">
+                            <img src={postForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                          </div>
+                          <span className="text-sm text-gray-400 truncate flex-1">Kép kiválasztva</span>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPostForm({ ...postForm, imageUrl: '' });
+                            }}
+                            className="text-red-400 hover:text-red-300 p-1"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <Plus className="w-5 h-5 text-gray-500" />
+                          <span className="text-sm text-gray-500">Kattints a feltöltéshez</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <FileText className="w-4 h-4" /> Tartalom
+                  </label>
+                  <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-1 p-2 border-b border-white/10 bg-white/5 flex-wrap">
+                      <button onClick={() => insertText('# ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Heading1 className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('## ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Heading2 className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('**', '**')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Bold className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('*', '*')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Italic className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('- ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><List className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('> ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Quote className="w-4 h-4" /></button>
+                      <EmojiPickerButton onEmojiSelect={(emoji) => insertText(emoji, '')} />
+                    </div>
+                    <textarea 
+                      ref={textareaRef}
+                      value={postForm.content}
+                      onChange={(e) => setPostForm({ ...postForm, content: e.target.value })}
+                      placeholder="Írd ide a bejegyzés tartalmát..."
+                      className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[200px] resize-none text-gray-300 leading-relaxed font-mono text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 flex gap-4">
+                  <button 
+                    onClick={() => {
+                      addNotification({
+                        userId: 'all',
+                        type: 'news',
+                        title: 'Új poszt közzétéve!',
+                        message: `A(z) "${postForm.title}" bejegyzés sikeresen közzétéve.`
+                      });
+                      setActiveModal(null);
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20"
+                  >
+                    <Save className="w-5 h-5" /> Poszt közzététele
+                  </button>
+                  <button 
+                    onClick={() => setActiveModal(null)}
+                    className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  >
+                    Mégse
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {activeModal === 'course' && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveModal(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
+                <h2 className="text-2xl font-bold flex items-center gap-3">
+                  <Plus className="text-blue-500" /> Új Kurzus Létrehozása
+                </h2>
+                <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-8 space-y-6 max-h-[70vh] overflow-auto custom-scrollbar">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <Type className="w-4 h-4" /> Cím
+                  </label>
+                  <input 
+                    type="text" 
+                    value={courseForm.title}
+                    onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                    placeholder="A kurzus címe..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <LayoutDashboard className="w-4 h-4" /> Kategória
+                    </label>
+                    <select 
+                      value={courseForm.category}
+                      onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="AI Alapok">AI Alapok</option>
+                      <option value="Prompt Engineering">Prompt Engineering</option>
+                      <option value="AI Üzleti Alkalmazása">AI Üzleti Alkalmazása</option>
+                      <option value="Képalkotás">Képalkotás</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <LayoutDashboard className="w-4 h-4" /> Szint
+                    </label>
+                    <select 
+                      value={courseForm.level}
+                      onChange={(e) => setCourseForm({ ...courseForm, level: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="Kezdő">Kezdő</option>
+                      <option value="Haladó">Haladó</option>
+                      <option value="Profi">Profi</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <Lock className="w-4 h-4" /> Hozzáférés
+                    </label>
+                    <select 
+                      value={courseForm.accessType}
+                      onChange={(e) => setCourseForm({ ...courseForm, accessType: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    >
+                      <option value="free">Ingyenes</option>
+                      <option value="premium">Prémium</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" /> Ár (Ft)
+                    </label>
+                    <input 
+                      type="number" 
+                      value={courseForm.price}
+                      onChange={(e) => setCourseForm({ ...courseForm, price: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 flex gap-4">
+                  <button 
+                    onClick={() => {
+                      addNotification({
+                        userId: 'all',
+                        type: 'course',
+                        title: 'Új kurzus létrehozva!',
+                        message: `A(z) "${courseForm.title}" kurzus sikeresen létrehozva.`
+                      });
+                      setActiveModal(null);
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20"
+                  >
+                    <Save className="w-5 h-5" /> Kurzus mentése
+                  </button>
+                  <button 
+                    onClick={() => setActiveModal(null)}
+                    className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  >
+                    Mégse
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {activeModal === 'notification' && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveModal(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
+                <h2 className="text-2xl font-bold flex items-center gap-3">
+                  <Bell className="text-orange-500" /> Értesítés Küldése
+                </h2>
+                <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-8 space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Cím</label>
+                  <input 
+                    type="text" 
+                    value={notificationForm.title}
+                    onChange={(e) => setNotificationForm({ ...notificationForm, title: e.target.value })}
+                    placeholder="Értesítés címe..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Üzenet</label>
+                  <textarea 
+                    value={notificationForm.message}
+                    onChange={(e) => setNotificationForm({ ...notificationForm, message: e.target.value })}
+                    placeholder="Írd ide az üzenetet..."
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors h-32 resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Típus</label>
+                    <select 
+                      value={notificationForm.type}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, type: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 appearance-none"
+                    >
+                      <option value="info">Információ</option>
+                      <option value="success">Siker</option>
+                      <option value="warning">Figyelmeztetés</option>
+                      <option value="error">Hiba</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Célcsoport</label>
+                    <select 
+                      value={notificationForm.target}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, target: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 appearance-none"
+                    >
+                      <option value="all">Mindenki</option>
+                      <option value="premium">Csak Prémium</option>
+                      <option value="free">Csak Ingyenes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex gap-4">
+                  <button 
+                    onClick={() => {
+                      addNotification({
+                        userId: notificationForm.target === 'all' ? 'all' : 'premium', // Simplified for demo
+                        type: 'admin',
+                        title: notificationForm.title,
+                        message: notificationForm.message
+                      });
+                      setActiveModal(null);
+                    }}
+                    className="flex-1 bg-orange-600 hover:bg-orange-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-600/20"
+                  >
+                    <Send className="w-5 h-5" /> Küldés most
+                  </button>
+                  <button 
+                    onClick={() => setActiveModal(null)}
+                    className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  >
+                    Mégse
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

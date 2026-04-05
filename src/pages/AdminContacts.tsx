@@ -26,7 +26,8 @@ import {
   Linkedin,
   Contact2,
   Edit2,
-  Users
+  Users,
+  Megaphone
 } from 'lucide-react';
 
 export default function AdminContacts() {
@@ -96,11 +97,12 @@ export default function AdminContacts() {
   };
 
   const navItems = [
-    { name: 'Posztok', icon: FileText, path: '/admin' },
+    { name: 'Analitika', icon: BarChart3, path: '/admin/analytics' },
+    { name: 'Kampányok', icon: Megaphone, path: '/admin/campaigns' },
+    { name: 'Posztok', icon: FileText, path: '/admin/posts' },
     { name: 'Tudástár', icon: BookOpen, path: '/admin/tudastar' },
     { name: 'Felhasználók', icon: Users, path: '/admin/users' },
     { name: 'Kapcsolatok', icon: Contact2, path: '/admin/contacts' },
-    { name: 'Analitika', icon: BarChart3, path: '/admin/analytics' },
     { name: 'Beállítások', icon: Settings, path: '/admin/settings' },
   ];
 

@@ -108,11 +108,8 @@ export default function NotificationCenter() {
             <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
               {notifications.length > 0 ? (
                 <div className="divide-y divide-white/5">
-                  {notifications.map((notification) => (
-                    <div 
-                      key={notification.id}
-                      className={`p-4 hover:bg-white/5 transition-colors relative group/item ${!notification.read ? 'bg-blue-500/5' : ''}`}
-                    >
+                  {notifications.map((notification) => {
+                    const content = (
                       <div className="flex gap-3">
                         <div className="mt-1 shrink-0">
                           <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
@@ -121,41 +118,61 @@ export default function NotificationCenter() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <h4 className={`text-sm font-bold truncate ${!notification.read ? 'text-white' : 'text-gray-300'}`}>
+                            <h4 className={`text-sm font-bold truncate ${!notification.read ? 'text-white' : 'text-gray-200'}`}>
                               {notification.title}
                             </h4>
                             <span className="text-[10px] text-gray-500 whitespace-nowrap mt-0.5">
                               {new Date(notification.createdAt).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-2">
+                          <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
                             {notification.message}
                           </p>
-                          {notification.link && (
-                            <Link 
-                              to={notification.link}
-                              onClick={() => {
-                                handleMarkRead(notification.id);
-                                setIsOpen(false);
-                              }}
-                              className="text-[10px] font-bold text-blue-400 hover:underline"
-                            >
-                              Megtekintés
-                            </Link>
-                          )}
                         </div>
                         {!notification.read && (
                           <button 
-                            onClick={() => handleMarkRead(notification.id)}
-                            className="absolute right-4 bottom-4 opacity-0 group-hover/item:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded-md"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleMarkRead(notification.id);
+                            }}
+                            className="absolute right-4 bottom-4 opacity-0 group-hover/item:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded-md z-10"
                             title="Megjelölés olvasottként"
                           >
                             <Check className="w-3 h-3 text-gray-400" />
                           </button>
                         )}
                       </div>
-                    </div>
-                  ))}
+                    );
+
+                    const className = `p-4 hover:bg-white/5 transition-colors relative group/item block ${!notification.read ? 'bg-blue-500/5' : ''}`;
+
+                    if (notification.link) {
+                      return (
+                        <Link 
+                          key={notification.id}
+                          to={notification.link}
+                          onClick={() => {
+                            handleMarkRead(notification.id);
+                            setIsOpen(false);
+                          }}
+                          className={className}
+                        >
+                          {content}
+                        </Link>
+                      );
+                    }
+
+                    return (
+                      <div 
+                        key={notification.id}
+                        onClick={() => handleMarkRead(notification.id)}
+                        className={`${className} cursor-pointer`}
+                      >
+                        {content}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="p-12 text-center">
