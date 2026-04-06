@@ -21,7 +21,10 @@ import CourseDetailPage from './pages/CourseDetailPage';
 import AdminSettings from './pages/AdminSettings';
 import AdminUsers from './pages/AdminUsers';
 import AdminCampaigns from './pages/AdminCampaigns';
+import AdminNotifications from './pages/AdminNotifications';
 import CommunityPage from './pages/CommunityPage';
+import AIDictionaryPage from './pages/AIDictionaryPage';
+import ToolsPage from './pages/ToolsPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import ScrollToTop from './components/ScrollToTop';
@@ -38,6 +41,8 @@ export default function App() {
         <Route path="/news/:id" element={<NewsDetailPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/tudastar" element={<CoursesPage />} />
+        <Route path="/tudastar/szotar" element={<AIDictionaryPage />} />
+        <Route path="/tudastar/eszkoztar" element={<ToolsPage />} />
         <Route path="/tudastar/:id" element={<CourseDetailPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
@@ -51,6 +56,7 @@ export default function App() {
         <Route path="/admin/tudastar" element={<AdminCourses />} />
         <Route path="/admin/contacts" element={<AdminContacts />} />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/notifications" element={<AdminNotifications />} />
         <Route path="/admin/campaigns" element={<AdminCampaigns />} />
         <Route path="/admin/analytics" element={<AdminAnalytics />} />
         <Route path="/admin/settings" element={<AdminSettings />} />

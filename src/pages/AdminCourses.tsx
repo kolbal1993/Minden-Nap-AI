@@ -196,8 +196,20 @@ export default function AdminCourses() {
     handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
-    setCourses(courses.filter(c => c.id !== id));
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setCourseToDelete(id);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (courseToDelete) {
+      setCourses(courses.filter(c => c.id !== courseToDelete));
+      setIsDeleteConfirmOpen(false);
+      setCourseToDelete(null);
+    }
   };
 
   const filteredCourses = courses.filter(c => 
@@ -225,6 +237,9 @@ export default function AdminCourses() {
         <nav className="flex-1 p-4 space-y-2">
           <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <BarChart3 className="w-5 h-5" /> Analitika
+          </Link>
+          <Link to="/admin/notifications" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/notifications' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <Bell className="w-5 h-5" /> Értesítések
           </Link>
           <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Megaphone className="w-5 h-5" /> Kampányok
@@ -368,7 +383,7 @@ export default function AdminCourses() {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => handleDelete(course.id)}
+                          onClick={() => handleDeleteClick(course.id)}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-all"
                           title="Törlés"
                         >
@@ -644,6 +659,47 @@ export default function AdminCourses() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {isDeleteConfirmOpen && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDeleteConfirmOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <Trash2 className="text-red-500 w-8 h-8" />
+              </div>
+              <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
+              <p className="text-gray-400 text-center mb-8">Ez a művelet nem vonható vissza. A kurzus véglegesen törlődik.</p>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                >
+                  Mégse
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
+                >
+                  Törlés
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

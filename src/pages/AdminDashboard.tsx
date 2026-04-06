@@ -44,7 +44,11 @@ import {
   Bell,
   Zap,
   MessageSquare,
-  Megaphone
+  Megaphone,
+  ShieldCheck,
+  AlertCircle,
+  CheckCircle2,
+  ExternalLink
 } from 'lucide-react';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { addNotification } from '../utils/notifications';
@@ -71,7 +75,7 @@ const INITIAL_POSTS: Post[] = [
     title: 'A GPT-5 fejlesztése új mérföldkőhöz érkezett',
     type: 'Generatív AI',
     date: '2026-04-03',
-    content: 'A legfrissebb jelentések szerint az OpenAI új modellje minden eddiginél jobb érvelési képességekkel rendelkezik.',
+    content: 'A legfrissebb jelentések szerint az OpenAI új modellje minden eddiginél jobb érvelési képességekkel rendelkezik. #GPT5 #OpenAI #GenerativeAI #FutureOfTech',
     imageUrl: 'https://picsum.photos/seed/ai1/800/600',
     status: 'active',
     publishDate: '2026-04-03',
@@ -82,7 +86,7 @@ const INITIAL_POSTS: Post[] = [
     title: 'Az AI szerepe a fenntartható energiagazdálkodásban',
     type: 'Üzleti Automatizáció',
     date: '2026-04-02',
-    content: 'Hogyan segítenek a gépi tanulási algoritmusok az elektromos hálózatok optimalizálásában?',
+    content: 'Hogyan segítenek a gépi tanulási algoritmusok az elektromos hálózatok optimalizálásában? #AI #Sustainability #EnergyEfficiency #MachineLearning',
     imageUrl: 'https://picsum.photos/seed/ai2/800/600',
     status: 'active',
     publishDate: '2026-04-02',
@@ -114,6 +118,7 @@ export default function AdminDashboard() {
     title: '',
     message: '',
     type: 'admin' as const,
+    icon: 'Bell',
     link: ''
   });
   const [editingPost, setEditingPost] = useState<Post | null>(null);
@@ -220,10 +225,20 @@ export default function AdminDashboard() {
     handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
-    // window.confirm is restricted in iframes, performing direct delete for now
-    // In a real app, a custom modal would be used here.
-    setPosts(posts.filter(p => p.id !== id));
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setPostToDelete(id);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (postToDelete) {
+      setPosts(posts.filter(p => p.id !== postToDelete));
+      setIsDeleteConfirmOpen(false);
+      setPostToDelete(null);
+    }
   };
 
   const filteredPosts = posts.filter(p => 
@@ -250,6 +265,9 @@ export default function AdminDashboard() {
         <nav className="flex-1 p-4 space-y-2">
           <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <BarChart3 className="w-5 h-5" /> Analitika
+          </Link>
+          <Link to="/admin/notifications" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/notifications' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <Bell className="w-5 h-5" /> Értesítések
           </Link>
           <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Megaphone className="w-5 h-5" /> Kampányok
@@ -408,7 +426,7 @@ export default function AdminDashboard() {
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDelete(post.id);
+                            handleDeleteClick(post.id);
                           }}
                           className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-all"
                           title="Törlés"
@@ -663,7 +681,7 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
                 <h2 className="text-2xl font-bold flex items-center gap-3">
@@ -674,36 +692,81 @@ export default function AdminDashboard() {
                 </button>
               </div>
 
-              <div className="p-8 space-y-6">
+              <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Típus</label>
+                    <select 
+                      value={notificationData.type}
+                      onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-sm"
+                    >
+                      <option value="admin">Rendszerüzenet</option>
+                      <option value="news">Hír</option>
+                      <option value="course">Kurzus</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Értesítés Címe</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ikon Kiválasztása</label>
+                  <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+                    {[
+                      { id: 'Bell', icon: Bell },
+                      { id: 'Megaphone', icon: Megaphone },
+                      { id: 'BookOpen', icon: BookOpen },
+                      { id: 'Zap', icon: Zap },
+                      { id: 'ShieldCheck', icon: ShieldCheck },
+                      { id: 'AlertCircle', icon: AlertCircle },
+                      { id: 'CheckCircle2', icon: CheckCircle2 },
+                      { id: 'Clock', icon: Clock },
+                      { id: 'Plus', icon: Plus },
+                      { id: 'ExternalLink', icon: ExternalLink }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => setNotificationData({ ...notificationData, icon: item.id })}
+                        className={`p-3 rounded-xl border transition-all flex items-center justify-center ${
+                          notificationData.icon === item.id 
+                            ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                            : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10'
+                        }`}
+                      >
+                        <item.icon className="w-4 h-4" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Értesítés Címe</label>
                   <input 
                     type="text" 
                     value={notificationData.title}
                     onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
                     placeholder="Pl: Karbantartás várható..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Üzenet</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Üzenet</label>
                   <textarea 
                     value={notificationData.message}
                     onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
                     placeholder="Az értesítés részletes tartalma..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors min-h-[100px] resize-none text-sm"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Link (opcionális)</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Link (opcionális)</label>
                   <input 
                     type="text" 
                     value={notificationData.link}
                     onChange={(e) => setNotificationData({ ...notificationData, link: e.target.value })}
                     placeholder="Pl: /news/1"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm"
                   />
                 </div>
 
@@ -716,16 +779,58 @@ export default function AdminDashboard() {
                         type: 'admin',
                         title: notificationData.title,
                         message: notificationData.message,
+                        icon: notificationData.icon,
                         link: notificationData.link || undefined
-                      });
+                      } as any);
                       setIsNotificationModalOpen(false);
-                      setNotificationData({ title: '', message: '', type: 'admin', link: '' });
+                      setNotificationData({ title: '', message: '', type: 'admin', icon: 'Bell', link: '' });
                     }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20"
                   >
                     <Zap className="w-5 h-5" /> Értesítés Kiküldése Mindenkinek
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {isDeleteConfirmOpen && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDeleteConfirmOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <Trash2 className="text-red-500 w-8 h-8" />
+              </div>
+              <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
+              <p className="text-gray-400 text-center mb-8">Ez a művelet nem vonható vissza. A poszt véglegesen törlődik.</p>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                >
+                  Mégse
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
+                >
+                  Törlés
+                </button>
               </div>
             </motion.div>
           </div>

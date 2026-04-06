@@ -24,6 +24,11 @@ import {
   User,
   Smile,
   Megaphone,
+  Zap,
+  ShieldCheck,
+  AlertCircle,
+  CheckCircle2,
+  ExternalLink,
   Plus,
   Bell,
   Send,
@@ -50,7 +55,19 @@ import {
   Gift,
   Target,
   EyeOff,
-  Type
+  Type,
+  ChevronRight,
+  ChevronLeft,
+  ArrowUpRight,
+  ArrowDownRight,
+  Filter,
+  Download,
+  MoreVertical,
+  Activity,
+  Globe,
+  Smartphone,
+  Monitor,
+  MousePointer2
 } from 'lucide-react';
 import { NEWS_ITEMS } from '../constants/news';
 import EmojiPickerButton from '../components/EmojiPickerButton';
@@ -123,8 +140,10 @@ export default function AdminAnalytics() {
   const [notificationForm, setNotificationForm] = useState<any>({
     title: '',
     message: '',
-    type: 'info',
-    target: 'all'
+    type: 'admin',
+    icon: 'Bell',
+    target: 'all',
+    link: ''
   });
 
   const insertText = (before: string, after: string) => {
@@ -194,17 +213,11 @@ export default function AdminAnalytics() {
           <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <BarChart3 className="w-5 h-5" /> Analitika
           </Link>
+          <Link to="/admin/notifications" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/notifications' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
+            <Bell className="w-5 h-5" /> Értesítések
+          </Link>
           <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Megaphone className="w-5 h-5" /> Kampányok
-          </Link>
-          <Link to="/admin/posts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/posts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <FileText className="w-5 h-5" /> Posztok
-          </Link>
-          <Link to="/admin/tudastar" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/tudastar' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <BookOpen className="w-5 h-5" /> Tudástár
-          </Link>
-          <Link to="/admin/users" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/users' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <Users className="w-5 h-5" /> Felhasználók
           </Link>
           <Link to="/admin/contacts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/contacts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
             <Contact2 className="w-5 h-5" /> Kapcsolatok
@@ -957,7 +970,7 @@ export default function AdminAnalytics() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
                 <h2 className="text-2xl font-bold flex items-center gap-3">
@@ -968,7 +981,65 @@ export default function AdminAnalytics() {
                 </button>
               </div>
 
-              <div className="p-8 space-y-6">
+              <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Célcsoport</label>
+                    <select 
+                      value={notificationForm.target}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, target: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-sm"
+                    >
+                      <option value="all">Mindenki</option>
+                      <option value="premium">Csak Prémium</option>
+                      <option value="free">Csak Ingyenes</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Típus</label>
+                    <select 
+                      value={notificationForm.type}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, type: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-sm"
+                    >
+                      <option value="admin">Rendszerüzenet</option>
+                      <option value="news">Hír</option>
+                      <option value="course">Kurzus</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ikon Kiválasztása</label>
+                  <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+                    {[
+                      { id: 'Bell', icon: Bell },
+                      { id: 'Megaphone', icon: Megaphone },
+                      { id: 'BookOpen', icon: BookOpen },
+                      { id: 'Zap', icon: Zap },
+                      { id: 'ShieldCheck', icon: ShieldCheck },
+                      { id: 'AlertCircle', icon: AlertCircle },
+                      { id: 'CheckCircle2', icon: CheckCircle2 },
+                      { id: 'Clock', icon: Clock },
+                      { id: 'Plus', icon: Plus },
+                      { id: 'ExternalLink', icon: ExternalLink }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => setNotificationForm({ ...notificationForm, icon: item.id })}
+                        className={`p-4 rounded-2xl border transition-all flex items-center justify-center ${
+                          notificationForm.icon === item.id 
+                            ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                            : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10'
+                        }`}
+                      >
+                        <item.icon className="w-5 h-5" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Cím</label>
                   <input 
@@ -986,36 +1057,19 @@ export default function AdminAnalytics() {
                     value={notificationForm.message}
                     onChange={(e) => setNotificationForm({ ...notificationForm, message: e.target.value })}
                     placeholder="Írd ide az üzenetet..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors h-32 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Típus</label>
-                    <select 
-                      value={notificationForm.type}
-                      onChange={(e) => setNotificationForm({ ...notificationForm, type: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 appearance-none"
-                    >
-                      <option value="info">Információ</option>
-                      <option value="success">Siker</option>
-                      <option value="warning">Figyelmeztetés</option>
-                      <option value="error">Hiba</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Célcsoport</label>
-                    <select 
-                      value={notificationForm.target}
-                      onChange={(e) => setNotificationForm({ ...notificationForm, target: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 appearance-none"
-                    >
-                      <option value="all">Mindenki</option>
-                      <option value="premium">Csak Prémium</option>
-                      <option value="free">Csak Ingyenes</option>
-                    </select>
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Link (opcionális)</label>
+                  <input 
+                    type="text" 
+                    value={notificationForm.link}
+                    onChange={(e) => setNotificationForm({ ...notificationForm, link: e.target.value })}
+                    placeholder="Pl: /news/1"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
                 </div>
 
                 <div className="pt-4 flex gap-4">
@@ -1023,21 +1077,25 @@ export default function AdminAnalytics() {
                     onClick={() => {
                       addNotification({
                         userId: notificationForm.target === 'all' ? 'all' : 'premium', // Simplified for demo
-                        type: 'admin',
+                        type: notificationForm.type,
                         title: notificationForm.title,
-                        message: notificationForm.message
-                      });
+                        message: notificationForm.message,
+                        icon: notificationForm.icon,
+                        link: notificationForm.link || undefined
+                      } as any);
                       setActiveModal(null);
+                      setNotificationForm({
+                        title: '',
+                        message: '',
+                        type: 'admin',
+                        icon: 'Bell',
+                        target: 'all',
+                        link: ''
+                      });
                     }}
                     className="flex-1 bg-orange-600 hover:bg-orange-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-600/20"
                   >
                     <Send className="w-5 h-5" /> Küldés most
-                  </button>
-                  <button 
-                    onClick={() => setActiveModal(null)}
-                    className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-2xl font-bold transition-all"
-                  >
-                    Mégse
                   </button>
                 </div>
               </div>

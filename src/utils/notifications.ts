@@ -12,6 +12,7 @@ export interface Notification {
   title: string;
   message: string;
   link?: string;
+  icon?: string;
   read: boolean;
   createdAt: string;
 }
@@ -81,6 +82,13 @@ export const markAsRead = (notificationId: string) => {
   const updated = allNotifications.map(n => 
     n.id === notificationId ? { ...n, read: true } : n
   );
+  localStorage.setItem('notifications', JSON.stringify(updated));
+  window.dispatchEvent(new Event('storage'));
+};
+
+export const deleteNotification = (notificationId: string) => {
+  const allNotifications: Notification[] = JSON.parse(localStorage.getItem('notifications') || '[]');
+  const updated = allNotifications.filter(n => n.id !== notificationId);
   localStorage.setItem('notifications', JSON.stringify(updated));
   window.dispatchEvent(new Event('storage'));
 };

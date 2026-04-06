@@ -27,7 +27,8 @@ import {
   Contact2,
   Edit2,
   Users,
-  Megaphone
+  Megaphone,
+  Bell
 } from 'lucide-react';
 
 export default function AdminContacts() {
@@ -87,8 +88,20 @@ export default function AdminContacts() {
     setFormData({ label: '', value: '', type: 'email' });
   };
 
-  const handleDelete = (id: number) => {
-    setContacts(contacts.filter(c => c.id !== id));
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<number | null>(null);
+
+  const handleDeleteClick = (id: number) => {
+    setContactToDelete(id);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (contactToDelete) {
+      setContacts(contacts.filter(c => c.id !== contactToDelete));
+      setIsDeleteConfirmOpen(false);
+      setContactToDelete(null);
+    }
   };
 
   const handleLogout = () => {
@@ -98,6 +111,7 @@ export default function AdminContacts() {
 
   const navItems = [
     { name: 'Analitika', icon: BarChart3, path: '/admin/analytics' },
+    { name: 'Értesítések', icon: Bell, path: '/admin/notifications' },
     { name: 'Kampányok', icon: Megaphone, path: '/admin/campaigns' },
     { name: 'Posztok', icon: FileText, path: '/admin/posts' },
     { name: 'Tudástár', icon: BookOpen, path: '/admin/tudastar' },
@@ -205,7 +219,7 @@ export default function AdminContacts() {
                       <Edit2 className="w-5 h-5" />
                     </button>
                     <button 
-                      onClick={() => handleDelete(contact.id)}
+                      onClick={() => handleDeleteClick(contact.id)}
                       className="p-3 text-gray-500 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -288,6 +302,47 @@ export default function AdminContacts() {
                         <Save className="w-5 h-5" /> Mentés
                       </button>
                     </div>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+
+          {/* Delete Confirmation Modal */}
+          <AnimatePresence>
+            {isDeleteConfirmOpen && (
+              <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                  className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                />
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+                >
+                  <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <Trash2 className="text-red-500 w-8 h-8" />
+                  </div>
+                  <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
+                  <p className="text-gray-400 text-center mb-8">Ez a művelet nem vonható vissza. A kapcsolat véglegesen törlődik.</p>
+                  <div className="flex gap-4">
+                    <button 
+                      onClick={() => setIsDeleteConfirmOpen(false)}
+                      className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                    >
+                      Mégse
+                    </button>
+                    <button 
+                      onClick={confirmDelete}
+                      className="flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
+                    >
+                      Törlés
+                    </button>
                   </div>
                 </motion.div>
               </div>

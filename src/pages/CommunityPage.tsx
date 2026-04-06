@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageSquare, 
@@ -21,13 +21,22 @@ import {
   ExternalLink,
   Download,
   MoreVertical,
-  Smile
+  Smile,
+  ShieldCheck,
+  Hash,
+  ListRestart,
+  Loader2,
+  FileText
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Reactions from '../components/Reactions';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { addNotification } from '../utils/notifications';
+import { GoogleGenAI, Type } from "@google/genai";
+import Markdown from 'react-markdown';
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 interface Attachment {
   id: string;
@@ -60,6 +69,8 @@ interface Post {
   date: string;
   attachments?: Attachment[];
   userReaction?: string;
+  tags?: string[];
+  summary?: string;
 }
 
 const INITIAL_POSTS: Post[] = [
@@ -92,6 +103,7 @@ const INITIAL_POSTS: Post[] = [
         ]
       }
     ],
+    tags: ['chatbot', 'rag', 'openai', 'pinecone'],
     date: '2026-04-03'
   },
   {
@@ -103,6 +115,7 @@ const INITIAL_POSTS: Post[] = [
     category: 'help',
     reactions: { '😮': 8, '😢': 4 },
     comments: [],
+    tags: ['stablediffusion', 'lora', 'ai-art'],
     date: '2026-04-04'
   },
   {
@@ -114,6 +127,7 @@ const INITIAL_POSTS: Post[] = [
     category: 'experience',
     reactions: { '❤️': 30, '👍': 15 },
     comments: [],
+    tags: ['claude', 'coding', 'react', 'anthropic'],
     date: '2026-04-02'
   }
 ];
@@ -213,6 +227,7 @@ export default function CommunityPage() {
   const [isPosting, setIsPosting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'experience' | 'project' | 'help'>('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Modal state
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -224,6 +239,8 @@ export default function CommunityPage() {
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostCategory, setNewPostCategory] = useState<'experience' | 'project' | 'help'>('experience');
   const [newPostAttachments, setNewPostAttachments] = useState<Attachment[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // New comment state
@@ -242,11 +259,11 @@ export default function CommunityPage() {
     }
 
     const savedPosts = localStorage.getItem('community_posts');
+    let initialPosts = INITIAL_POSTS;
     if (savedPosts) {
       try {
         const parsedPosts = JSON.parse(savedPosts);
-        // Ensure all posts have reactions object
-        const sanitizedPosts = parsedPosts.map((post: any) => ({
+        initialPosts = parsedPosts.map((post: any) => ({
           ...post,
           reactions: post.reactions || {},
           comments: (post.comments || []).map((comment: any) => ({
@@ -258,21 +275,68 @@ export default function CommunityPage() {
             }))
           }))
         }));
-        setPosts(sanitizedPosts);
       } catch (e) {
         console.error("Error parsing community posts", e);
-        setPosts(INITIAL_POSTS);
       }
     } else {
-      setPosts(INITIAL_POSTS);
       localStorage.setItem('community_posts', JSON.stringify(INITIAL_POSTS));
     }
+    setPosts(initialPosts);
 
     const savedViewMode = localStorage.getItem('community_modal_view');
     if (savedViewMode === 'side' || savedViewMode === 'stacked') {
       setModalViewMode(savedViewMode);
     }
   }, []);
+
+  // Migration effect for auto-tagging
+  useEffect(() => {
+    if (posts.length === 0) return;
+
+    const migrateTags = async () => {
+      const postsToTag = posts.filter(p => !p.tags || p.tags.length === 0);
+      if (postsToTag.length === 0) return;
+
+      // Only process a few at a time to avoid rate limits
+      const batch = postsToTag.slice(0, 3);
+      
+      for (const post of batch) {
+        try {
+          const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: `Generálj 3-4 releváns hashtaget a következő poszthoz (csak a szavakat, '#' nélkül).
+            Cím: ${post.title}
+            Tartalom: ${post.content}
+            Válaszolj JSON formátumban: { "tags": string[] }`,
+            config: {
+              responseMimeType: "application/json",
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  tags: { type: Type.ARRAY, items: { type: Type.STRING } }
+                },
+                required: ["tags"]
+              }
+            }
+          });
+          const result = JSON.parse(response.text || '{}');
+          if (result.tags) {
+            setPosts(currentPosts => {
+              const updated = currentPosts.map(p => 
+                p.id === post.id ? { ...p, tags: result.tags } : p
+              );
+              localStorage.setItem('community_posts', JSON.stringify(updated));
+              return updated;
+            });
+          }
+        } catch (error) {
+          console.error("Error auto-tagging post:", post.id, error);
+        }
+      }
+    };
+
+    migrateTags();
+  }, [posts.some(p => !p.tags || p.tags.length === 0)]);
 
   const toggleViewMode = () => {
     const newMode = modalViewMode === 'side' ? 'stacked' : 'side';
@@ -301,33 +365,100 @@ export default function CommunityPage() {
     }
   };
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPostTitle || !newPostContent) return;
 
-    const newPost: Post = {
-      id: Date.now().toString(),
-      author: currentUser?.name || 'Vendég',
-      authorAvatar: currentUser?.avatar || 'https://picsum.photos/seed/guest/200/200',
-      title: newPostTitle,
-      content: newPostContent,
-      category: newPostCategory,
-      attachments: newPostAttachments,
-      reactions: {},
-      comments: [],
-      date: new Date().toISOString().split('T')[0]
-    };
+    setIsAnalyzing(true);
+    try {
+      // AI Moderation & Auto-Tagging
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Moderáld és címkézd fel a következő közösségi posztot. 
+        Feladatok:
+        1. Ellenőrizd, hogy nem spam-e (ha igen, jelezd).
+        2. Javítsd ki a helyesírási hibákat a szövegben.
+        3. Generálj 3-4 releváns hashtaget (csak a szavakat, '#' nélkül).
+        
+        Cím: ${newPostTitle}
+        Tartalom: ${newPostContent}
+        
+        Válaszolj JSON formátumban:
+        {
+          "isSpam": boolean,
+          "correctedTitle": string,
+          "correctedContent": string,
+          "tags": string[]
+        }`,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              isSpam: { type: Type.BOOLEAN },
+              correctedTitle: { type: Type.STRING },
+              correctedContent: { type: Type.STRING },
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } }
+            },
+            required: ["isSpam", "correctedTitle", "correctedContent", "tags"]
+          }
+        }
+      });
 
-    const updatedPosts = [newPost, ...posts];
-    setPosts(updatedPosts);
-    localStorage.setItem('community_posts', JSON.stringify(updatedPosts));
-    
-    // Reset form
-    setNewPostTitle('');
-    setNewPostContent('');
-    setNewPostCategory('experience');
-    setNewPostAttachments([]);
-    setIsPosting(false);
+      const aiResult = JSON.parse(response.text || '{}');
+
+      if (aiResult.isSpam) {
+        alert("Sajnáljuk, de a bejegyzésedet a rendszer spamnek érzékelte. Kérjük, fogalmazd át!");
+        setIsAnalyzing(false);
+        return;
+      }
+
+      const newPost: Post = {
+        id: Date.now().toString(),
+        author: currentUser?.name || 'Vendég',
+        authorAvatar: currentUser?.avatar || 'https://picsum.photos/seed/guest/200/200',
+        title: aiResult.correctedTitle || newPostTitle,
+        content: aiResult.correctedContent || newPostContent,
+        category: newPostCategory,
+        attachments: newPostAttachments,
+        reactions: {},
+        comments: [],
+        tags: aiResult.tags || [],
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      const updatedPosts = [newPost, ...posts];
+      setPosts(updatedPosts);
+      localStorage.setItem('community_posts', JSON.stringify(updatedPosts));
+      
+      // Reset form
+      setNewPostTitle('');
+      setNewPostContent('');
+      setNewPostCategory('experience');
+      setNewPostAttachments([]);
+      setIsPosting(false);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      // Fallback to normal post if AI fails
+      const newPost: Post = {
+        id: Date.now().toString(),
+        author: currentUser?.name || 'Vendég',
+        authorAvatar: currentUser?.avatar || 'https://picsum.photos/seed/guest/200/200',
+        title: newPostTitle,
+        content: newPostContent,
+        category: newPostCategory,
+        attachments: newPostAttachments,
+        reactions: {},
+        comments: [],
+        date: new Date().toISOString().split('T')[0]
+      };
+      const updatedPosts = [newPost, ...posts];
+      setPosts(updatedPosts);
+      localStorage.setItem('community_posts', JSON.stringify(updatedPosts));
+      setIsPosting(false);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleShare = async (post: Post) => {
@@ -548,11 +679,71 @@ export default function CommunityPage() {
     }
   };
 
+  const handleGenerateSummary = async (post: Post) => {
+    if (post.comments.length < 2) {
+      alert("Legalább 2 hozzászólás szükséges az összefoglalóhoz.");
+      return;
+    }
+
+    setIsSummarizing(true);
+    try {
+      const commentsText = post.comments.map(c => `${c.author}: ${c.text}`).join('\n');
+      
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Készíts egy rövid, 3 pontos összefoglalót a következő közösségi beszélgetés lényegéről. 
+        A válaszod legyen lényegre törő és magyar nyelvű.
+        
+        Beszélgetés:
+        ${commentsText}`,
+      });
+
+      const summary = response.text;
+      
+      const updatedPosts = posts.map(p => {
+        if (p.id === post.id) {
+          return { ...p, summary };
+        }
+        return p;
+      });
+
+      setPosts(updatedPosts);
+      localStorage.setItem('community_posts', JSON.stringify(updatedPosts));
+      
+      if (selectedPost && selectedPost.id === post.id) {
+        setSelectedPost({ ...selectedPost, summary });
+      }
+    } catch (error) {
+      console.error("Summary generation error:", error);
+      alert("Hiba történt az összefoglaló generálása során.");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+  const allTags = useMemo(() => {
+    const tagCounts: { [key: string]: number } = {};
+    posts.forEach(post => {
+      post.tags?.forEach(tag => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    });
+    return Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag]) => tag);
+  }, [posts]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
   const filteredPosts = posts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          post.content.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = activeFilter === 'all' || post.category === activeFilter;
-    return matchesSearch && matchesFilter;
+    const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => post.tags?.includes(tag));
+    return matchesSearch && matchesFilter && matchesTags;
   });
 
   const getCategoryIcon = (category: string) => {
@@ -605,6 +796,17 @@ export default function CommunityPage() {
       </div>
 
       <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">{post.title}</h2>
+      
+      {post.tags && post.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {post.tags.map(tag => (
+            <span key={tag} className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-2 py-1 rounded-md border border-blue-400/20 flex items-center gap-1">
+              <Hash className="w-3 h-3" /> {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       <p className="text-gray-400 text-lg leading-relaxed mb-8 whitespace-pre-wrap">{post.content}</p>
 
       <div className="flex items-center gap-6 mb-8 py-6 border-y border-white/5">
@@ -663,9 +865,39 @@ export default function CommunityPage() {
           <MessageSquare className="w-5 h-5 text-blue-500" />
           Hozzászólások ({post.comments.length})
         </h3>
+        {post.comments.length >= 2 && (
+          <button 
+            onClick={() => handleGenerateSummary(post)}
+            disabled={isSummarizing}
+            className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-wider bg-blue-400/10 px-3 py-1.5 rounded-full border border-blue-400/20 transition-all disabled:opacity-50"
+          >
+            {isSummarizing ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <ListRestart className="w-3 h-3" />
+            )}
+            Smart Summary
+          </button>
+        )}
       </div>
 
       <div className={`p-6 space-y-6 custom-scrollbar ${modalViewMode === 'side' ? 'flex-1 overflow-y-auto' : 'w-full'}`}>
+        {post.summary && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 mb-6"
+          >
+            <div className="flex items-center gap-2 mb-3 text-blue-400">
+              <FileText className="w-4 h-4" />
+              <h4 className="text-xs font-bold uppercase tracking-widest">AI Összefoglaló</h4>
+            </div>
+            <div className="text-sm text-gray-300 leading-relaxed prose prose-invert prose-sm max-w-none">
+              <Markdown>{post.summary}</Markdown>
+            </div>
+          </motion.div>
+        )}
+
         {post.comments.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-sm italic">Még nincsenek hozzászólások. Legyél te az első!</p>
@@ -816,6 +1048,42 @@ export default function CommunityPage() {
             </div>
           </div>
 
+          {/* Hashtag Bar */}
+          {allTags.length > 0 && (
+            <div className="flex items-center gap-4 mb-8 bg-white/5 p-4 rounded-2xl border border-white/10 overflow-hidden">
+              <div className="flex items-center gap-2 text-gray-500 shrink-0">
+                <Hash className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap hidden sm:inline">Népszerű címkék:</span>
+              </div>
+              
+              <div className="flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide flex-1 no-scrollbar">
+                {allTags.slice(0, 20).map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border flex items-center gap-1.5 shrink-0 ${
+                      selectedTags.includes(tag)
+                        ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
+                        : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    <Hash className="w-3 h-3 opacity-50" />
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              {selectedTags.length > 0 && (
+                <button
+                  onClick={() => setSelectedTags([])}
+                  className="shrink-0 text-xs text-blue-500 hover:text-blue-400 font-bold flex items-center gap-1 whitespace-nowrap"
+                >
+                  <X className="w-3 h-3" /> Törlés
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Create Post Form */}
           {isLoggedIn && isPosting && (
             <div className="mb-12">
@@ -901,10 +1169,19 @@ export default function CommunityPage() {
                       </div>
                       <button 
                         type="submit"
-                        disabled={!newPostTitle || !newPostContent}
+                        disabled={!newPostTitle || !newPostContent || isAnalyzing}
                         className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
-                        <Send className="w-4 h-4" /> Közzététel
+                        {isAnalyzing ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            AI Ellenőrzés...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" /> Közzététel
+                          </>
+                        )}
                       </button>
                     </div>
 
@@ -980,6 +1257,17 @@ export default function CommunityPage() {
                     {/* Post Content */}
                     <div className="space-y-4">
                       <h3 className="text-xl md:text-2xl font-bold text-white leading-tight group-hover:text-blue-400 transition-colors">{post.title}</h3>
+                      
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {post.tags.map(tag => (
+                            <span key={tag} className="text-[9px] font-bold text-blue-400/70 bg-blue-400/5 px-2 py-0.5 rounded border border-blue-400/10 flex items-center gap-1">
+                              <Hash className="w-2.5 h-2.5" /> {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
                       <p className="text-gray-400 leading-relaxed line-clamp-3">{post.content}</p>
                       
                       {post.attachments && post.attachments.length > 0 && (
@@ -1084,6 +1372,36 @@ export default function CommunityPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      `}</style>
     </div>
   );
 }
