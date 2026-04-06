@@ -24,6 +24,7 @@ import {
   Palette,
   Megaphone
 } from 'lucide-react';
+import AdminSidebar from '../components/AdminSidebar';
 
 export default function AdminSettings() {
   const location = useLocation();
@@ -45,52 +46,7 @@ export default function AdminSettings() {
 
   return (
     <div className="min-h-screen bg-transparent text-gray-100 flex font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-white/5 bg-black/20 backdrop-blur-xl hidden md:flex flex-col">
-        <Link to="/" className="p-6 flex items-center gap-3 border-b border-white/5 group cursor-pointer">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
-            <Cpu className="text-white w-5 h-5" />
-          </div>
-          <span className="font-bold tracking-tight">Minden Nap AI</span>
-        </Link>
-        
-        <nav className="flex-1 p-4 space-y-2">
-          <Link to="/admin/analytics" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/analytics' || location.pathname === '/admin' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <BarChart3 className="w-5 h-5" /> Analitika
-          </Link>
-          <Link to="/admin/notifications" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/notifications' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <Bell className="w-5 h-5" /> Értesítések
-          </Link>
-          <Link to="/admin/campaigns" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/campaigns' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <Megaphone className="w-5 h-5" /> Kampányok
-          </Link>
-          <Link to="/admin/posts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/posts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <FileText className="w-5 h-5" /> Posztok
-          </Link>
-          <Link to="/admin/tudastar" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/tudastar' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <BookOpen className="w-5 h-5" /> Tudástár
-          </Link>
-          <Link to="/admin/users" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/users' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <Users className="w-5 h-5" /> Felhasználók
-          </Link>
-          <Link to="/admin/contacts" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/contacts' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <Contact2 className="w-5 h-5" /> Kapcsolatok
-          </Link>
-          <Link to="/admin/settings" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${location.pathname === '/admin/settings' ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}>
-            <Settings className="w-5 h-5" /> Beállítások
-          </Link>
-        </nav>
-
-        <div className="p-4 border-t border-white/5">
-          <Link 
-            to="/" 
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-colors"
-          >
-            <LogOut className="w-5 h-5" /> Kilépés
-          </Link>
-        </div>
-      </aside>
+      <AdminSidebar />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">

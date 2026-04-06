@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Bell, 
@@ -24,6 +24,7 @@ export default function NotificationCenter() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const updateNotifications = () => {
     const userId = localStorage.getItem('userId') || 'guest';
@@ -59,6 +60,18 @@ export default function NotificationCenter() {
   const handleMarkRead = (id: string) => {
     markAsRead(id);
     updateNotifications();
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    handleMarkRead(notification.id);
+    setIsOpen(false);
+    if (notification.link) {
+      if (notification.link.startsWith('http')) {
+        window.open(notification.link, '_blank', 'noopener,noreferrer');
+      } else {
+        navigate(notification.link);
+      }
+    }
   };
 
   const getIcon = (type: string) => {
@@ -108,8 +121,12 @@ export default function NotificationCenter() {
             <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
               {notifications.length > 0 ? (
                 <div className="divide-y divide-white/5">
-                  {notifications.map((notification) => {
-                    const content = (
+                  {notifications.map((notification) => (
+                    <div 
+                      key={notification.id}
+                      onClick={() => handleNotificationClick(notification)}
+                      className={`p-4 hover:bg-white/5 transition-colors relative group/item cursor-pointer block ${!notification.read ? 'bg-blue-500/5' : ''}`}
+                    >
                       <div className="flex gap-3">
                         <div className="mt-1 shrink-0">
                           <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
@@ -143,36 +160,8 @@ export default function NotificationCenter() {
                           </button>
                         )}
                       </div>
-                    );
-
-                    const className = `p-4 hover:bg-white/5 transition-colors relative group/item block ${!notification.read ? 'bg-blue-500/5' : ''}`;
-
-                    if (notification.link) {
-                      return (
-                        <Link 
-                          key={notification.id}
-                          to={notification.link}
-                          onClick={() => {
-                            handleMarkRead(notification.id);
-                            setIsOpen(false);
-                          }}
-                          className={className}
-                        >
-                          {content}
-                        </Link>
-                      );
-                    }
-
-                    return (
-                      <div 
-                        key={notification.id}
-                        onClick={() => handleMarkRead(notification.id)}
-                        className={`${className} cursor-pointer`}
-                      >
-                        {content}
-                      </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="p-12 text-center">

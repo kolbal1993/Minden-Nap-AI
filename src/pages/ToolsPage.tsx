@@ -92,6 +92,17 @@ const TOOLS = [
     isAffiliate: false,
     rating: 4.9,
     color: 'bg-blue-600/10 text-blue-400'
+  },
+  {
+    id: '7',
+    name: 'Make.com',
+    description: 'A legerősebb vizuális automatizációs platform, amellyel kódolás nélkül kapcsolhatod össze kedvenc alkalmazásaidat és AI eszközeidet.',
+    category: 'Produktivitás',
+    icon: Zap,
+    url: 'https://www.make.com/en/register?pc=mindennapai',
+    isAffiliate: true,
+    rating: 4.9,
+    color: 'bg-indigo-500/10 text-indigo-500'
   }
 ];
 

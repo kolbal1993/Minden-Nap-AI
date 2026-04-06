@@ -30,6 +30,7 @@ import {
   Megaphone,
   Bell
 } from 'lucide-react';
+import AdminSidebar from '../components/AdminSidebar';
 
 export default function AdminContacts() {
   const location = useLocation();
@@ -122,48 +123,10 @@ export default function AdminContacts() {
 
   return (
     <div className="min-h-screen bg-transparent text-gray-100 font-sans flex">
-      {/* Sidebar */}
-      <aside className="w-72 border-r border-white/5 flex flex-col fixed h-full bg-black/20 backdrop-blur-xl z-20">
-        <div className="p-8">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-blue-600/20">
-              <Cpu className="text-white w-6 h-6" />
-            </div>
-            <span className="text-xl font-bold tracking-tighter">Minden Nap AI</span>
-          </Link>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${
-                location.pathname === item.path 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                  : 'text-gray-500 hover:bg-white/5 hover:text-gray-300'
-              }`}
-            >
-              <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-white' : 'group-hover:text-blue-400'}`} />
-              <span className="font-medium">{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="p-6 border-t border-white/5">
-          <Link 
-            to="/" 
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-400 transition-colors group"
-          >
-            <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-            <span className="font-medium">Kijelentkezés</span>
-          </Link>
-        </div>
-      </aside>
+      <AdminSidebar />
 
       {/* Main Content */}
-      <main className="flex-1 ml-72 p-12">
+      <main className="flex-1 p-12">
         <div className="max-w-5xl mx-auto">
           <header className="flex justify-between items-end mb-12">
             <div>
