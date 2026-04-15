@@ -138,6 +138,8 @@ export default function AdminNotifications() {
                 className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-64"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
               />
             </div>
             <button 
@@ -325,6 +327,8 @@ export default function AdminNotifications() {
                     type="text" 
                     value={notificationData.title}
                     onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: Karbantartás várható..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
@@ -335,6 +339,8 @@ export default function AdminNotifications() {
                   <textarea 
                     value={notificationData.message}
                     onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Az értesítés részletes tartalma..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none"
                   />
@@ -346,6 +352,8 @@ export default function AdminNotifications() {
                     type="text" 
                     value={notificationData.link}
                     onChange={(e) => setNotificationData({ ...notificationData, link: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: /news/1"
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />

@@ -502,6 +502,8 @@ export default function AdminAnalytics() {
                       type="text" 
                       value={campaignForm.name}
                       onChange={(e) => setCampaignForm({...campaignForm, name: e.target.value})}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Pl. Nyári Akció"
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
                     />
@@ -528,6 +530,8 @@ export default function AdminAnalytics() {
                     <textarea 
                       value={campaignForm.description}
                       onChange={(e) => setCampaignForm({...campaignForm, description: e.target.value})}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Rövid leírás a kampányról..."
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none"
                     />
@@ -562,6 +566,8 @@ export default function AdminAnalytics() {
                           const val = e.target.value.replace(/[^0-9]/g, '');
                           setCampaignForm({...campaignForm, discountValue: val === '' ? undefined : parseInt(val)});
                         }}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="0"
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
                       />
@@ -649,6 +655,8 @@ export default function AdminAnalytics() {
                     type="text" 
                     value={postForm.title}
                     onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="A bejegyzés címe..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
@@ -764,6 +772,8 @@ export default function AdminAnalytics() {
                       ref={textareaRef}
                       value={postForm.content}
                       onChange={(e) => setPostForm({ ...postForm, content: e.target.value })}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Írd ide a bejegyzés tartalmát..."
                       className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[200px] resize-none text-gray-300 leading-relaxed font-mono text-sm"
                     />
@@ -830,6 +840,8 @@ export default function AdminAnalytics() {
                     type="text" 
                     value={courseForm.title}
                     onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="A kurzus címe..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
@@ -889,6 +901,8 @@ export default function AdminAnalytics() {
                       type="number" 
                       value={courseForm.price}
                       onChange={(e) => setCourseForm({ ...courseForm, price: parseInt(e.target.value) || 0 })}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="0"
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                     />
@@ -1011,6 +1025,8 @@ export default function AdminAnalytics() {
                     type="text" 
                     value={notificationForm.title}
                     onChange={(e) => setNotificationForm({ ...notificationForm, title: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Értesítés címe..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
@@ -1021,6 +1037,8 @@ export default function AdminAnalytics() {
                   <textarea 
                     value={notificationForm.message}
                     onChange={(e) => setNotificationForm({ ...notificationForm, message: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Írd ide az üzenetet..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none"
                   />
@@ -1032,6 +1050,8 @@ export default function AdminAnalytics() {
                     type="text" 
                     value={notificationForm.link}
                     onChange={(e) => setNotificationForm({ ...notificationForm, link: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: /news/1"
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />

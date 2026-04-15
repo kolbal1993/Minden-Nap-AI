@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Public profile information for users.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique identifier for the user." },
+        "displayName": { "type": "string", "description": "The user's display name." },
+        "photoURL": { "type": "string", "description": "The URL of the user's profile picture." },
+        "lastSeen": { "type": "string", "format": "date-time", "description": "The last time the user was active." },
+        "status": { "type": "string", "enum": ["online", "offline", "away"], "description": "The user's current status." }
+      },
+      "required": ["uid", "displayName"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Metadata for a chat between two or more users.",
+      "type": "object",
+      "properties": {
+        "participants": { "type": "array", "items": { "type": "string" }, "description": "The UIDs of the users in the conversation." },
+        "lastMessage": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" },
+            "senderId": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        },
+        "unreadCount": { "type": "object", "description": "A map of user UIDs to their unread message count." }
+      },
+      "required": ["participants"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "An individual message within a conversation.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "description": "The ID of the conversation this message belongs to." },
+        "senderId": { "type": "string", "description": "The UID of the user who sent the message." },
+        "text": { "type": "string", "description": "The content of the message." },
+        "timestamp": { "type": "string", "format": "date-time", "description": "When the message was sent." },
+        "type": { "type": "string", "enum": ["text", "image"], "description": "The type of message." }
+      },
+      "required": ["conversationId", "senderId", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "Public user profiles."
+    },
+    "/conversations/{conversationId}": {
+      "schema": "Conversation",
+      "description": "Metadata for chats."
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Messages within a specific conversation."
+    }
+  }
+}

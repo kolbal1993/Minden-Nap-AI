@@ -242,6 +242,8 @@ export default function AdminCourses() {
                 className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-64"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
               />
             </div>
             <button 
@@ -400,6 +402,8 @@ export default function AdminCourses() {
                     type="text" 
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onFocus={(e) => { const t = e.target; setTimeout(() => t.select(), 0); }}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="A kurzus címe..."
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
@@ -472,7 +476,14 @@ export default function AdminCourses() {
                     </label>
                     <select 
                       value={formData.accessType}
-                      onChange={(e) => setFormData({ ...formData, accessType: e.target.value as any })}
+                      onChange={(e) => {
+                        const newAccessType = e.target.value as any;
+                        setFormData({ 
+                          ...formData, 
+                          accessType: newAccessType,
+                          price: newAccessType === 'free' ? 0 : (formData.price || 0)
+                        });
+                      }}
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
                     >
                       <option value="free">Ingyenes</option>
@@ -486,7 +497,16 @@ export default function AdminCourses() {
                     <input 
                       type="number" 
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
+                      onChange={(e) => {
+                        const newPrice = parseInt(e.target.value) || 0;
+                        setFormData({ 
+                          ...formData, 
+                          price: newPrice,
+                          accessType: newPrice > 0 ? 'premium' : formData.accessType
+                        });
+                      }}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="0"
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                     />
@@ -593,6 +613,8 @@ export default function AdminCourses() {
                       required
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Írd ide a kurzus leírását (Markdown támogatott)..."
                       className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[250px] resize-none text-gray-300 leading-relaxed font-mono text-sm"
                     />

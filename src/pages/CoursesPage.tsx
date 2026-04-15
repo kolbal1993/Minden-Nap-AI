@@ -109,7 +109,7 @@ export default function CoursesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-body font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -119,7 +119,7 @@ export default function CoursesPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-6xl font-bold tracking-tighter mb-6"
+              className="text-5xl md:text-6xl font-bold tracking-tighter mb-6 text-title"
             >
               Tanulj az <span className="text-blue-500">AI Jövőjéről</span>
             </motion.h1>
@@ -127,7 +127,7 @@ export default function CoursesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-400 max-w-2xl"
+              className="text-xl text-body max-w-2xl"
             >
               Válogass szakértők által összeállított kurzusaink közül, és szerezz piacképes tudást a mesterséges intelligenciát területén.
             </motion.p>
@@ -147,8 +147,8 @@ export default function CoursesPage() {
                   <Crown className="text-orange-500 w-8 h-8" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">Minden kurzus egyetlen előfizetéssel?</h2>
-                  <p className="text-gray-400 text-sm max-w-md">Válts Prémiumra és férj hozzá az összes jelenlegi és jövőbeli kurzusunkhoz korlátozások nélkül.</p>
+                  <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Minden kurzus egyetlen előfizetéssel?</h2>
+                  <p className="text-gray-600 dark:text-gray-100 text-sm max-w-md">Válts Prémiumra és férj hozzá az összes jelenlegi és jövőbeli kurzusunkhoz korlátozások nélkül.</p>
                 </div>
               </div>
               <button 
@@ -168,19 +168,19 @@ export default function CoursesPage() {
               const CardContent = (
                 <div className="flex flex-col items-center text-center h-full relative z-10">
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 shadow-lg mb-6 ${
-                    selectedCategory === module.id ? 'bg-blue-600 text-white scale-110 shadow-blue-600/20' : 'bg-white/5 text-gray-400 group-hover:scale-110 group-hover:bg-white/10'
+                    selectedCategory === module.id ? 'bg-blue-600 text-white scale-110 shadow-blue-600/20' : 'bg-hover text-muted group-hover:scale-110 group-hover:bg-hover'
                   }`}>
                     <module.icon className="w-8 h-8" />
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-blue-400 transition-colors">{module.title}</h3>
-                    <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-title">{module.title}</h3>
+                    <p className="text-body leading-relaxed text-xs sm:text-sm">
                       {module.description}
                     </p>
                   </div>
                   {/* Arrow indicator at the bottom center instead of absolute corner */}
                   <div className={`mt-6 transition-all duration-300 ${
-                    selectedCategory === module.id ? 'text-blue-500 opacity-100' : 'text-gray-600 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'
+                    selectedCategory === module.id ? 'text-blue-500 opacity-100' : 'text-muted opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'
                   }`}>
                     <ArrowRight className="w-5 h-5" />
                   </div>
@@ -190,7 +190,7 @@ export default function CoursesPage() {
               const className = `p-8 rounded-[2.5rem] border transition-all relative overflow-hidden group flex flex-col h-full ${
                 selectedCategory === module.id 
                   ? 'bg-gradient-to-br border-blue-500/50 ring-2 ring-blue-500/10' 
-                  : 'bg-[#0d0d0d] border-white/5 hover:border-white/20 shadow-2xl'
+                  : 'bg-card border-main hover:border-main shadow-sm hover:shadow-xl'
               } ${module.color}`;
 
               const GlowEffect = (
@@ -254,13 +254,15 @@ export default function CoursesPage() {
               )}
             </div>
             <div className="relative w-full md:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Keresés a tudástárban..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-full pl-11 pr-6 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
+                className="w-full bg-card border border-main rounded-full pl-11 pr-6 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm text-title"
               />
             </div>
           </div>
@@ -275,7 +277,7 @@ export default function CoursesPage() {
               return (
                 <div key={module.id} className="space-y-8">
                   <div className="flex items-center gap-4">
-                    <h2 className="text-3xl font-bold tracking-tight">{module.title}</h2>
+                    <h2 className="text-3xl font-bold tracking-tight text-title">{module.title}</h2>
                     <div className="h-px flex-1 bg-gradient-to-r from-blue-500/50 to-transparent" />
                   </div>
 
@@ -290,7 +292,7 @@ export default function CoursesPage() {
                       >
                         <Link 
                           to={`/tudastar/${course.id}`}
-                          className="flex flex-col bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-blue-500/30 transition-all shadow-2xl h-full group"
+                          className="flex flex-col bg-card border border-main rounded-[2.5rem] overflow-hidden hover:border-blue-500/30 transition-all shadow-sm hover:shadow-xl h-full group"
                         >
                           <div className="relative aspect-[16/10] overflow-hidden">
                             <img 
@@ -299,7 +301,7 @@ export default function CoursesPage() {
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                               referrerPolicy="no-referrer"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent opacity-60" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#0f0f0f] via-transparent to-transparent opacity-60" />
                             <div className="absolute top-6 left-6 flex flex-col gap-2">
                               <span className="bg-black/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase border border-white/10">
                                 {course.level}
@@ -314,34 +316,34 @@ export default function CoursesPage() {
                           
                           <div className="p-8 flex flex-col flex-1">
                             <div className="flex items-center justify-between mb-4">
-                              <span className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em]">{course.category}</span>
-                              <div className="flex items-center gap-1.5 text-orange-400 text-sm font-bold">
+                              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em]">{course.category}</span>
+                              <div className="flex items-center gap-1.5 text-orange-500 dark:text-orange-400 text-sm font-bold">
                                 <Star className="w-4 h-4 fill-current" /> {course.rating}
                               </div>
                             </div>
                             
-                            <h3 className="text-xl font-bold mb-4 leading-tight group-hover:text-blue-400 transition-colors">
+                            <h3 className="text-xl font-bold mb-4 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-title">
                               {course.title}
                             </h3>
                             
-                            <p className="text-gray-500 text-sm mb-8 line-clamp-2 leading-relaxed">
+                            <p className="text-body text-sm mb-8 line-clamp-2 leading-relaxed">
                               {course.description}
                             </p>
                             
                             <div className="mt-auto">
-                              <div className="flex items-center justify-between mb-6 pt-6 border-t border-white/5">
+                              <div className="flex items-center justify-between mb-6 pt-6 border-t border-main">
                                 <div className="flex items-center gap-4">
-                                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                                  <div className="flex items-center gap-1.5 text-[11px] text-body">
                                     <Clock className="w-3.5 h-3.5" /> {course.duration}
                                   </div>
-                                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                                  <div className="flex items-center gap-1.5 text-[11px] text-body">
                                     <BarChart className="w-3.5 h-3.5" /> {course.students}
                                   </div>
                                 </div>
-                                <span className="text-lg font-bold text-white">{course.price}</span>
+                                <span className="text-lg font-bold text-title">{course.price}</span>
                               </div>
                               
-                              <div className="w-full py-4 rounded-2xl bg-white/5 group-hover:bg-blue-600 text-center text-sm font-bold transition-all flex items-center justify-center gap-2">
+                              <div className="w-full py-4 rounded-2xl bg-hover group-hover:bg-blue-600 group-hover:text-white text-center text-sm font-bold transition-all flex items-center justify-center gap-2 text-title">
                                 Megtekintés <ArrowRight className="w-4 h-4" />
                               </div>
                             </div>

@@ -17,7 +17,9 @@ import {
   Newspaper,
   Mail,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Calendar,
+  Clock
 } from 'lucide-react';
 
 // --- Types ---
@@ -71,7 +73,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-main font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar transparent />
 
       {/* Hero Section */}
@@ -85,14 +87,14 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-bold uppercase tracking-widest mb-8">
               <Sparkles className="w-3.5 h-3.5" /> Minden Nap AI
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent leading-[1.1]">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-8 bg-gradient-to-br from-[var(--text-title)] via-[var(--text-title)] to-blue-100 bg-clip-text text-transparent leading-[1.1] drop-shadow-2xl">
               Az AI érthetően. <br />
-              <span className="text-blue-500">Hírek és tudás</span> minden nap.
+              <span className="text-blue-600 dark:text-blue-400 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]">Hírek és tudás</span> <span className="text-[var(--text-title)]">minden nap.</span>
             </h1>
-            <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-12 leading-relaxed">
+            <p className="max-w-2xl mx-auto text-desc text-lg md:text-xl mb-12 leading-relaxed">
               Maradj naprakész a legfrissebb AI hírekkel és sajátítsd el a jövő technológiáját 
               gyakorlatias kurzusaink segítségével.
             </p>
@@ -100,7 +102,7 @@ export default function LandingPage() {
               <Link to="/news" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20 group">
                 Legfrissebb Hírek <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/tudastar" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all text-center hover:border-white/20">
+              <Link to="/tudastar" className="w-full sm:w-auto bg-hover border border-main text-title px-10 py-5 rounded-2xl font-bold text-lg transition-all text-center hover:border-accent/20">
                 Tudástár Böngészése
               </Link>
             </div>
@@ -109,16 +111,16 @@ export default function LandingPage() {
       </section>
 
       {/* News Quick View */}
-      <section className="py-24 bg-[#0d0d0d] border-y border-white/5">
+      <section className="py-24 bg-surface border-y border-subtle transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-end justify-between mb-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 flex items-center gap-3">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 flex items-center gap-3 text-title">
                 <Newspaper className="text-blue-500 w-8 h-8" /> Friss Hírek
               </h2>
-              <p className="text-gray-400">A legfontosabb események az AI világából.</p>
+              <p className="text-body">A legfontosabb események az AI világából.</p>
             </div>
-            <Link to="/news" className="hidden md:flex items-center gap-2 text-blue-400 font-bold hover:text-blue-300 transition-colors group">
+            <Link to="/news" className="hidden md:flex items-center gap-2 text-blue-600 font-bold hover:text-blue-500 transition-colors group">
               Összes hír <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -135,7 +137,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group bg-[#151515] border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-blue-500/30 transition-all hover:-translate-y-2 shadow-2xl h-full"
+                  className="group bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all hover:-translate-y-2 shadow-[var(--shadow-main)] hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.15)] h-full"
                 >
                   <div className="relative h-56 overflow-hidden">
                     <img 
@@ -144,18 +146,23 @@ export default function LandingPage() {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute top-5 left-5 bg-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white">
+                    <div className="absolute top-5 left-5 bg-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
                       {news.category}
                     </div>
                   </div>
                   <div className="p-8">
-                    <div className="text-xs text-gray-500 font-medium mb-4">{news.date}</div>
-                    <h3 className="text-xl font-bold mb-4 group-hover:text-blue-400 transition-colors leading-tight">
+                    <div className="flex items-center gap-3 text-muted text-xs mb-4">
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {news.date}</span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-title group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
                       {news.title}
                     </h3>
-                    <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
+                    <p className="text-desc text-sm line-clamp-3 mb-6 leading-relaxed">
                       {news.excerpt}
                     </p>
+                    <div className="flex items-center gap-2 text-blue-600 text-xs font-bold uppercase tracking-wider group/btn">
+                      Olvasd tovább <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </motion.div>
               </Link>
@@ -172,117 +179,127 @@ export default function LandingPage() {
 
       {/* Educational Teaser */}
       <section className="py-32 relative overflow-hidden">
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/5 blur-[120px] rounded-full -z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/5 blur-[120px] rounded-full -z-10" />
         
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/5 rounded-[3rem] p-8 md:p-20 flex flex-col lg:flex-row items-center gap-16 shadow-3xl">
-            <div className="flex-1 space-y-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 text-sm font-bold">
-                <BookOpen className="w-5 h-5" /> Tanulj velünk
+          <div className="flex flex-col lg:flex-row items-center gap-20">
+            <div className="flex-1 space-y-10">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-bold uppercase tracking-widest">
+                <Zap className="w-3.5 h-3.5" /> Gyakorlati Tudás
               </div>
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter leading-tight">
-                Sajátítsd el az AI <br /> 
-                <span className="text-blue-500">gyakorlati használatát.</span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--text-title)] tracking-tight leading-[1.1]">
+                Sajátítsd el az AI-t <br />
+                <span className="text-blue-600">lépésről lépésre.</span>
               </h2>
-              <p className="text-gray-400 text-lg leading-relaxed">
-                Kurzusaink nem csak elméletet tanítanak. Valós projekteken keresztül mutatjuk meg, 
-                hogyan integrálhatod a mesterséges intelligenciát a mindennapi munkádba.
+              <p className="text-[var(--text-body)] text-lg leading-relaxed max-w-xl">
+                Nem csak híreket kapsz. Megmutatjuk, hogyan használd az AI eszközöket 
+                a mindennapi munkádban és kreatív folyamataidban.
               </p>
-              <ul className="space-y-4">
+              <ul className="space-y-5 text-[var(--text-title)]">
                 {[
-                  'Iparági szakértők által vezetett órák',
-                  'Gyakorlati feladatok és visszajelzés',
-                  'Örökös hozzáférés a tananyagokhoz',
-                  'Exkluzív közösségi tagság'
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-gray-300">
-                    <CheckCircle2 className="text-blue-500 w-5 h-5" />
+                  'Prompt Engineering alapoktól a profi szintig',
+                  'Kép- és videógenerálás mesterfogásai',
+                  'AI munkafolyamatok automatizálása',
+                  'Személyre szabott tanulási útvonalak'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-4 group">
+                    <div className="w-6 h-6 rounded-full bg-blue-600/10 border border-blue-500/20 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    </div>
                     <span className="font-medium">{item}</span>
                   </li>
                 ))}
               </ul>
-              <Link to="/tudastar" className="inline-flex items-center gap-3 bg-white text-black px-10 py-5 rounded-2xl font-bold text-lg hover:bg-gray-200 transition-all hover:scale-105 active:scale-95">
-                Tudástár megtekintése <ArrowRight className="w-5 h-5" />
-              </Link>
+              <div className="pt-4">
+                <Link to="/tudastar" className="inline-flex items-center gap-3 bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-blue-50 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20">
+                  Tudástár megtekintése <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
             </div>
             <div className="flex-1 relative">
-              <div className="relative z-10 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+              <div className="relative z-10 rounded-3xl overflow-hidden border border-subtle shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700 group">
                 <img 
                   src="https://picsum.photos/seed/learning/800/1000" 
                   alt="Learning AI" 
-                  className="w-full aspect-[4/5] object-cover"
+                  className="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-1000"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-10">
-                  <div className="bg-blue-600/90 backdrop-blur-md p-6 rounded-2xl border border-white/20 inline-block max-w-xs">
+                  <div className="bg-blue-600/90 backdrop-blur-md p-6 rounded-2xl border border-white/20 inline-block max-w-xs shadow-2xl">
                     <p className="text-white font-bold text-lg mb-1">AI Prompt Engineering</p>
                     <p className="text-blue-100 text-sm opacity-80">A legnépszerűbb kurzusunk</p>
                   </div>
                 </div>
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full" />
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 blur-3xl rounded-full" />
+              <div className="absolute -top-10 -right-10 w-48 h-48 bg-blue-500/10 blur-3xl rounded-full animate-pulse" />
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-purple-500/5 blur-3xl rounded-full" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Newsletter Subscription */}
-      <section className="py-24 bg-blue-600 relative overflow-hidden">
-        {/* Abstract background patterns */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
-        </div>
+      <section className="py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-bg-main to-bg-main -z-10" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
         
         <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-8"
+            className="bg-card border border-subtle p-12 md:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden group"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl mb-4">
-              <Mail className="text-white w-8 h-8" />
+            {/* Background Glow */}
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/10 blur-[80px] rounded-full group-hover:bg-blue-600/20 transition-colors duration-700" />
+            
+            <div className="relative z-10 space-y-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600/10 rounded-3xl mb-4 border border-blue-500/20">
+                <Mail className="text-blue-600 w-10 h-10" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-[var(--text-title)] tracking-tight leading-tight">
+                Ne maradj le semmiről. <br />
+                <span className="text-blue-600">AI hírek a postaládádba.</span>
+              </h2>
+              <p className="text-[var(--text-body)] text-lg max-w-xl mx-auto leading-relaxed">
+                Iratkozz fel hírlevelünkre, és küldjük a hét legfontosabb AI híreit 
+                és exkluzív oktatási tippjeit közvetlenül a postaládádba.
+              </p>
+              
+              <form onSubmit={handleSubscribe} className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
+                <input 
+                  type="email" 
+                  placeholder="E-mail címed" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={(e) => e.target.select()}
+                  onClick={(e) => e.currentTarget.select()}
+                  required
+                  className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-2xl px-6 py-5 text-[var(--text-title)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all"
+                />
+                <button 
+                  type="submit"
+                  className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-blue-500 transition-all active:scale-95 shadow-xl shadow-blue-600/20 hover:scale-105"
+                >
+                  Feliratkozás
+                </button>
+              </form>
+              
+              {subscribed && (
+                <motion.p 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-green-500 font-bold flex items-center justify-center gap-2"
+                >
+                  <CheckCircle2 className="w-5 h-5" /> Köszönjük! Hamarosan jelentkezünk.
+                </motion.p>
+              )}
+              
+              <p className="text-muted text-xs">
+                Bármikor leiratkozhatsz. Adatvédelmi irányelveinket <Link to="/privacy" className="underline hover:text-blue-600 transition-colors">itt találod</Link>.
+              </p>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-              Ne maradj le semmiről.
-            </h2>
-            <p className="text-blue-100 text-lg max-w-xl mx-auto opacity-90">
-              Iratkozz fel hírlevelünkre, és küldjük a hét legfontosabb AI híreit 
-              és exkluzív oktatási tippjeit közvetlenül a postaládádba.
-            </p>
-            
-            <form onSubmit={handleSubscribe} className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-              <input 
-                type="email" 
-                placeholder="E-mail címed" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="flex-1 bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-white placeholder:text-blue-200 focus:outline-none focus:bg-white/20 transition-all"
-              />
-              <button 
-                type="submit"
-                className="bg-white text-blue-600 px-8 py-4 rounded-2xl font-bold hover:bg-blue-50 transition-all active:scale-95 shadow-lg"
-              >
-                Feliratkozás
-              </button>
-            </form>
-            
-            {subscribed && (
-              <motion.p 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-white font-bold flex items-center justify-center gap-2"
-              >
-                <CheckCircle2 className="w-5 h-5" /> Köszönjük! Hamarosan jelentkezünk.
-              </motion.p>
-            )}
-            
-            <p className="text-blue-200 text-xs opacity-70">
-              Bármikor leiratkozhatsz. Adatvédelmi irányelveinket <Link to="/privacy" className="underline">itt találod</Link>.
-            </p>
           </motion.div>
         </div>
       </section>

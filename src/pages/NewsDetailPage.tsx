@@ -232,10 +232,28 @@ export default function NewsDetailPage() {
     localStorage.setItem(`news_comments_${id}`, JSON.stringify(updatedComments));
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setShowShareTooltip(true);
-    setTimeout(() => setShowShareTooltip(false), 2000);
+  const handleShare = async () => {
+    const shareData = {
+      title: news.title,
+      text: news.excerpt,
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        setShowShareTooltip(true);
+        setTimeout(() => setShowShareTooltip(false), 2000);
+      }
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        await navigator.clipboard.writeText(shareData.url);
+        setShowShareTooltip(true);
+        setTimeout(() => setShowShareTooltip(false), 2000);
+      }
+    }
   };
 
   const updateGlobalStats = (newsId: string, field: 'saves', delta: number) => {
@@ -259,13 +277,13 @@ export default function NewsDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Back Link */}
-          <Link to="/news" className="inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-12 group">
+          <Link to="/news" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:hover:text-white transition-colors mb-12 group">
             <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Vissza a hírekhez
           </Link>
 
@@ -276,21 +294,21 @@ export default function NewsDetailPage() {
             className="mb-12"
           >
             <div className="flex items-center gap-3 mb-6">
-              <span className="bg-blue-600/20 text-blue-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
+              <span className="bg-blue-600/20 text-blue-600 dark:text-blue-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
                 {news.category}
               </span>
-              <span className="text-gray-500 text-xs font-medium">• {news.readTime} olvasás</span>
+              <span className="text-gray-600 dark:text-gray-100 text-xs font-medium">• {news.readTime} olvasás</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-8 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-8 leading-tight text-gray-900 dark:text-white">
               {news.title}
             </h1>
-            <div className="flex items-center justify-between border-y border-white/5 py-6">
+            <div className="flex items-center justify-between border-y border-black/5 dark:border-white/5 py-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold">
+                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold text-white">
                   {news.author[0]}
                 </div>
                 <div>
-                  <div className="text-white font-bold">{news.author}</div>
+                  <div className="text-gray-900 dark:text-white font-bold">{news.author}</div>
                   <div className="text-gray-500 text-sm flex items-center gap-2">
                     <Calendar className="w-3.5 h-3.5" /> {news.date}
                   </div>
@@ -300,10 +318,10 @@ export default function NewsDetailPage() {
                 <div className="relative">
                   <button 
                     onClick={handleShare}
-                    className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center transition-colors"
+                    className="w-10 h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center transition-colors border border-black/10 dark:border-white/10"
                     title="Megosztás"
                   >
-                    <Share2 className="w-4 h-4 text-gray-400" />
+                    <Share2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </button>
                   <AnimatePresence>
                     {showShareTooltip && (
@@ -320,7 +338,7 @@ export default function NewsDetailPage() {
                 </div>
                 <button 
                   onClick={handleBookmark}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isBookmarked ? 'bg-blue-600 text-white' : 'bg-white/5 hover:bg-white/10 text-gray-400'}`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors border ${isBookmarked ? 'bg-blue-600 border-blue-600 text-white' : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 border-black/10 dark:border-white/10'}`}
                   title={isBookmarked ? "Eltávolítás a könyvjelzők közül" : "Mentés könyvjelzőként"}
                 >
                   <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
@@ -351,15 +369,15 @@ export default function NewsDetailPage() {
             transition={{ delay: 0.2 }}
             className="prose prose-invert prose-blue max-w-none"
           >
-            <p className="text-xl text-gray-300 leading-relaxed font-medium mb-12 italic border-l-4 border-blue-500 pl-8">
+            <p className="text-xl text-gray-700 dark:text-gray-100 leading-relaxed font-medium mb-12 italic border-l-4 border-blue-500 pl-8">
               {news.excerpt}
             </p>
-            <div className="text-gray-400 text-lg leading-relaxed space-y-8 whitespace-pre-line mb-16">
+            <div className="text-gray-700 dark:text-gray-100 text-lg leading-relaxed space-y-8 whitespace-pre-line mb-16">
               {news.content}
             </div>
 
             {/* Interaction Buttons */}
-            <div className="flex items-center justify-center gap-6 py-12 border-y border-white/5">
+            <div className="flex items-center justify-center gap-6 py-12 border-y border-black/5 dark:border-white/5">
               <Reactions 
                 reactions={newsReactions} 
                 userReaction={userReaction}
@@ -370,35 +388,35 @@ export default function NewsDetailPage() {
           </motion.div>
 
           {/* Footer Actions */}
-          <div className="mt-20 pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+          <div className="mt-20 pt-12 border-t border-black/5 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
             <div className="flex items-center gap-4">
               <MessageSquare className="text-blue-500 w-6 h-6" />
-              <span className="text-gray-400">Hozzászólások ({comments.length})</span>
+              <span className="text-gray-600 dark:text-gray-100">Hozzászólások ({comments.length})</span>
             </div>
-            <Link to="/news" className="bg-white text-black px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-200 transition-all">
+            <Link to="/news" className="bg-gray-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-800 dark:hover:bg-gray-200 transition-all">
               Többi Hír <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
 
           {/* Comment Section */}
           <div className="space-y-12">
-            <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
-              <h3 className="text-xl font-bold mb-8">
+            <div className="bg-white dark:bg-[#0f0f0f] border border-black/[0.05] dark:border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-sm hover:shadow-xl dark:shadow-2xl transition-colors duration-300">
+              <h3 className="text-xl font-bold mb-8 text-gray-900 dark:text-white">
                 {replyingTo ? `Válasz neki: ${replyingTo.author}` : 'Szólj hozzá a hírhez'}
               </h3>
               <form onSubmit={(e) => handleAddComment(e, replyingTo?.commentId)} className="space-y-6">
                 {replyingTo && (
                   <div className="flex items-center justify-between bg-blue-600/10 px-4 py-2 rounded-xl border border-blue-500/20">
-                    <span className="text-sm text-blue-400 font-medium flex items-center gap-2">
+                    <span className="text-sm text-blue-600 dark:text-blue-400 font-medium flex items-center gap-2">
                       <Smile className="w-4 h-4" /> Válasz neki: <strong>{replyingTo.author}</strong>
                     </span>
-                    <button type="button" onClick={() => setReplyingTo(null)} className="text-blue-400 hover:text-white">
+                    <button type="button" onClick={() => setReplyingTo(null)} className="text-blue-600 dark:text-blue-400 hover:text-gray-900 dark:hover:text-white">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 )}
                 <div className="flex gap-4">
-                  <Link to="/profile" className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-white/10 hover:border-blue-500 transition-colors">
+                  <Link to="/profile" className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-black/10 dark:border-white/10 hover:border-blue-500 transition-colors">
                     <img src={userProfile?.avatar} alt="" className="w-full h-full object-cover" />
                   </Link>
                   <div className="flex-1 relative">
@@ -406,7 +424,7 @@ export default function NewsDetailPage() {
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder={replyingTo ? "Írd le a válaszod..." : "Írd le a véleményed..."}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none min-h-[120px]"
+                      className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none min-h-[120px] text-gray-900 dark:text-white"
                     />
                     <div className="absolute right-3 bottom-3">
                       <EmojiPickerButton 
@@ -420,7 +438,7 @@ export default function NewsDetailPage() {
                     <button 
                       type="button"
                       onClick={() => setReplyingTo(null)}
-                      className="px-8 py-3 rounded-xl font-bold text-gray-400 hover:text-white transition-all"
+                      className="px-8 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all"
                     >
                       Mégse
                     </button>
@@ -480,12 +498,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`bg-[#0d0d0d] border rounded-3xl p-6 flex gap-4 transition-all ${comment.isPremium ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-transparent' : 'border-white/5'}`}
+        className={`bg-white dark:bg-[#0f0f0f] border rounded-3xl p-6 flex gap-4 transition-all shadow-sm hover:shadow-xl dark:shadow-2xl ${comment.isPremium ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-transparent' : 'border-black/[0.05] dark:border-white/5'}`}
       >
-        <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10 hover:border-blue-500 transition-colors relative">
+        <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10 hover:border-blue-500 transition-colors relative">
           <img src={comment.userAvatar} alt="" className="w-full h-full object-cover" />
           {comment.isPremium && (
-            <div className="absolute bottom-0 right-0 bg-orange-500 p-0.5 rounded-full border border-[#0d0d0d] z-10">
+            <div className="absolute bottom-0 right-0 bg-orange-500 p-0.5 rounded-full border border-white dark:border-[#0d0d0d] z-10">
               <Zap className="w-1.5 h-1.5 text-white fill-current" />
             </div>
           )}
@@ -493,18 +511,18 @@ const CommentItem: React.FC<CommentItemProps> = ({
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Link to="/profile" className={`font-bold transition-colors ${comment.isPremium ? 'text-orange-400 hover:text-orange-300' : 'text-gray-200 hover:text-blue-400'}`}>
+              <Link to="/profile" className={`font-bold transition-colors ${comment.isPremium ? 'text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300' : 'text-gray-900 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400'}`}>
                 {comment.userName}
               </Link>
               {comment.isPremium && (
-                <span className="bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border border-orange-500/20 flex items-center gap-1">
+                <span className="bg-orange-600/20 text-orange-600 dark:text-orange-400 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border border-orange-500/20 flex items-center gap-1">
                   <Zap className="w-2 h-2 fill-current" /> Prémium
                 </span>
               )}
             </div>
-            <span className="text-xs text-gray-500">{comment.date}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-100">{comment.date}</span>
           </div>
-          <p className={`${comment.isPremium ? 'text-gray-200' : 'text-gray-400'} leading-relaxed mb-4`}>
+          <p className={`${comment.isPremium ? 'text-gray-800 dark:text-gray-100' : 'text-gray-700 dark:text-gray-100'} leading-relaxed mb-4`}>
             {comment.text}
           </p>
           <div className="flex items-center gap-4">

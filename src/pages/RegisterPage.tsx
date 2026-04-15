@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { 
@@ -14,8 +14,11 @@ import {
   ArrowRight, 
   Github, 
   Chrome,
-  ChevronLeft
+  ChevronLeft,
+  AlertCircle
 } from 'lucide-react';
+import { auth, googleProvider } from '../lib/firebase';
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -24,19 +27,77 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = (e: FormEvent) => {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userEmail = user.email || '';
+        localStorage.setItem('isLoggedIn', 'true');
+        if (userEmail === 'admin@mindennapai.hu' || userEmail === 'kolesbalazs93@gmail.com') {
+          localStorage.setItem('userRole', 'admin');
+          navigate('/admin');
+        } else {
+          localStorage.setItem('userRole', 'user');
+          navigate('/');
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
-    // Mock registration logic
-    setTimeout(() => {
+    if (formData.password !== formData.confirmPassword) {
+      setError('A két jelszó nem egyezik meg!');
       setIsLoading(false);
-      navigate('/login');
-      alert('Sikeres regisztráció! Most már bejelentkezhetsz.');
-    }, 1500);
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      await updateProfile(userCredential.user, {
+        displayName: formData.name
+      });
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', 'user');
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message || 'Hiba történt a regisztráció során.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: string) => {
+    setIsLoading(true);
+    setError('');
+    try {
+      if (provider === 'Google') {
+        const result = await signInWithPopup(auth, googleProvider);
+        const userEmail = result.user.email || '';
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        if (userEmail === 'admin@mindennapai.hu' || userEmail === 'kolesbalazs93@gmail.com') {
+          localStorage.setItem('userRole', 'admin');
+          navigate('/admin');
+        } else {
+          localStorage.setItem('userRole', 'user');
+          navigate('/');
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || 'Hiba történt a bejelentkezés során.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,6 +119,16 @@ export default function RegisterPage() {
 
         <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
           <form onSubmit={handleRegister} className="space-y-5">
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-sm flex items-center gap-3"
+              >
+                <AlertCircle className="w-5 h-5 shrink-0" />
+                {error}
+              </motion.div>
+            )}
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Teljes név</label>
               <div className="relative">
@@ -66,6 +137,8 @@ export default function RegisterPage() {
                   type="text" 
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onFocus={(e) => e.target.select()}
+                  onClick={(e) => e.currentTarget.select()}
                   placeholder="Kovács János"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   required
@@ -81,6 +154,8 @@ export default function RegisterPage() {
                   type="email" 
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onFocus={(e) => e.target.select()}
+                  onClick={(e) => e.currentTarget.select()}
                   placeholder="pelda@email.hu"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   required
@@ -96,6 +171,25 @@ export default function RegisterPage() {
                   type="password" 
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onFocus={(e) => e.target.select()}
+                  onClick={(e) => e.currentTarget.select()}
+                  placeholder="••••••••"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Jelszó újra</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                <input 
+                  type="password" 
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  onFocus={(e) => e.target.select()}
+                  onClick={(e) => e.currentTarget.select()}
                   placeholder="••••••••"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   required
@@ -120,10 +214,18 @@ export default function RegisterPage() {
 
           <div className="mt-8 pt-8 border-t border-white/5">
             <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl transition-all">
+              <button 
+                type="button"
+                onClick={() => handleSocialLogin('Google')}
+                className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl transition-all"
+              >
                 <Chrome className="w-5 h-5" /> <span className="text-sm font-medium">Google</span>
               </button>
-              <button className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl transition-all">
+              <button 
+                type="button"
+                onClick={() => handleSocialLogin('GitHub')}
+                className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl transition-all"
+              >
                 <Github className="w-5 h-5" /> <span className="text-sm font-medium">GitHub</span>
               </button>
             </div>

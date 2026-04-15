@@ -235,6 +235,8 @@ export default function AdminContacts() {
                         type="text" 
                         value={formData.label}
                         onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="pl. Ügyfélszolgálat"
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                       />
@@ -246,6 +248,8 @@ export default function AdminContacts() {
                         type="text" 
                         value={formData.value}
                         onChange={(e) => setFormData({ ...formData, value: e.target.value })}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="pl. info@mindennapai.hu"
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                       />

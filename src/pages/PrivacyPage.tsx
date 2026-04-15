@@ -17,7 +17,7 @@ import {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold tracking-tighter mb-6"
+              className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 text-gray-900 dark:text-white"
             >
               Adatvédelmi <span className="text-blue-500">Tájékoztató</span>
             </motion.h1>
@@ -42,16 +42,16 @@ export default function PrivacyPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-gray-400"
+              className="text-gray-700 dark:text-gray-100"
             >
               Utolsó frissítés: 2026. április 3.
             </motion.p>
           </div>
 
           {/* Content */}
-          <div className="space-y-12 text-gray-300 leading-relaxed">
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <div className="space-y-12 text-gray-700 dark:text-gray-100 leading-relaxed">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Info className="text-blue-500 w-6 h-6" /> 1. Bevezetés
               </h2>
               <p className="mb-4">
@@ -62,28 +62,28 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Database className="text-blue-500 w-6 h-6" /> 2. Gyűjtött adatok köre
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                  <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
                     <UserCheck className="w-4 h-4 text-blue-400" /> Regisztrációs adatok
                   </h3>
-                  <p className="text-sm text-gray-400">Név, e-mail cím, jelszó (titkosítva), cégnév (opcionális).</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-100">Név, e-mail cím, jelszó (titkosítva), cégnév (opcionális).</p>
                 </div>
                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                  <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
                     <Eye className="w-4 h-4 text-blue-400" /> Használati adatok
                   </h3>
-                  <p className="text-sm text-gray-400">IP cím, böngésző típusa, megtekintett kurzusok, belépési naplók.</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-100">IP cím, böngésző típusa, megtekintett kurzusok, belépési naplók.</p>
                 </div>
               </div>
             </section>
 
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Lock className="text-blue-500 w-6 h-6" /> 3. Az adatkezelés célja
               </h2>
               <ul className="space-y-4">
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                 <Shield className="text-blue-500 w-6 h-6" /> 4. Az Ön jogai
               </h2>
@@ -132,7 +132,7 @@ export default function PrivacyPage() {
             </section>
 
             <div className="p-8 rounded-[2rem] bg-blue-600/5 border border-blue-500/10 text-center">
-              <p className="text-gray-400 text-sm italic">
+              <p className="text-gray-700 dark:text-gray-100 text-sm italic">
                 Adatvédelmi kérdésekben írjon nekünk az <a href="mailto:privacy@mindennapai.hu" className="text-blue-400 font-bold hover:underline">privacy@mindennapai.hu</a> címen.
               </p>
             </div>

@@ -59,7 +59,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -77,10 +77,10 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-5xl md:text-7xl font-bold tracking-tighter mb-6"
+              className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 text-gray-900 dark:text-white"
             >
               Kérdésed van? <br />
-              <span className="text-gray-500">Itt vagyunk, hogy segítsünk.</span>
+              <span className="text-gray-400 dark:text-gray-100">Itt vagyunk, hogy segítsünk.</span>
             </motion.h1>
           </div>
 
@@ -97,8 +97,8 @@ export default function ContactPage() {
                   <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <Mail className="text-blue-500 w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">E-mail</h3>
-                  <p className="text-gray-400 text-sm mb-4">Írj nekünk bármikor, 24 órán belül válaszolunk.</p>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">E-mail</h3>
+                  <p className="text-gray-700 dark:text-gray-100 text-sm mb-4">Írj nekünk bármikor, 24 órán belül válaszolunk.</p>
                   <a href={`mailto:${contactInfo.email}`} className="text-blue-400 font-medium hover:underline">{contactInfo.email}</a>
                 </div>
 
@@ -106,8 +106,8 @@ export default function ContactPage() {
                   <div className="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <Phone className="text-purple-500 w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">Telefon</h3>
-                  <p className="text-gray-400 text-sm mb-4">Hívj minket munkaidőben (H-P 9:00 - 17:00).</p>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Telefon</h3>
+                  <p className="text-gray-700 dark:text-gray-100 text-sm mb-4">Hívj minket munkaidőben (H-P 9:00 - 17:00).</p>
                   <a href={`tel:${contactInfo.phone}`} className="text-purple-400 font-medium hover:underline">{contactInfo.phone}</a>
                 </div>
 
@@ -115,14 +115,14 @@ export default function ContactPage() {
                   <div className="w-12 h-12 bg-green-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <MapPin className="text-green-500 w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">Iroda</h3>
-                  <p className="text-gray-400 text-sm mb-4">Látogass el hozzánk egy kávéra és beszélgessünk az AI jövőjéről.</p>
-                  <p className="text-white font-medium">{contactInfo.address}</p>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Iroda</h3>
+                  <p className="text-gray-700 dark:text-gray-100 text-sm mb-4">Látogass el hozzánk egy kávéra és beszélgessünk az AI jövőjéről.</p>
+                  <p className="text-gray-900 dark:text-white font-medium">{contactInfo.address}</p>
                 </div>
               </div>
 
               <div className="pt-8 border-t border-white/5">
-                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Kövess minket</h4>
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Kövess minket</h4>
                 <div className="flex gap-4">
                   {contactInfo.socials.map((social) => (
                     <a 
@@ -150,7 +150,7 @@ export default function ContactPage() {
                     <Send className="text-green-500 w-10 h-10" />
                   </div>
                   <h2 className="text-2xl font-bold mb-4">Üzenet elküldve!</h2>
-                  <p className="text-gray-400 max-w-xs mx-auto">Köszönjük a megkeresést. Hamarosan felvesszük veled a kapcsolatot.</p>
+                  <p className="text-gray-300 max-w-xs mx-auto">Köszönjük a megkeresést. Hamarosan felvesszük veled a kapcsolatot.</p>
                   <button 
                     onClick={() => setIsSent(false)}
                     className="mt-8 text-blue-400 font-bold hover:text-blue-300 transition-colors"
@@ -162,22 +162,26 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Név</label>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Név</label>
                       <input 
                         type="text" 
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="Kovács János"
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">E-mail</label>
+                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">E-mail</label>
                       <input 
                         type="email" 
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="pelda@email.hu"
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                         required
@@ -186,11 +190,13 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Tárgy</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Tárgy</label>
                     <input 
                       type="text" 
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Miben segíthetünk?"
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                       required
@@ -198,12 +204,14 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Üzenet</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Üzenet</label>
                     <div className="relative">
                       <textarea 
                         rows={5}
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="Írd le részletesen a kérdésedet..."
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none"
                         required

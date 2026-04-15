@@ -17,7 +17,7 @@ import {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -34,7 +34,7 @@ export default function TermsPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold tracking-tighter mb-6"
+              className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 text-gray-900 dark:text-white"
             >
               Általános <span className="text-blue-500">Szerződési Feltételek</span>
             </motion.h1>
@@ -42,16 +42,16 @@ export default function TermsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-gray-400"
+              className="text-gray-700 dark:text-gray-100"
             >
               Utolsó frissítés: 2026. április 3.
             </motion.p>
           </div>
 
           {/* Content */}
-          <div className="space-y-12 text-gray-300 leading-relaxed">
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+          <div className="space-y-12 text-gray-700 dark:text-gray-100 leading-relaxed">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <FileText className="text-blue-500 w-6 h-6" /> 1. Általános rendelkezések
               </h2>
               <p className="mb-4">
@@ -62,8 +62,8 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <ShieldCheck className="text-blue-500 w-6 h-6" /> 2. Szolgáltatások köre
               </h2>
               <ul className="space-y-4">
@@ -82,8 +82,8 @@ export default function TermsPage() {
               </ul>
             </section>
 
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Lock className="text-blue-500 w-6 h-6" /> 3. Regisztráció és adatvédelem
               </h2>
               <p className="mb-4">
@@ -94,8 +94,8 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <AlertCircle className="text-blue-500 w-6 h-6" /> 4. Felelősségkorlátozás
               </h2>
               <p className="mb-4">
@@ -107,7 +107,7 @@ export default function TermsPage() {
             </section>
 
             <div className="p-8 rounded-[2rem] bg-blue-600/5 border border-blue-500/10 text-center">
-              <p className="text-gray-400 text-sm italic">
+              <p className="text-gray-700 dark:text-gray-100 text-sm italic">
                 Kérdés esetén forduljon hozzánk bizalommal az <a href="mailto:info@mindennapai.hu" className="text-blue-400 font-bold hover:underline">info@mindennapai.hu</a> e-mail címen.
               </p>
             </div>

@@ -61,6 +61,8 @@ export default function ForgotPasswordPage() {
                       type="email" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="pelda@email.hu"
                       className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                       required

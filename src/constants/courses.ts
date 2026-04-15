@@ -81,7 +81,7 @@ export const COURSES = [
     title: 'Python Programozás AI Fejlesztőknek',
     description: 'Sajátítsd el a Python alapjait, amire szükséged lesz saját AI alkalmazások és scriptek írásához.',
     level: 'Kezdő',
-    accessType: 'free',
+    accessType: 'premium',
     duration: '30 óra',
     rating: 4.9,
     students: 2100,

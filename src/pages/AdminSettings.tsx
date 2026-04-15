@@ -87,6 +87,8 @@ export default function AdminSettings() {
                     type="text" 
                     value={siteName}
                     onChange={(e) => setSiteName(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
                 </div>
@@ -96,6 +98,8 @@ export default function AdminSettings() {
                     type="email" 
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                   />
                 </div>

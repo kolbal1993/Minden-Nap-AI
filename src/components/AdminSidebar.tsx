@@ -37,12 +37,12 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="w-64 border-r border-white/5 bg-black/20 backdrop-blur-xl hidden md:flex flex-col shrink-0">
-      <Link to="/" className="p-6 flex items-center gap-3 border-b border-white/5 group cursor-pointer">
+    <aside className="w-64 border-r border-main bg-glass backdrop-blur-xl hidden md:flex flex-col shrink-0">
+      <Link to="/" className="p-6 flex items-center gap-3 border-b border-main group cursor-pointer">
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
           <Cpu className="text-white w-5 h-5" />
         </div>
-        <span className="font-bold tracking-tight">Minden Nap AI</span>
+        <span className="font-bold tracking-tight text-title">Minden Nap AI</span>
       </Link>
       
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
@@ -50,14 +50,14 @@ export default function AdminSidebar() {
           <Link 
             key={item.to}
             to={item.to} 
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${item.active ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-white/5 text-gray-400'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${item.active ? 'bg-blue-600/10 text-blue-400 font-medium' : 'hover:bg-hover text-muted'}`}
           >
             <item.icon className="w-5 h-5" /> {item.label}
           </Link>
         ))}
       </nav>
 
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-main">
         <Link 
           to="/" 
           onClick={handleLogout}

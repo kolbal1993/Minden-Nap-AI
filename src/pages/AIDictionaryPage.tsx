@@ -105,7 +105,7 @@ export default function AIDictionaryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-main font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -113,7 +113,7 @@ export default function AIDictionaryPage() {
           {/* Back Link */}
           <Link 
             to="/tudastar" 
-            className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-400 transition-colors mb-8 group"
+            className="inline-flex items-center gap-2 text-muted hover:text-blue-600 transition-colors mb-8 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Vissza a Tudástárhoz
@@ -124,14 +124,14 @@ export default function AIDictionaryPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-sm font-bold mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-600 text-sm font-bold mb-6"
             >
               <Sparkles className="w-4 h-4" /> AI Szótár
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold tracking-tighter mb-6"
+              className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 text-title"
             >
               Értsd meg az <span className="text-blue-500">AI Nyelvét</span>
             </motion.h1>
@@ -139,7 +139,7 @@ export default function AIDictionaryPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-gray-400 max-w-2xl mx-auto"
+              className="text-lg text-body max-w-2xl mx-auto"
             >
               Írj be bármilyen AI szakzsargont vagy rövidítést, és mesterséges intelligenciánk azonnal elmagyarázza neked.
             </motion.p>
@@ -150,14 +150,16 @@ export default function AIDictionaryPage() {
             <div className="absolute inset-0 bg-blue-600/20 blur-[60px] opacity-20" />
             <div className="relative flex gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted w-5 h-5" />
                 <input 
                   type="text" 
                   placeholder="Pl. LLM, RAG, Fine-tuning..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                  onClick={(e) => e.currentTarget.select()}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full bg-[#0d0d0d] border border-white/10 rounded-3xl pl-16 pr-6 py-5 focus:outline-none focus:border-blue-500 transition-all text-lg shadow-2xl"
+                  className="w-full bg-card border border-main rounded-3xl pl-16 pr-6 py-5 focus:outline-none focus:border-blue-500 transition-all text-lg shadow-xl text-title placeholder:text-muted"
                 />
               </div>
               <button 
@@ -177,7 +179,7 @@ export default function AIDictionaryPage() {
 
           {/* Suggestions */}
           <div className="mb-16">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <h3 className="text-xs font-bold text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
               <History className="w-3 h-3" /> Gyakori kifejezések
             </h3>
             <div className="flex flex-wrap gap-3">
@@ -185,10 +187,10 @@ export default function AIDictionaryPage() {
                 <button
                   key={s.term}
                   onClick={() => handleSearch(s.term)}
-                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-blue-600/5 text-sm text-gray-400 hover:text-blue-400 transition-all flex flex-col items-start gap-1"
+                  className="px-4 py-2 rounded-xl bg-surface border border-main hover:border-blue-500/50 hover:bg-blue-600/5 text-sm text-body hover:text-blue-600 transition-all flex flex-col items-start gap-1 shadow-sm"
                 >
-                  <span className="font-bold text-gray-200">{s.term}</span>
-                  <span className="text-[10px] opacity-60">{s.description}</span>
+                  <span className="font-bold text-title">{s.term}</span>
+                  <span className="text-[10px] opacity-80">{s.description}</span>
                 </button>
               ))}
             </div>
@@ -202,13 +204,13 @@ export default function AIDictionaryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-12 text-center"
+                className="bg-card border border-main rounded-[2.5rem] p-12 text-center shadow-xl"
               >
                 <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse">
                   <Brain className="w-10 h-10 text-blue-500" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Az AI gondolkodik...</h3>
-                <p className="text-gray-500">Pillanatokon belül érkezik a magyarázat.</p>
+                <h3 className="text-xl font-bold mb-2 text-title">Az AI gondolkodik...</h3>
+                <p className="text-body">Pillanatokon belül érkezik a magyarázat.</p>
               </motion.div>
             ) : result ? (
               <motion.div
@@ -216,7 +218,7 @@ export default function AIDictionaryPage() {
                 ref={resultRef}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#0d0d0d] border border-blue-500/20 rounded-[2.5rem] overflow-hidden shadow-2xl relative"
+                className="bg-card border border-blue-500/20 rounded-[2.5rem] overflow-hidden shadow-xl relative"
               >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
                 
@@ -227,42 +229,42 @@ export default function AIDictionaryPage() {
                         <Book className="text-blue-500 w-6 h-6" />
                       </div>
                       <div>
-                        <h2 className="text-2xl font-bold">{searchTerm}</h2>
-                        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">AI Magyarázat</p>
+                        <h2 className="text-2xl font-bold text-title">{searchTerm}</h2>
+                        <p className="text-xs text-muted uppercase tracking-widest font-bold">AI Magyarázat</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={handleCopy}
-                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all relative group"
+                        className="p-3 rounded-xl bg-hover text-muted hover:text-title transition-all relative group"
                         title="Másolás"
                       >
                         {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
-                        <span className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-black text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        <span className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-black text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                           {copied ? 'Másolva!' : 'Másolás'}
                         </span>
                       </button>
                     </div>
                   </div>
 
-                  <div className="prose prose-invert prose-blue max-w-none">
-                    <div className="markdown-body text-gray-300 leading-relaxed space-y-4">
+                  <div className="prose prose-blue dark:prose-invert max-w-none">
+                    <div className="markdown-body text-body leading-relaxed space-y-4">
                       <Markdown>{result}</Markdown>
                     </div>
                   </div>
 
-                  <div className="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="mt-12 pt-8 border-t border-subtle flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-2 text-xs text-muted">
                       <Terminal className="w-4 h-4" />
                       Generálva a Minden Nap AI motorjával
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="text-xs text-gray-500">Hasznos volt?</span>
+                      <span className="text-xs text-muted">Hasznos volt?</span>
                       <div className="flex gap-2">
-                        <button className="p-2 rounded-lg bg-white/5 hover:bg-green-500/20 text-gray-400 hover:text-green-500 transition-all">
+                        <button className="p-2 rounded-lg bg-hover hover:bg-green-500/20 text-muted hover:text-green-600 transition-all">
                           <Smile className="w-4 h-4" />
                         </button>
-                        <button className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all">
+                        <button className="p-2 rounded-lg bg-hover hover:bg-red-500/20 text-muted hover:text-red-600 transition-all">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -281,12 +283,12 @@ export default function AIDictionaryPage() {
               className="mt-20"
             >
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold flex items-center gap-3">
+                <h2 className="text-xl font-bold flex items-center gap-3 text-title">
                   <History className="text-blue-500 w-5 h-5" /> Korábbi keresések
                 </h2>
                 <button 
                   onClick={clearHistory}
-                  className="text-xs text-gray-500 hover:text-red-400 transition-colors flex items-center gap-2"
+                  className="text-xs text-muted hover:text-red-400 transition-colors flex items-center gap-2"
                 >
                   <Trash2 className="w-3 h-3" /> Előzmények törlése
                 </button>
@@ -296,13 +298,13 @@ export default function AIDictionaryPage() {
                   <button
                     key={i}
                     onClick={() => handleSearch(h.term)}
-                    className="p-6 rounded-3xl bg-[#0d0d0d] border border-white/5 hover:border-blue-500/30 transition-all text-left group"
+                    className="p-6 rounded-3xl bg-card border border-main hover:border-blue-500/30 transition-all text-left group shadow-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-gray-200 group-hover:text-blue-400 transition-colors">{h.term}</span>
-                      <MessageSquare className="w-4 h-4 text-gray-600 group-hover:text-blue-500 transition-colors" />
+                      <span className="font-bold text-title group-hover:text-blue-600 transition-colors">{h.term}</span>
+                      <MessageSquare className="w-4 h-4 text-muted group-hover:text-blue-600 transition-colors" />
                     </div>
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-body line-clamp-2 leading-relaxed">
                       {h.explanation.replace(/[#*`]/g, '').substring(0, 100)}...
                     </p>
                   </button>

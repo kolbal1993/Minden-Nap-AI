@@ -253,28 +253,30 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 flex font-sans">
+    <div className="min-h-screen bg-main text-body flex font-sans">
       <AdminSidebar />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-20 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md flex items-center justify-between px-8">
-          <h1 className="text-xl font-bold">Tartalomkezelés</h1>
+        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-8">
+          <h1 className="text-xl font-bold text-title">Tartalomkezelés</h1>
           <div className="flex items-center gap-4">
             <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Keresés..." 
-                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-64"
+                className="bg-card border border-main rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-64 text-title placeholder:text-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
               />
             </div>
             <button 
               onClick={() => setIsNotificationModalOpen(true)}
-              className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-white/10"
+              className="bg-hover hover:bg-hover/80 text-title px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-main"
             >
               <Bell className="w-4 h-4" /> Értesítés küldése
             </button>
@@ -289,33 +291,33 @@ export default function AdminDashboard() {
 
         {/* Table Container */}
         <div className="flex-1 overflow-auto p-8">
-          <div className="bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden">
+          <div className="bg-card border border-main rounded-3xl overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white/5 border-b border-white/5">
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">ID</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Cím</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Típus</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Státusz</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Időzítés</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Statisztika</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Műveletek</th>
+                <tr className="bg-hover border-b border-main">
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">ID</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Cím</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Típus</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Státusz</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Időzítés</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Statisztika</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-main">
                 {filteredPosts.map((post) => (
                   <tr 
                     key={post.id} 
                     onClick={() => handleOpenModal(post)}
-                    className="hover:bg-white/[0.02] transition-colors group cursor-pointer"
+                    className="hover:bg-hover transition-colors group cursor-pointer"
                   >
-                    <td className="px-6 py-4 text-sm text-gray-500 font-mono">{post.id}</td>
+                    <td className="px-6 py-4 text-sm text-muted font-mono">{post.id}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/5 shrink-0">
+                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-hover shrink-0">
                           <img src={post.imageUrl} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         </div>
-                        <span className="font-medium text-gray-200">{post.title}</span>
+                        <span className="font-medium text-title">{post.title}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -330,7 +332,7 @@ export default function AdminDashboard() {
                             <Eye className="w-3 h-3" /> Aktív
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-white/5 px-2 py-1 rounded-md border border-white/10">
+                          <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted bg-hover px-2 py-1 rounded-md border border-main">
                             <EyeOff className="w-3 h-3" /> Inaktív
                           </span>
                         )}
@@ -338,12 +340,12 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
+                        <div className="flex items-center gap-1.5 text-[10px] text-muted">
                           <Clock className="w-3 h-3 text-blue-400" />
                           <span>Publikálás: {post.publishDate}</span>
                         </div>
                         {post.expiryDate && (
-                          <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
+                          <div className="flex items-center gap-1.5 text-[10px] text-muted">
                             <X className="w-3 h-3 text-red-400" />
                             <span>Lejárat: {post.expiryDate}</span>
                           </div>
@@ -366,7 +368,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-400">{post.date}</td>
+                    <td className="px-6 py-4 text-sm text-muted">{post.date}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
@@ -374,7 +376,7 @@ export default function AdminDashboard() {
                             e.stopPropagation();
                             handleOpenModal(post);
                           }}
-                          className="p-2 rounded-lg hover:bg-blue-500/10 text-gray-400 hover:text-blue-400 transition-all"
+                          className="p-2 rounded-lg hover:bg-blue-500/10 text-muted hover:text-blue-400 transition-all"
                           title="Szerkesztés"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -384,7 +386,7 @@ export default function AdminDashboard() {
                             e.stopPropagation();
                             handleDeleteClick(post.id);
                           }}
-                          className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-all"
+                          className="p-2 rounded-lg hover:bg-red-500/10 text-muted hover:text-red-400 transition-all"
                           title="Törlés"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -397,10 +399,10 @@ export default function AdminDashboard() {
             </table>
             {filteredPosts.length === 0 && (
               <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="text-gray-600 w-8 h-8" />
+                <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="text-muted w-8 h-8" />
                 </div>
-                <p className="text-gray-500">Nem található a keresésnek megfelelő bejegyzés.</p>
+                <p className="text-muted">Nem található a keresésnek megfelelő bejegyzés.</p>
               </div>
             )}
           </div>
@@ -422,21 +424,21 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
-              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
-                <h2 className="text-2xl font-bold flex items-center gap-3">
+              <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
+                <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
                   {editingPost ? <Edit2 className="text-blue-500" /> : <Plus className="text-blue-500" />}
                   {editingPost ? 'Poszt Szerkesztése' : 'Új Poszt Létrehozása'}
                 </h2>
-                <button onClick={handleCloseModal} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <button onClick={handleCloseModal} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-auto custom-scrollbar">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <Type className="w-4 h-4" /> Cím
                   </label>
                   <input 
@@ -444,20 +446,22 @@ export default function AdminDashboard() {
                     type="text" 
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="A bejegyzés címe..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                       <LayoutDashboard className="w-4 h-4" /> Típus
                     </label>
                     <select 
                       value={formData.type}
                       onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                      className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-title"
                     >
                       <option value="Generatív AI">Generatív AI</option>
                       <option value="Üzleti Automatizáció">Üzleti Automatizáció</option>
@@ -466,7 +470,7 @@ export default function AdminDashboard() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                       <Eye className="w-4 h-4" /> Státusz
                     </label>
                     <div className="flex items-center gap-4 h-[58px]">
@@ -476,7 +480,7 @@ export default function AdminDashboard() {
                         className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
                           formData.status === 'active' 
                             ? 'bg-green-500/10 border-green-500/50 text-green-400' 
-                            : 'bg-white/5 border-white/10 text-gray-500'
+                            : 'bg-hover border-main text-muted'
                         }`}
                       >
                         <Eye className="w-4 h-4" /> Aktív
@@ -487,7 +491,7 @@ export default function AdminDashboard() {
                         className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
                           formData.status === 'inactive' 
                             ? 'bg-red-500/10 border-red-500/50 text-red-400' 
-                            : 'bg-white/5 border-white/10 text-gray-500'
+                            : 'bg-hover border-main text-muted'
                         }`}
                       >
                         <EyeOff className="w-4 h-4" /> Inaktív
@@ -498,31 +502,31 @@ export default function AdminDashboard() {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                       <Clock className="w-4 h-4" /> Publikálás dátuma és ideje
                     </label>
                     <input
                       type="datetime-local"
                       value={formData.publishDate}
                       onChange={(e) => setFormData({ ...formData, publishDate: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors text-title"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                       <X className="w-4 h-4" /> Lejárat dátuma és ideje
                     </label>
                     <input
                       type="datetime-local"
                       value={formData.expiryDate}
                       onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors text-title"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <ImageIcon className="w-4 h-4" /> Kép feltöltése
                   </label>
                     <div className="relative group/upload">
@@ -541,13 +545,13 @@ export default function AdminDashboard() {
                         }}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                       />
-                      <div className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 flex items-center gap-3 group-hover/upload:border-blue-500/50 transition-colors overflow-hidden">
+                      <div className="w-full bg-hover border border-main rounded-2xl px-5 py-4 flex items-center gap-3 group-hover/upload:border-blue-500/50 transition-colors overflow-hidden">
                         {formData.imageUrl ? (
                           <div className="flex items-center gap-3 w-full">
-                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 shrink-0">
+                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-hover shrink-0">
                               <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                             </div>
-                            <span className="text-sm text-gray-400 truncate flex-1">Kép kiválasztva</span>
+                            <span className="text-sm text-muted truncate flex-1">Kép kiválasztva</span>
                             <button 
                               type="button"
                               onClick={(e) => {
@@ -561,8 +565,8 @@ export default function AdminDashboard() {
                           </div>
                         ) : (
                           <>
-                            <Plus className="w-5 h-5 text-gray-500" />
-                            <span className="text-sm text-gray-500">Kattints a feltöltéshez</span>
+                            <Plus className="w-5 h-5 text-muted" />
+                            <span className="text-sm text-muted">Kattints a feltöltéshez</span>
                           </>
                         )}
                       </div>
@@ -570,24 +574,24 @@ export default function AdminDashboard() {
                   </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <FileText className="w-4 h-4" /> Tartalom
                   </label>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-                    <div className="flex items-center gap-1 p-2 border-b border-white/10 bg-white/5 flex-wrap">
-                      <button type="button" onClick={() => insertText('# ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Címsor 1"><Heading1 className="w-4 h-4" /></button>
-                      <button type="button" onClick={() => insertText('## ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Címsor 2"><Heading2 className="w-4 h-4" /></button>
-                      <div className="w-px h-5 bg-white/10 mx-1" />
-                      <button type="button" onClick={() => insertText('**', '**')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Félkövér"><Bold className="w-4 h-4" /></button>
-                      <button type="button" onClick={() => insertText('*', '*')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Dőlt"><Italic className="w-4 h-4" /></button>
-                      <div className="w-px h-5 bg-white/10 mx-1" />
-                      <button type="button" onClick={() => insertText('- ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Lista"><List className="w-4 h-4" /></button>
-                      <button type="button" onClick={() => insertText('1. ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Számozott lista"><ListOrdered className="w-4 h-4" /></button>
-                      <div className="w-px h-5 bg-white/10 mx-1" />
-                      <button type="button" onClick={() => insertText('> ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Idézet"><Quote className="w-4 h-4" /></button>
-                      <button type="button" onClick={() => insertText('`', '`')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Kód"><Code className="w-4 h-4" /></button>
-                      <button type="button" onClick={() => insertText('[', '](url)')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors" title="Link"><LinkIcon className="w-4 h-4" /></button>
-                      <div className="w-px h-5 bg-white/10 mx-1" />
+                  <div className="bg-hover border border-main rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-1 p-2 border-b border-main bg-hover flex-wrap">
+                      <button type="button" onClick={() => insertText('# ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Címsor 1"><Heading1 className="w-4 h-4" /></button>
+                      <button type="button" onClick={() => insertText('## ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Címsor 2"><Heading2 className="w-4 h-4" /></button>
+                      <div className="w-px h-5 bg-main mx-1" />
+                      <button type="button" onClick={() => insertText('**', '**')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Félkövér"><Bold className="w-4 h-4" /></button>
+                      <button type="button" onClick={() => insertText('*', '*')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Dőlt"><Italic className="w-4 h-4" /></button>
+                      <div className="w-px h-5 bg-main mx-1" />
+                      <button type="button" onClick={() => insertText('- ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Lista"><List className="w-4 h-4" /></button>
+                      <button type="button" onClick={() => insertText('1. ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Számozott lista"><ListOrdered className="w-4 h-4" /></button>
+                      <div className="w-px h-5 bg-main mx-1" />
+                      <button type="button" onClick={() => insertText('> ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Idézet"><Quote className="w-4 h-4" /></button>
+                      <button type="button" onClick={() => insertText('`', '`')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Kód"><Code className="w-4 h-4" /></button>
+                      <button type="button" onClick={() => insertText('[', '](url)')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors" title="Link"><LinkIcon className="w-4 h-4" /></button>
+                      <div className="w-px h-5 bg-main mx-1" />
                       <EmojiPickerButton onEmojiSelect={(emoji) => insertText(emoji, '')} />
                     </div>
                     <textarea 
@@ -595,8 +599,10 @@ export default function AdminDashboard() {
                       required
                       value={formData.content}
                       onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Írd ide a bejegyzés tartalmát (Markdown támogatott)..."
-                      className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[300px] resize-none text-gray-300 leading-relaxed font-mono text-sm"
+                      className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[300px] resize-none text-body leading-relaxed font-mono text-sm"
                     />
                   </div>
                 </div>
@@ -611,7 +617,7 @@ export default function AdminDashboard() {
                   <button 
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                    className="px-8 bg-hover hover:bg-hover/80 border border-main text-title py-4 rounded-2xl font-bold transition-all"
                   >
                     Mégse
                   </button>
@@ -637,13 +643,13 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
-              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
-                <h2 className="text-2xl font-bold flex items-center gap-3">
+              <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
+                <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
                   <Bell className="text-blue-500" /> Rendszerértesítés Küldése
                 </h2>
-                <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -651,11 +657,11 @@ export default function AdminDashboard() {
               <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Típus</label>
+                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Típus</label>
                     <select 
                       value={notificationData.type}
                       onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-sm"
+                      className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-sm text-title"
                     >
                       <option value="admin">Rendszerüzenet</option>
                       <option value="news">Hír</option>
@@ -665,7 +671,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ikon Kiválasztása</label>
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Ikon Kiválasztása</label>
                   <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
                     {[
                       { id: 'Bell', icon: Bell },
@@ -685,7 +691,7 @@ export default function AdminDashboard() {
                         className={`p-3 rounded-xl border transition-all flex items-center justify-center ${
                           notificationData.icon === item.id 
                             ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
-                            : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10'
+                            : 'bg-hover border-main text-muted hover:bg-hover/80'
                         }`}
                       >
                         <item.icon className="w-4 h-4" />
@@ -695,34 +701,40 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Értesítés Címe</label>
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Értesítés Címe</label>
                   <input 
                     type="text" 
                     value={notificationData.title}
                     onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: Karbantartás várható..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                    className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm text-title placeholder:text-muted"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Üzenet</label>
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Üzenet</label>
                   <textarea 
                     value={notificationData.message}
                     onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Az értesítés részletes tartalma..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors min-h-[100px] resize-none text-sm"
+                    className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors min-h-[100px] resize-none text-sm text-title placeholder:text-muted"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Link (opcionális)</label>
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Link (opcionális)</label>
                   <input 
                     type="text" 
                     value={notificationData.link}
                     onChange={(e) => setNotificationData({ ...notificationData, link: e.target.value })}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: /news/1"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                    className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-sm text-title placeholder:text-muted"
                   />
                 </div>
 
@@ -767,17 +779,17 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+              className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl"
             >
               <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <Trash2 className="text-red-500 w-8 h-8" />
               </div>
-              <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
-              <p className="text-gray-400 text-center mb-8">Ez a művelet nem vonható vissza. A poszt véglegesen törlődik.</p>
+              <h2 className="text-xl font-bold text-center mb-2 text-title">Biztosan törölni szeretnéd?</h2>
+              <p className="text-muted text-center mb-8">Ez a művelet nem vonható vissza. A poszt véglegesen törlődik.</p>
               <div className="flex gap-4">
                 <button 
                   onClick={() => setIsDeleteConfirmOpen(false)}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all"
                 >
                   Mégse
                 </button>

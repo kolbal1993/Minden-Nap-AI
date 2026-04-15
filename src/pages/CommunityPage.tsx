@@ -148,9 +148,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   depth = 0 
 }) => {
   return (
-    <div className={`space-y-4 ${depth > 0 ? 'ml-6 pl-4 border-l border-white/5' : ''}`}>
+    <div className={`space-y-4 ${depth > 0 ? 'ml-6 pl-4 border-l border-main' : ''}`}>
       <div className="flex gap-3">
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-white/5 border border-white/10 shrink-0">
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-hover border border-main shrink-0">
           {comment.authorAvatar ? (
             <img src={comment.authorAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
@@ -161,10 +161,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h5 className="font-bold text-sm text-gray-200">{comment.author}</h5>
-            <span className="text-[10px] text-gray-500">{comment.date}</span>
+            <h5 className="font-bold text-sm text-title">{comment.author}</h5>
+            <span className="text-[10px] text-muted">{comment.date}</span>
           </div>
-          <p className="text-sm text-gray-400 leading-relaxed mb-2">{comment.text}</p>
+          <p className="text-sm text-body leading-relaxed mb-2">{comment.text}</p>
           
           {comment.attachments && comment.attachments.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-2">
@@ -173,14 +173,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   key={att.id}
                   href={att.data}
                   download={att.name}
-                  className="flex items-center gap-2 bg-white/5 border border-white/10 px-2 py-1 rounded-lg hover:bg-white/10 transition-colors"
+                  className="flex items-center gap-2 bg-hover border border-main px-2 py-1 rounded-lg hover:bg-hover transition-colors"
                 >
                   {att.type.startsWith('image/') ? (
                     <ImageIcon className="w-3 h-3 text-blue-500" />
                   ) : (
                     <File className="w-3 h-3 text-blue-500" />
                   )}
-                  <span className="text-[10px] text-gray-400 truncate max-w-[100px]">{att.name}</span>
+                  <span className="text-[10px] text-muted truncate max-w-[100px]">{att.name}</span>
                 </a>
               ))}
             </div>
@@ -774,9 +774,9 @@ export default function CommunityPage() {
   };
 
   const renderPostContent = (post: Post) => (
-    <div className={`p-8 md:p-12 border-white/5 custom-scrollbar ${modalViewMode === 'side' ? 'flex-1 overflow-y-auto border-b md:border-b-0 md:border-r' : 'w-full border-b'}`}>
+    <div className={`p-8 md:p-12 border-main custom-scrollbar ${modalViewMode === 'side' ? 'flex-1 overflow-y-auto border-b md:border-b-0 md:border-r' : 'w-full border-b'}`}>
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
+        <div className="w-12 h-12 rounded-full overflow-hidden border border-main">
           {post.authorAvatar ? (
             <img src={post.authorAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
@@ -786,8 +786,8 @@ export default function CommunityPage() {
           )}
         </div>
         <div>
-          <h4 className="font-bold text-lg">{post.author}</h4>
-          <p className="text-sm text-gray-500">{post.date}</p>
+          <h4 className="font-bold text-lg text-title">{post.author}</h4>
+          <p className="text-sm text-body">{post.date}</p>
         </div>
         <div className={`ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-full border text-xs font-bold uppercase tracking-wider ${getCategoryColor(post.category)}`}>
           {getCategoryIcon(post.category)}
@@ -795,33 +795,33 @@ export default function CommunityPage() {
         </div>
       </div>
 
-      <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">{post.title}</h2>
+      <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight text-title">{post.title}</h2>
       
       {post.tags && post.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
           {post.tags.map(tag => (
-            <span key={tag} className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-2 py-1 rounded-md border border-blue-400/20 flex items-center gap-1">
+            <span key={tag} className="text-[10px] font-bold text-blue-500 dark:text-blue-400 bg-blue-500/5 dark:bg-blue-400/10 px-2 py-1 rounded-md border border-blue-500/10 dark:border-blue-400/20 flex items-center gap-1">
               <Hash className="w-3 h-3" /> {tag}
             </span>
           ))}
         </div>
       )}
 
-      <p className="text-gray-400 text-lg leading-relaxed mb-8 whitespace-pre-wrap">{post.content}</p>
+      <p className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed mb-8 whitespace-pre-wrap">{post.content}</p>
 
-      <div className="flex items-center gap-6 mb-8 py-6 border-y border-white/5">
+      <div className="flex items-center gap-6 mb-8 py-6 border-y border-black/5 dark:border-white/5">
         <Reactions 
           reactions={post.reactions} 
           userReaction={post.userReaction}
           onReact={(emoji) => handleReaction(post.id, emoji)}
         />
-        <div className="flex items-center gap-2 text-gray-500">
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-200">
           <MessageSquare className="w-5 h-5" />
           <span className="text-sm font-bold">{post.comments.length}</span>
         </div>
         <button 
           onClick={() => handleShare(post)}
-          className="flex items-center gap-2 text-gray-500 hover:text-green-400 transition-colors ml-auto"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-200 hover:text-green-500 dark:hover:text-green-400 transition-colors ml-auto"
         >
           <Share2 className="w-5 h-5" />
         </button>
@@ -830,7 +830,7 @@ export default function CommunityPage() {
       {post.attachments && post.attachments.length > 0 && (
         <div className="space-y-6">
           {post.attachments.map((att) => (
-            <div key={att.id} className="rounded-3xl overflow-hidden border border-white/5 bg-white/5 group relative">
+            <div key={att.id} className="rounded-3xl overflow-hidden border border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 group relative">
               {att.type.startsWith('image/') ? (
                 <img src={att.data} alt="" className="w-full object-contain max-h-[500px]" />
               ) : (
@@ -839,13 +839,13 @@ export default function CommunityPage() {
                     <File className="w-8 h-8 text-blue-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h5 className="font-bold text-lg truncate">{att.name}</h5>
-                    <p className="text-sm text-gray-500 uppercase tracking-widest">{att.type.split('/')[1] || 'Fájl'}</p>
+                    <h5 className="font-bold text-lg truncate text-gray-900 dark:text-white">{att.name}</h5>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 uppercase tracking-widest">{att.type.split('/')[1] || 'Fájl'}</p>
                   </div>
                   <a 
                     href={att.data} 
                     download={att.name}
-                    className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors"
+                    className="w-12 h-12 bg-black/5 dark:bg-white/5 rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors text-gray-900 dark:text-white"
                   >
                     <Download className="w-5 h-5" />
                   </a>
@@ -859,9 +859,9 @@ export default function CommunityPage() {
   );
 
   const renderCommentsSection = (post: Post) => (
-    <div className={`flex flex-col bg-[#0a0a0a] ${modalViewMode === 'side' ? 'w-full md:w-[400px]' : 'w-full'}`}>
-      <div className="p-6 border-b border-white/5 flex items-center justify-between">
-        <h3 className="font-bold flex items-center gap-2">
+    <div className={`flex flex-col bg-gray-50 dark:bg-[#0a0a0a] ${modalViewMode === 'side' ? 'w-full md:w-[400px]' : 'w-full'}`}>
+      <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between">
+        <h3 className="font-bold flex items-center gap-2 text-gray-900 dark:text-white">
           <MessageSquare className="w-5 h-5 text-blue-500" />
           Hozzászólások ({post.comments.length})
         </h3>
@@ -869,7 +869,7 @@ export default function CommunityPage() {
           <button 
             onClick={() => handleGenerateSummary(post)}
             disabled={isSummarizing}
-            className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 uppercase tracking-wider bg-blue-400/10 px-3 py-1.5 rounded-full border border-blue-400/20 transition-all disabled:opacity-50"
+            className="text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 flex items-center gap-1 uppercase tracking-wider bg-blue-600/10 dark:bg-blue-400/10 px-3 py-1.5 rounded-full border border-blue-500/20 dark:border-blue-400/20 transition-all disabled:opacity-50"
           >
             {isSummarizing ? (
               <Loader2 className="w-3 h-3 animate-spin" />
@@ -888,11 +888,11 @@ export default function CommunityPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 mb-6"
           >
-            <div className="flex items-center gap-2 mb-3 text-blue-400">
+            <div className="flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400">
               <FileText className="w-4 h-4" />
               <h4 className="text-xs font-bold uppercase tracking-widest">AI Összefoglaló</h4>
             </div>
-            <div className="text-sm text-gray-300 leading-relaxed prose prose-invert prose-sm max-w-none">
+            <div className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed prose dark:prose-invert prose-sm max-w-none">
               <Markdown>{post.summary}</Markdown>
             </div>
           </motion.div>
@@ -900,7 +900,7 @@ export default function CommunityPage() {
 
         {post.comments.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-sm italic">Még nincsenek hozzászólások. Legyél te az első!</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm italic">Még nincsenek hozzászólások. Legyél te az első!</p>
           </div>
         ) : (
           post.comments.map((comment) => (
@@ -916,13 +916,13 @@ export default function CommunityPage() {
       </div>
 
       {/* Comment Input */}
-      <div className="p-6 border-t border-white/5 bg-[#0d0d0d]">
+      <div className="p-6 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#0d0d0d]">
         {replyingTo && (
           <div className="mb-3 flex items-center justify-between bg-blue-600/10 px-3 py-2 rounded-lg border border-blue-500/20">
-            <span className="text-xs text-blue-400 font-medium flex items-center gap-2">
+            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-2">
               <Reply className="w-3 h-3" /> Válasz neki: <strong>{replyingTo.author}</strong>
             </span>
-            <button onClick={() => setReplyingTo(null)} className="text-blue-400 hover:text-white">
+            <button onClick={() => setReplyingTo(null)} className="text-blue-600 dark:text-blue-400 hover:text-gray-900 dark:hover:text-white">
               <X className="w-3 h-3" />
             </button>
           </div>
@@ -932,8 +932,9 @@ export default function CommunityPage() {
           <textarea
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
+            onFocus={(e) => e.target.select()}
             placeholder="Írj egy hozzászólást..."
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-4 pr-20 text-sm focus:outline-none focus:border-blue-500 resize-none"
+            className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-3 pl-4 pr-20 text-sm focus:outline-none focus:border-blue-500 resize-none text-gray-900 dark:text-white"
             rows={2}
           />
           <div className="absolute right-3 bottom-3 flex items-center gap-1">
@@ -943,7 +944,7 @@ export default function CommunityPage() {
             <button 
               onClick={() => handleAddComment(post.id, replyingTo?.commentId)}
               disabled={!commentText.trim() && commentAttachments.length === 0}
-              className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-500 transition-colors disabled:opacity-50"
+              className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-500 transition-colors disabled:opacity-50 text-white"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -953,7 +954,7 @@ export default function CommunityPage() {
         <div className="mt-3 flex items-center justify-between">
           <button 
             onClick={() => commentFileInputRef.current?.click()}
-            className="flex items-center gap-2 text-xs text-gray-500 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-100 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <Paperclip className="w-4 h-4" />
             Fájl csatolása
@@ -969,10 +970,10 @@ export default function CommunityPage() {
         {commentAttachments.length > 0 && (
           <div className="mt-3 space-y-2">
             {commentAttachments.map((att) => (
-              <div key={att.id} className="flex items-center justify-between bg-white/5 px-3 py-2 rounded-lg border border-white/10">
+              <div key={att.id} className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-3 py-2 rounded-lg border border-black/10 dark:border-white/10">
                 <div className="flex items-center gap-2 min-w-0">
                   <File className="w-3 h-3 text-blue-500 shrink-0" />
-                  <span className="text-[10px] text-gray-400 truncate">{att.name}</span>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate">{att.name}</span>
                 </div>
                 <button onClick={() => setCommentAttachments(commentAttachments.filter(a => a.id !== att.id))}>
                   <X className="w-3 h-3 text-gray-500 hover:text-red-400" />
@@ -986,7 +987,7 @@ export default function CommunityPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans">
+    <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar />
       
       <main className="pt-32 pb-20 px-6">
@@ -996,7 +997,7 @@ export default function CommunityPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold mb-4 tracking-tight"
+              className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-gray-900 dark:text-white"
             >
               AI Közösségi <span className="text-blue-600">Hub</span>
             </motion.h1>
@@ -1004,7 +1005,7 @@ export default function CommunityPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-gray-400 text-lg max-w-2xl mx-auto"
+              className="text-gray-600 dark:text-gray-200 text-lg max-w-2xl mx-auto"
             >
               Oszd meg tapasztalataidat, mutasd be projektjeidet, vagy kérj segítséget a közösségtől.
             </motion.p>
@@ -1022,13 +1023,15 @@ export default function CommunityPage() {
               </button>
             )}
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300 w-5 h-5" />
               <input 
                 type="text"
                 placeholder="Keresés a posztok között..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500 transition-colors"
+                onFocus={(e) => { setSearchQuery(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
+                className="w-full bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500 transition-colors text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
@@ -1038,8 +1041,8 @@ export default function CommunityPage() {
                   onClick={() => setActiveFilter(filter)}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap border ${
                     activeFilter === filter 
-                      ? 'bg-blue-600 border-blue-500 text-white' 
-                      : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
+                      ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                      : 'bg-white dark:bg-white/5 border-black/[0.08] dark:border-white/10 text-gray-600 dark:text-gray-200 hover:bg-black/[0.03] dark:hover:bg-white/10'
                   }`}
                 >
                   {filter === 'all' ? 'Összes' : getCategoryLabel(filter)}
@@ -1050,8 +1053,8 @@ export default function CommunityPage() {
 
           {/* Hashtag Bar */}
           {allTags.length > 0 && (
-            <div className="flex items-center gap-4 mb-8 bg-white/5 p-4 rounded-2xl border border-white/10 overflow-hidden">
-              <div className="flex items-center gap-2 text-gray-500 shrink-0">
+            <div className="flex items-center gap-4 mb-8 bg-white dark:bg-white/5 p-4 rounded-2xl border border-black/10 dark:border-white/10 overflow-hidden transition-colors duration-300">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 shrink-0">
                 <Hash className="w-4 h-4" />
                 <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap hidden sm:inline">Népszerű címkék:</span>
               </div>
@@ -1064,7 +1067,7 @@ export default function CommunityPage() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border flex items-center gap-1.5 shrink-0 ${
                       selectedTags.includes(tag)
                         ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
-                        : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
+                        : 'bg-white dark:bg-white/5 border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10'
                     }`}
                   >
                     <Hash className="w-3 h-3 opacity-50" />
@@ -1090,11 +1093,11 @@ export default function CommunityPage() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-[#0d0d0d] border border-white/10 rounded-3xl p-8"
+                className="bg-white dark:bg-[#0f0f0f] border border-black/10 dark:border-white/10 rounded-3xl p-8 shadow-xl dark:shadow-2xl transition-colors duration-300"
               >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">Új bejegyzés létrehozása</h2>
-                    <button onClick={() => setIsPosting(false)} className="text-gray-500 hover:text-white">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Új bejegyzés létrehozása</h2>
+                    <button onClick={() => setIsPosting(false)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
                       <X className="w-6 h-6" />
                     </button>
                   </div>
@@ -1102,7 +1105,7 @@ export default function CommunityPage() {
                   <form onSubmit={handleCreatePost} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-gray-500 uppercase tracking-widest">Kategória</label>
+                        <label className="text-sm font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">Kategória</label>
                         <div className="flex gap-2">
                           {(['experience', 'project', 'help'] as const).map((cat) => (
                             <button
@@ -1121,11 +1124,12 @@ export default function CommunityPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-gray-500 uppercase tracking-widest">Cím</label>
+                        <label className="text-sm font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">Cím</label>
                         <input 
                           type="text"
                           value={newPostTitle}
                           onChange={(e) => setNewPostTitle(e.target.value)}
+                          onFocus={(e) => e.target.select()}
                           placeholder="Miről szól a posztod?"
                           className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 focus:outline-none focus:border-blue-500"
                         />
@@ -1133,11 +1137,12 @@ export default function CommunityPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-500 uppercase tracking-widest">Tartalom</label>
+                      <label className="text-sm font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">Tartalom</label>
                       <div className="relative">
                         <textarea 
                           value={newPostContent}
                           onChange={(e) => setNewPostContent(e.target.value)}
+                          onFocus={(e) => e.target.select()}
                           placeholder="Írd le a részleteket..."
                           rows={4}
                           className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 focus:outline-none focus:border-blue-500 resize-none"
@@ -1155,7 +1160,7 @@ export default function CommunityPage() {
                         <button 
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+                          className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-200 hover:text-white transition-colors"
                         >
                           <Paperclip className="w-5 h-5 text-blue-500" />
                           Fájl csatolása
@@ -1228,13 +1233,13 @@ export default function CommunityPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   onClick={() => setSelectedPost(post)}
-                  className="bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-all cursor-pointer group"
+                  className="bg-white dark:bg-[#0f0f0f] border border-black/[0.05] dark:border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 dark:hover:border-white/10 transition-all cursor-pointer group shadow-sm hover:shadow-xl dark:shadow-2xl"
                 >
                   <div className="p-6 md:p-8">
                     {/* Post Header */}
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 border border-white/10">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
                           {post.authorAvatar ? (
                             <img src={post.authorAvatar} alt={post.author} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                           ) : (
@@ -1244,8 +1249,8 @@ export default function CommunityPage() {
                           )}
                         </div>
                         <div>
-                          <h4 className="font-bold text-gray-200">{post.author}</h4>
-                          <p className="text-xs text-gray-500">{post.date}</p>
+                          <h4 className="font-bold text-gray-900 dark:text-gray-200">{post.author}</h4>
+                          <p className="text-xs text-gray-600 dark:text-gray-200">{post.date}</p>
                         </div>
                       </div>
                       <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider ${getCategoryColor(post.category)}`}>
@@ -1256,19 +1261,19 @@ export default function CommunityPage() {
 
                     {/* Post Content */}
                     <div className="space-y-4">
-                      <h3 className="text-xl md:text-2xl font-bold text-white leading-tight group-hover:text-blue-400 transition-colors">{post.title}</h3>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{post.title}</h3>
                       
                       {post.tags && post.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {post.tags.map(tag => (
-                            <span key={tag} className="text-[9px] font-bold text-blue-400/70 bg-blue-400/5 px-2 py-0.5 rounded border border-blue-400/10 flex items-center gap-1">
+                            <span key={tag} className="text-[9px] font-bold text-blue-500 dark:text-blue-400/70 bg-blue-500/5 dark:bg-blue-400/5 px-2 py-0.5 rounded border border-blue-500/10 dark:border-blue-400/10 flex items-center gap-1">
                               <Hash className="w-2.5 h-2.5" /> {tag}
                             </span>
                           ))}
                         </div>
                       )}
 
-                      <p className="text-gray-400 leading-relaxed line-clamp-3">{post.content}</p>
+                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3">{post.content}</p>
                       
                       {post.attachments && post.attachments.length > 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -1302,13 +1307,13 @@ export default function CommunityPage() {
                           onReact={(emoji) => handleReaction(post.id, emoji)}
                         />
                       </div>
-                      <div className="flex items-center gap-2 text-gray-500">
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-200">
                         <MessageSquare className="w-5 h-5" />
                         <span className="text-sm font-bold">{post.comments.length}</span>
                       </div>
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleShare(post); }}
-                        className="flex items-center gap-2 text-gray-500 hover:text-green-400 transition-colors ml-auto"
+                        className="flex items-center gap-2 text-gray-600 dark:text-gray-200 hover:text-green-400 transition-colors ml-auto"
                       >
                         <Share2 className="w-5 h-5" />
                       </button>
@@ -1319,12 +1324,12 @@ export default function CommunityPage() {
             </AnimatePresence>
 
             {filteredPosts.length === 0 && (
-              <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5 border-dashed">
-                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="text-gray-500 w-8 h-8" />
+              <div className="text-center py-20 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/5 dark:border-white/5 border-dashed transition-colors duration-300">
+                <div className="w-16 h-16 bg-black/5 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="text-gray-600 dark:text-gray-300 w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-400">Nincs találat</h3>
-                <p className="text-gray-500">Próbálkozz más keresési kifejezéssel vagy szűrővel.</p>
+                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">Nincs találat</h3>
+                <p className="text-gray-600 dark:text-gray-300">Próbálkozz más keresési kifejezéssel vagy szűrővel.</p>
               </div>
             )}
           </div>
@@ -1348,19 +1353,19 @@ export default function CommunityPage() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className={`relative w-full max-w-5xl h-full max-h-[90vh] bg-[#0d0d0d] border border-white/10 rounded-[2rem] flex ${modalViewMode === 'side' ? 'flex-col md:flex-row overflow-hidden' : 'flex-col overflow-y-auto custom-scrollbar'}`}
+              className={`relative w-full max-w-5xl h-full max-h-[90vh] bg-white dark:bg-[#0f0f0f] border border-black/10 dark:border-white/10 rounded-[2rem] flex ${modalViewMode === 'side' ? 'flex-col md:flex-row overflow-hidden' : 'flex-col overflow-y-auto custom-scrollbar'} transition-colors duration-300`}
             >
               <div className="absolute top-6 right-6 z-10 flex gap-2">
                 <button 
                   onClick={toggleViewMode}
                   title={modalViewMode === 'side' ? 'Váltás egymás alatti nézetre' : 'Váltás egymás melletti nézetre'}
-                  className="w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors border border-white/10"
+                  className="w-10 h-10 bg-black/10 dark:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 dark:text-white hover:bg-black/20 dark:hover:bg-white/10 transition-colors border border-black/10 dark:border-white/10"
                 >
                   {modalViewMode === 'side' ? <MoreVertical className="w-5 h-5 rotate-90" /> : <MoreVertical className="w-5 h-5" />}
                 </button>
                 <button 
                   onClick={() => setSelectedPost(null)}
-                  className="w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors border border-white/10"
+                  className="w-10 h-10 bg-black/10 dark:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 dark:text-white hover:bg-black/20 dark:hover:bg-white/10 transition-colors border border-black/10 dark:border-white/10"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -1395,10 +1400,16 @@ export default function CommunityPage() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(0, 0, 0, 0.1);
           border-radius: 10px;
         }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+        }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.2);
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.2);
         }
       `}</style>

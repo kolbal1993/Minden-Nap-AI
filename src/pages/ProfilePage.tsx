@@ -30,11 +30,27 @@ import {
   Edit3,
   X,
   PlayCircle,
-  BookOpen
+  BookOpen,
+  ShieldCheck,
+  ShieldAlert
 } from 'lucide-react';
+import { 
+  auth, 
+  db, 
+  handleFirestoreError, 
+  OperationType 
+} from '../lib/firebase';
+import { 
+  doc, 
+  getDoc, 
+  setDoc, 
+  serverTimestamp 
+} from 'firebase/firestore';
+import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { NEWS_ITEMS } from '../constants/news';
 import { COURSES } from '../constants/courses';
 import { AnimatePresence } from 'motion/react';
+import SecuritySettings from '../components/SecuritySettings';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -47,7 +63,8 @@ export default function ProfilePage() {
     profession: 'AI Tanácsadó',
     bio: 'Szenvedélyem a mesterséges intelligencia és annak gyakorlati alkalmazása a mindennapi üzleti folyamatokban.',
     avatar: 'https://picsum.photos/seed/user123/200/200',
-    isPremium: true
+    isPremium: true,
+    is2FAEnabled: false
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -58,20 +75,50 @@ export default function ProfilePage() {
   const [tempFormData, setTempFormData] = useState(formData);
 
   useEffect(() => {
-    // Check if logged in
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (!isLoggedIn) {
-      navigate('/login');
-      return;
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-    // Load saved profile data if exists
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) {
-      const parsed = JSON.parse(savedProfile);
-      setFormData(parsed);
-      setTempFormData(parsed);
-    }
+      // Load profile from Firestore
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          const profile = {
+            name: data.displayName || user.displayName || 'Anonymous',
+            email: user.email || '',
+            company: data.company || '',
+            profession: data.profession || '',
+            bio: data.bio || '',
+            avatar: data.photoURL || user.photoURL || `https://picsum.photos/seed/${user.uid}/200/200`,
+            isPremium: data.isPremium || false,
+            is2FAEnabled: data.is2FAEnabled || false
+          };
+          setFormData(profile);
+          setTempFormData(profile);
+        } else {
+          // Fallback to auth data
+          const profile = {
+            name: user.displayName || 'Anonymous',
+            email: user.email || '',
+            company: '',
+            profession: '',
+            bio: '',
+            avatar: user.photoURL || `https://picsum.photos/seed/${user.uid}/200/200`,
+            isPremium: false,
+            is2FAEnabled: false
+          };
+          setFormData(profile);
+          setTempFormData(profile);
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+    });
 
     // Load saved news
     const savedNewsIds = JSON.parse(localStorage.getItem('user_saved_news') || '[]');
@@ -101,25 +148,48 @@ export default function ProfilePage() {
       return { ...sc, ...courseInfo };
     });
     setStartedCourses(enrichedCourses);
+
+    return () => unsubscribe();
   }, [navigate]);
 
-  const handleSave = (e: FormEvent) => {
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault();
+    if (!auth.currentUser) return;
+    
     setIsSaving(true);
 
-    // Mock save logic
-    setTimeout(() => {
+    try {
+      // Update Auth Profile
+      await updateProfile(auth.currentUser, {
+        displayName: tempFormData.name,
+        photoURL: tempFormData.avatar
+      });
+
+      // Update Firestore
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await setDoc(userRef, {
+        displayName: tempFormData.name,
+        photoURL: tempFormData.avatar,
+        company: tempFormData.company,
+        profession: tempFormData.profession,
+        bio: tempFormData.bio,
+        isPremium: tempFormData.isPremium,
+        is2FAEnabled: tempFormData.is2FAEnabled,
+        lastSeen: serverTimestamp()
+      }, { merge: true });
+
       setFormData(tempFormData);
       localStorage.setItem('userProfile', JSON.stringify(tempFormData));
       setIsSaving(false);
       setShowSuccess(true);
       setIsEditing(false);
       
-      // Trigger a window event to update navbar
       window.dispatchEvent(new Event('storage'));
-      
       setTimeout(() => setShowSuccess(false), 3000);
-    }, 1000);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${auth.currentUser.uid}`);
+      setIsSaving(false);
+    }
   };
 
   const handleAvatarClick = () => {
@@ -138,7 +208,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-body font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -149,8 +219,8 @@ export default function ProfilePage() {
             className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
           >
             <div>
-              <h1 className="text-4xl font-bold tracking-tighter mb-2">Saját Profil</h1>
-              <p className="text-gray-500">Tekintsd meg adataidat és elmentett híreidet.</p>
+              <h1 className="text-4xl font-bold tracking-tighter mb-2 text-title">Saját Profil</h1>
+              <p className="text-body">Tekintsd meg adataidat és elmentett híreidet.</p>
             </div>
             {showSuccess && (
               <motion.div 
@@ -169,12 +239,12 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-2xl relative overflow-hidden"
+              className="bg-card border border-main rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-xl transition-colors duration-300"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px] -z-10" />
               
               <div className="relative shrink-0">
-                <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl relative">
+                <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-main shadow-2xl relative">
                   <img 
                     src={formData.avatar} 
                     alt="Avatar" 
@@ -182,7 +252,7 @@ export default function ProfilePage() {
                     referrerPolicy="no-referrer"
                   />
                   {formData.isPremium && (
-                    <div className="absolute bottom-1 right-1 bg-gradient-to-br from-orange-400 to-orange-600 p-2.5 rounded-full border-4 border-[#0d0d0d] shadow-lg z-10">
+                    <div className="absolute bottom-1 right-1 bg-gradient-to-br from-orange-400 to-orange-600 p-2.5 rounded-full border-4 border-card shadow-lg z-10">
                       <Zap className="w-5 h-5 text-white fill-current" />
                     </div>
                   )}
@@ -191,17 +261,17 @@ export default function ProfilePage() {
 
               <div className="text-center md:text-left flex-1 space-y-4">
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
-                  <h2 className="text-3xl font-bold tracking-tight">{formData.name}</h2>
+                  <h2 className="text-3xl font-bold tracking-tight text-title">{formData.name}</h2>
                   {formData.isPremium && (
                     <div className="flex justify-center md:justify-start">
-                      <span className="bg-orange-600/20 text-orange-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-500/20 flex items-center gap-1.5">
+                      <span className="bg-orange-600/20 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-500/20 flex items-center gap-1.5">
                         <Zap className="w-3 h-3 fill-current" /> Prémium Tag
                       </span>
                     </div>
                   )}
                 </div>
                 
-                <div className="flex flex-wrap justify-center md:justify-start gap-y-2 gap-x-6 text-gray-400">
+                <div className="flex flex-wrap justify-center md:justify-start gap-y-2 gap-x-6 text-body">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">{formData.email}</span>
@@ -220,7 +290,7 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                <p className="text-gray-500 leading-relaxed max-w-xl mx-auto md:mx-0">
+                <p className="text-body leading-relaxed max-w-xl mx-auto md:mx-0">
                   {formData.bio || 'Nincs megadott bemutatkozás.'}
                 </p>
 
@@ -230,7 +300,7 @@ export default function ProfilePage() {
                       setTempFormData(formData);
                       setIsEditing(true);
                     }}
-                    className="bg-white text-black px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-all shadow-xl shadow-white/5 group"
+                    className="bg-title text-bg-main px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-hover transition-all shadow-xl group"
                   >
                     <Edit3 className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Profil szerkesztése
                   </button>
@@ -246,14 +316,23 @@ export default function ProfilePage() {
                     }}
                     className={`px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all border ${
                       formData.isPremium 
-                        ? 'border-orange-500/20 text-orange-400 hover:bg-orange-500/5' 
-                        : 'border-white/10 text-gray-400 hover:bg-white/5'
+                        ? 'border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-500/5' 
+                        : 'border-main text-muted hover:bg-hover'
                     }`}
                   >
                     <Crown className="w-4 h-4" /> {formData.isPremium ? 'Prémium lemondása' : 'Váltás Prémiumra'}
                   </button>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Security Settings Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <SecuritySettings />
             </motion.div>
           </div>
 
@@ -309,26 +388,28 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="text-center">
-                        <p className="text-sm font-medium text-gray-400">Kattints a képre a feltöltéshez</p>
-                        <p className="text-xs text-gray-600 mt-1">Ajánlott: 400x400px, JPG vagy PNG</p>
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-200">Kattints a képre a feltöltéshez</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ajánlott: 400x400px, JPG vagy PNG</p>
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest ml-1 flex items-center gap-2">
                           <User className="w-3 h-3" /> Teljes név
                         </label>
                         <input 
                           type="text" 
                           value={tempFormData.name}
                           onChange={(e) => setTempFormData({ ...tempFormData, name: e.target.value })}
+                          onFocus={(e) => e.target.select()}
+                          onClick={(e) => e.currentTarget.select()}
                           className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                           required
                         />
                       </div>
                       <div className="space-y-2 opacity-60">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest ml-1 flex items-center gap-2">
                           <Mail className="w-3 h-3" /> E-mail cím
                         </label>
                         <input 
@@ -342,31 +423,35 @@ export default function ProfilePage() {
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest ml-1 flex items-center gap-2">
                           <Building2 className="w-3 h-3" /> Cégnév
                         </label>
                         <input 
                           type="text" 
                           value={tempFormData.company}
                           onChange={(e) => setTempFormData({ ...tempFormData, company: e.target.value })}
+                          onFocus={(e) => e.target.select()}
+                          onClick={(e) => e.currentTarget.select()}
                           className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest ml-1 flex items-center gap-2">
                           <Briefcase className="w-3 h-3" /> Foglalkozás
                         </label>
                         <input 
                           type="text" 
                           value={tempFormData.profession}
                           onChange={(e) => setTempFormData({ ...tempFormData, profession: e.target.value })}
+                          onFocus={(e) => e.target.select()}
+                          onClick={(e) => e.currentTarget.select()}
                           className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
                         />
                       </div>
                     </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest ml-1 flex items-center gap-2">
                           <FileText className="w-3 h-3" /> Rövid bemutatkozás
                         </label>
                         <div className="relative">
@@ -374,6 +459,8 @@ export default function ProfilePage() {
                             rows={4}
                             value={tempFormData.bio}
                             onChange={(e) => setTempFormData({ ...tempFormData, bio: e.target.value })}
+                            onFocus={(e) => e.target.select()}
+                            onClick={(e) => e.currentTarget.select()}
                             placeholder="Írj pár szót magadról..."
                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 focus:outline-none focus:border-blue-500 transition-colors resize-none"
                           />
@@ -424,7 +511,7 @@ export default function ProfilePage() {
               <h2 className="text-2xl font-bold flex items-center gap-3">
                 <PlayCircle className="text-blue-500 w-6 h-6" /> Elkezdett Kurzusok
               </h2>
-              <span className="text-sm text-gray-500 font-medium">{startedCourses.length} kurzus</span>
+              <span className="text-sm text-gray-500 dark:text-gray-300 font-medium">{startedCourses.length} kurzus</span>
             </div>
 
             {startedCourses.length > 0 ? (
@@ -449,7 +536,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="p-6 flex flex-col justify-center flex-1">
                         <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest font-bold">
+                          <div className="flex items-center gap-4 text-[10px] text-gray-700 dark:text-gray-100 uppercase tracking-widest font-bold">
                             <span className="text-blue-400">{course.category}</span>
                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Utoljára: {course.lastAccessed}</span>
                           </div>
@@ -469,7 +556,7 @@ export default function ProfilePage() {
                               className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full"
                             />
                           </div>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
+                          <div className="flex items-center justify-between text-xs text-gray-700 dark:text-gray-100">
                             <span className="flex items-center gap-1.5">
                               <BookOpen className="w-3.5 h-3.5" /> {course.completedModules} / {course.totalModules} modul kész
                             </span>
@@ -488,7 +575,7 @@ export default function ProfilePage() {
                 <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                   <PlayCircle className="text-gray-600 w-8 h-8" />
                 </div>
-                <p className="text-gray-500 mb-6">Még nem kezdtél el egy kurzust sem.</p>
+                <p className="text-gray-500 dark:text-gray-300 mb-6">Még nem kezdtél el egy kurzust sem.</p>
                 <Link to="/courses" className="text-blue-400 font-bold hover:underline">
                   Fedezd fel a Tudástárat
                 </Link>
@@ -507,7 +594,7 @@ export default function ProfilePage() {
               <h2 className="text-2xl font-bold flex items-center gap-3">
                 <Bookmark className="text-blue-500 w-6 h-6" /> Elmentett Hírek
               </h2>
-              <span className="text-sm text-gray-500 font-medium">{savedNews.length} bejegyzés</span>
+              <span className="text-sm text-gray-500 dark:text-gray-300 font-medium">{savedNews.length} bejegyzés</span>
             </div>
 
             {savedNews.length > 0 ? (
@@ -531,7 +618,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="p-6 flex flex-col justify-center flex-1">
-                        <div className="flex items-center gap-4 text-[10px] text-gray-500 mb-3 uppercase tracking-widest font-bold">
+                        <div className="flex items-center gap-4 text-[10px] text-gray-700 dark:text-gray-100 mb-3 uppercase tracking-widest font-bold">
                           <span className="text-blue-400">{news.category}</span>
                           <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {news.date}</span>
                         </div>
@@ -548,7 +635,7 @@ export default function ProfilePage() {
                 <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Bookmark className="text-gray-600 w-8 h-8" />
                 </div>
-                <p className="text-gray-500 mb-6">Még nincsenek elmentett híreid.</p>
+                <p className="text-gray-500 dark:text-gray-300 mb-6">Még nincsenek elmentett híreid.</p>
                 <Link to="/news" className="text-blue-400 font-bold hover:underline">
                   Böngéssz a hírek között
                 </Link>

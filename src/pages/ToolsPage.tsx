@@ -118,7 +118,7 @@ export default function ToolsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-transparent text-body font-sans selection:bg-blue-500/30 transition-colors duration-300">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
@@ -126,7 +126,7 @@ export default function ToolsPage() {
           {/* Back Link */}
           <Link 
             to="/tudastar" 
-            className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-400 transition-colors mb-8 group"
+            className="inline-flex items-center gap-2 text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Vissza a Tudástárhoz
@@ -144,7 +144,7 @@ export default function ToolsPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-6xl font-bold tracking-tighter mb-6"
+              className="text-5xl md:text-6xl font-bold tracking-tighter mb-6 text-title"
             >
               A Legjobb <span className="text-emerald-500">AI Eszközök</span>
             </motion.h1>
@@ -152,7 +152,7 @@ export default function ToolsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-400 max-w-2xl"
+              className="text-xl text-body max-w-2xl"
             >
               Válogatott gyűjtemény a leghatékonyabb mesterséges intelligencia szoftverekből, amiket mi is nap mint nap használunk.
             </motion.p>
@@ -168,7 +168,7 @@ export default function ToolsPage() {
                   className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all border ${
                     selectedCategory === cat 
                       ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20' 
-                      : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
+                      : 'bg-card border-main text-body hover:border-main hover:bg-hover'
                   }`}
                 >
                   {cat}
@@ -176,13 +176,15 @@ export default function ToolsPage() {
               ))}
             </div>
             <div className="relative w-full lg:w-96">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Eszköz keresése..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#0d0d0d] border border-white/10 rounded-full pl-11 pr-6 py-4 focus:outline-none focus:border-emerald-500 transition-all text-sm shadow-xl"
+                onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
+                className="w-full bg-card border border-main rounded-full pl-11 pr-6 py-4 focus:outline-none focus:border-emerald-500 transition-all text-sm shadow-xl text-title"
               />
             </div>
           </div>
@@ -197,7 +199,7 @@ export default function ToolsPage() {
                 transition={{ delay: index * 0.05 }}
                 className="group"
               >
-                <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 h-full flex flex-col hover:border-emerald-500/30 transition-all shadow-2xl relative overflow-hidden">
+                <div className="bg-card border border-main rounded-[2.5rem] p-8 h-full flex flex-col hover:border-emerald-500/30 transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                   {/* Background Glow */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/5 blur-[60px] -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
@@ -205,20 +207,20 @@ export default function ToolsPage() {
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${tool.color}`}>
                       <tool.icon className="w-7 h-7" />
                     </div>
-                    <div className="flex items-center gap-1.5 text-orange-400 text-sm font-bold bg-orange-400/5 px-3 py-1 rounded-full border border-orange-400/10">
+                    <div className="flex items-center gap-1.5 text-orange-500 dark:text-orange-400 text-sm font-bold bg-orange-400/5 px-3 py-1 rounded-full border border-orange-400/10">
                       <Star className="w-3.5 h-3.5 fill-current" /> {tool.rating}
                     </div>
                   </div>
 
                   <div className="mb-2 flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{tool.category}</span>
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">{tool.category}</span>
                     {tool.isAffiliate && (
-                      <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest bg-orange-500/10 px-2 py-0.5 rounded">Ajánlott</span>
+                      <span className="text-[10px] font-bold text-orange-600 dark:text-orange-500 uppercase tracking-widest bg-orange-500/10 px-2 py-0.5 rounded">Ajánlott</span>
                     )}
                   </div>
 
-                  <h3 className="text-2xl font-bold mb-4 group-hover:text-emerald-400 transition-colors">{tool.name}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-8 flex-1">
+                  <h3 className="text-2xl font-bold mb-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors text-title">{tool.name}</h3>
+                  <p className="text-body text-sm leading-relaxed mb-8 flex-1">
                     {tool.description}
                   </p>
 
@@ -226,7 +228,7 @@ export default function ToolsPage() {
                     href={tool.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-4 rounded-2xl bg-white/5 hover:bg-emerald-600 text-center text-sm font-bold transition-all flex items-center justify-center gap-2 group/btn"
+                    className="w-full py-4 rounded-2xl bg-hover hover:bg-emerald-600 hover:text-white text-center text-sm font-bold transition-all flex items-center justify-center gap-2 group/btn text-title"
                   >
                     Megnyitás <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                   </a>
@@ -246,9 +248,9 @@ export default function ToolsPage() {
           )}
 
           {/* Affiliate Disclaimer */}
-          <div className="mt-20 p-8 rounded-3xl bg-white/5 border border-white/10 text-center">
-            <p className="text-xs text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              <span className="font-bold text-gray-400">Közzététel:</span> Az oldalon található linkek egy része affiliate link lehet. Ez azt jelenti, hogy ha ezeken keresztül regisztrálsz vagy vásárolsz, mi jutalékot kaphatunk, ami segít fenntartani az oldalt és ingyenes tartalmakat gyártani. Ez számodra semmilyen plusz költséggel nem jár, sőt, gyakran kedvezményeket is biztosítunk. Csak olyan eszközöket ajánlunk, amiket mi is ismerünk és jónak tartunk.
+          <div className="mt-20 p-8 rounded-3xl bg-card border border-main text-center shadow-lg">
+            <p className="text-xs text-body max-w-2xl mx-auto leading-relaxed">
+              <span className="font-bold text-title">Közzététel:</span> Az oldalon található linkek egy része affiliate link lehet. Ez azt jelenti, hogy ha ezeken keresztül regisztrálsz vagy vásárolsz, mi jutalékot kaphatunk, ami segít fenntartani az oldalt és ingyenes tartalmakat gyártani. Ez számodra semmilyen plusz költséggel nem jár, sőt, gyakran kedvezményeket is biztosítunk. Csak olyan eszközöket ajánlunk, amiket mi is ismerünk és jónak tartunk.
             </p>
           </div>
         </div>

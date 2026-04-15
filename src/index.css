@@ -3,10 +3,74 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-bg-main: var(--bg-main);
+  --color-bg-card: var(--bg-card);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-glass: var(--bg-glass);
+  --color-bg-hover: var(--bg-hover);
+  --color-text-main: var(--text-main);
+  --color-text-title: var(--text-title);
+  --color-text-body: var(--text-body);
+  --color-text-desc: var(--text-desc);
+  --color-text-muted: var(--text-muted);
+  --color-border-main: var(--border-main);
+  --color-border-subtle: var(--border-subtle);
 }
 
 @layer base {
+  :root {
+    /* Dark Theme (Default - Original Look) */
+    --bg-main: #0a0a0a;
+    --bg-card: #0f0f0f;
+    --bg-surface: #1a1a1a;
+    --bg-glass: rgba(10, 10, 10, 0.8);
+    --bg-hover: rgba(255, 255, 255, 0.05);
+    
+    --text-main: #ffffff;
+    --text-title: #ffffff;
+    --text-body: #f9fafb;
+    --text-desc: #d1d5db;
+    --text-muted: #9ca3af;
+    
+    --border-main: rgba(255, 255, 255, 0.1);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    
+    --accent: #2563eb;
+    --accent-hover: #3b82f6;
+    --accent-soft: rgba(37, 99, 235, 0.1);
+    
+    --shadow-main: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  }
+
+  .light-mode {
+    /* Light Theme (New Design) */
+    --bg-main: #fcfcfc;
+    --bg-card: #ffffff;
+    --bg-surface: #f8f9fa;
+    --bg-glass: rgba(252, 252, 252, 0.8);
+    --bg-hover: rgba(0, 0, 0, 0.05);
+    
+    --text-main: #0f172a;
+    --text-title: #0f172a;
+    --text-body: #334155;
+    --text-desc: #475569;
+    --text-muted: #64748b;
+    
+    --border-main: rgba(0, 0, 0, 0.1);
+    --border-subtle: rgba(0, 0, 0, 0.05);
+    
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: rgba(37, 99, 235, 0.05);
+    
+    --shadow-main: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
   body {
-    @apply bg-[#0a0a0a] text-gray-100 antialiased;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.6;
+    @apply antialiased transition-colors duration-300;
   }
 }

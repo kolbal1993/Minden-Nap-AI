@@ -196,6 +196,8 @@ export default function AdminCampaigns() {
                 className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-80"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
+                onClick={(e) => e.currentTarget.select()}
               />
             </div>
           </div>
@@ -328,6 +330,8 @@ export default function AdminCampaigns() {
                       type="text" 
                       value={newCampaign.name}
                       onChange={(e) => setNewCampaign({...newCampaign, name: e.target.value})}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Pl. Nyári Akció"
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
                     />
@@ -371,6 +375,8 @@ export default function AdminCampaigns() {
                     <textarea 
                       value={newCampaign.description}
                       onChange={(e) => setNewCampaign({...newCampaign, description: e.target.value})}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => e.currentTarget.select()}
                       placeholder="Rövid leírás a kampányról..."
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none"
                     />
@@ -405,6 +411,8 @@ export default function AdminCampaigns() {
                           const val = e.target.value.replace(/[^0-9]/g, '');
                           setNewCampaign({...newCampaign, discountValue: val === '' ? undefined : parseInt(val)});
                         }}
+                        onFocus={(e) => e.target.select()}
+                        onClick={(e) => e.currentTarget.select()}
                         placeholder="0"
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
                       />

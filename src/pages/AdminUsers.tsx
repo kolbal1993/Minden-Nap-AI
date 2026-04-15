@@ -332,6 +332,7 @@ export default function AdminUsers() {
                 className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-80"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setSearchTerm('')}
               />
             </div>
             <div className="flex bg-white/5 border border-white/10 rounded-xl p-1">
@@ -687,6 +688,8 @@ export default function AdminUsers() {
                     type="number" 
                     value={extensionDays === 'forever' ? '' : extensionDays}
                     onChange={(e) => setExtensionDays(parseInt(e.target.value) || 0)}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.currentTarget.select()}
                     disabled={extensionDays === 'forever'}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 disabled:opacity-50"
                   />
@@ -723,6 +726,8 @@ export default function AdminUsers() {
                 <textarea 
                   value={messageContent}
                   onChange={(e) => setMessageContent(e.target.value)}
+                  onFocus={(e) => e.target.select()}
+                  onClick={(e) => e.currentTarget.select()}
                   placeholder="Írd ide az üzenetet..."
                   className="w-full h-40 bg-white/5 border border-white/10 rounded-2xl p-4 focus:outline-none focus:border-blue-500 resize-none"
                 />
