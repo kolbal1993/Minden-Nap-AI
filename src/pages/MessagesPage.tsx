@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Send, 
-  User, 
   MoreVertical, 
   Phone, 
   Video, 
@@ -13,16 +13,12 @@ import {
   MessageSquare,
   ChevronLeft,
   X,
-  Check,
   CheckCheck,
-  Clock,
   Paperclip,
   Loader2,
   Users,
   Shield,
   Lock,
-  LockOpen,
-  Keyboard,
   Sparkles
 } from 'lucide-react';
 import { 
@@ -126,6 +122,7 @@ export default function MessagesPage() {
   const [privateKey, setPrivateKey] = useState<CryptoKey | null>(null);
   const [activeSymKey, setActiveSymKey] = useState<CryptoKey | null>(null);
   
+  const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<any>(null);
@@ -133,23 +130,28 @@ export default function MessagesPage() {
   const { showToast } = useToast();
 
   useEffect(() => {
-    const initAuth = async () => {
-      const unsubscribeAuth = auth.onAuthStateChanged(async (user) => {
-        setCurrentUser(user);
-        if (user) {
+    let unsubscribeSnapshot: (() => void) | null = null;
+
+    const unsubscribeAuth = auth.onAuthStateChanged(async (user) => {
+      setCurrentUser(user);
+      if (user) {
+        try {
           await ensureKeyPair(user);
           syncUserProfile(user);
-          loadConversations(user.uid);
-        } else {
+          unsubscribeSnapshot = loadConversations(user.uid);
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error during auth initialization:', error);
           setIsLoading(false);
         }
-      });
-      return unsubscribeAuth;
-    };
+      } else {
+        setIsLoading(false);
+      }
+    });
 
-    const unsubPromise = initAuth();
     return () => {
-      unsubPromise.then(unsub => unsub());
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
     };
   }, []);
 
@@ -471,20 +473,38 @@ export default function MessagesPage() {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!currentUser && !isLoading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-main flex flex-col items-center justify-center p-6 transition-colors duration-300">
-        <MessageSquare className="w-16 h-16 text-blue-600 mb-6" />
-        <h1 className="text-2xl font-bold mb-4 text-title">Jelentkezz be az üzenetküldéshez</h1>
-              <p className="text-body mb-8 text-center max-w-md">
-          Az üzenetküldés funkció használatáhához be kell jelentkezned a fiókodba.
-        </p>
-        <button 
-          onClick={() => window.location.href = '/login'}
-          className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all"
-        >
-          Bejelentkezés
-        </button>
+      <div className="min-h-screen bg-main flex flex-col items-center justify-center p-6">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-muted font-bold uppercase tracking-widest text-[10px]">Üzenetek betöltése...</p>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-main flex flex-col transition-colors duration-300">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center p-6 pt-20">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mb-8"
+          >
+            <MessageSquare className="w-10 h-10 text-blue-600" />
+          </motion.div>
+          <h1 className="text-3xl font-bold mb-4 text-title tracking-tight">Jelentkezz be az üzenetküldéshez</h1>
+          <p className="text-muted mb-10 text-center max-w-md leading-relaxed">
+            Az üzenetküldés funkció használatához be kell jelentkezned a fiókodba. Minden üzenet végpontok közötti titkosítással védett.
+          </p>
+          <button 
+            onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`)}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-12 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-blue-600/20 hover:scale-105 active:scale-95"
+          >
+            Bejelentkezés
+          </button>
+        </div>
       </div>
     );
   }

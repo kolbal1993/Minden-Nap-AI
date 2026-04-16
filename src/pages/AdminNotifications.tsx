@@ -27,12 +27,14 @@ import {
   Zap,
   Plus,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Menu
 } from 'lucide-react';
 import { Notification, addNotification, deleteNotification } from '../utils/notifications';
 import AdminSidebar from '../components/AdminSidebar';
 
 export default function AdminNotifications() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -121,21 +123,45 @@ export default function AdminNotifications() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 flex font-sans">
-      <AdminSidebar />
+    <div className="min-h-screen bg-main text-body flex font-sans transition-colors duration-300">
+      {/* Sidebar Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+        <AdminSidebar onClose={() => setIsMobileMenuOpen(false)} />
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Header */}
-        <header className="h-20 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md flex items-center justify-between px-8">
-          <h1 className="text-xl font-bold">Értesítések Kezelése</h1>
+        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 hover:bg-hover rounded-xl transition-colors md:hidden text-muted hover:text-title"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-lg sm:text-xl font-bold text-title truncate">Értesítések</h1>
+          </div>
           <div className="flex items-center gap-4">
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+            <div className="relative hidden lg:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
-                placeholder="Keresés az értesítések között..." 
-                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-64"
+                placeholder="Keresés..." 
+                className="bg-card border border-main rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-48 text-title placeholder:text-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
@@ -144,43 +170,43 @@ export default function AdminNotifications() {
             </div>
             <button 
               onClick={() => setIsNotificationModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-600/20"
+              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-600/20"
             >
-              <Plus className="w-4 h-4" /> Új Értesítés
+              <Plus className="w-4 h-4" /> <span className="hidden xs:inline">Új Értesítés</span><span className="xs:hidden">Új</span>
             </button>
           </div>
         </header>
 
         {/* Table Container */}
         <div className="flex-1 overflow-auto p-8">
-          <div className="bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden">
+          <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white/5 border-b border-white/5">
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Típus</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Cím / Üzenet</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Címzett</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Dátum</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Státusz</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Műveletek</th>
+                <tr className="bg-hover border-b border-main">
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Típus</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Cím / Üzenet</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Címzett</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Dátum</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Státusz</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-main">
                 {filteredNotifications.map((n) => (
                   <tr 
                     key={n.id} 
-                    className={`hover:bg-white/[0.02] transition-colors group ${n.link ? 'cursor-pointer' : ''}`}
+                    className={`hover:bg-hover transition-colors group ${n.link ? 'cursor-pointer' : ''}`}
                     onClick={() => handleNotificationClick(n.link)}
                   >
                     <td className="px-6 py-4">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-hover flex items-center justify-center">
                         {getTypeIcon(n.type)}
                       </div>
                     </td>
                     <td className="px-6 py-4 max-w-md">
                       <div className="space-y-1">
-                        <div className="font-medium text-gray-200">{n.title}</div>
-                        <div className="text-xs text-gray-500 line-clamp-1">{n.message}</div>
+                        <div className="font-medium text-title">{n.title}</div>
+                        <div className="text-xs text-muted line-clamp-1">{n.message}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -193,7 +219,7 @@ export default function AdminNotifications() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <div className="flex items-center gap-1.5 text-xs text-muted">
                         <Clock className="w-3 h-3" />
                         {new Date(n.createdAt).toLocaleString('hu-HU')}
                       </div>
@@ -215,7 +241,7 @@ export default function AdminNotifications() {
                           e.stopPropagation();
                           handleDeleteClick(n.id);
                         }}
-                        className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-all"
+                        className="p-2 rounded-lg hover:bg-red-500/10 text-muted hover:text-red-400 transition-all"
                         title="Visszavonás / Törlés"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -227,10 +253,10 @@ export default function AdminNotifications() {
             </table>
             {filteredNotifications.length === 0 && (
               <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Bell className="text-gray-600 w-8 h-8" />
+                <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bell className="text-muted w-8 h-8" />
                 </div>
-                <p className="text-gray-500">Nem található értesítés.</p>
+                <p className="text-muted">Nem található értesítés.</p>
               </div>
             )}
           </div>
@@ -252,13 +278,13 @@ export default function AdminNotifications() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
-              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
-                <h2 className="text-2xl font-bold flex items-center gap-3">
+              <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
+                <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
                   <Bell className="text-blue-500" /> Új Értesítés Küldése
                 </h2>
-                <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -266,11 +292,11 @@ export default function AdminNotifications() {
               <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Címzett</label>
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider">Címzett</label>
                     <select 
                       value={notificationData.userId}
                       onChange={(e) => setNotificationData({ ...notificationData, userId: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                      className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-title"
                     >
                       <option value="all">Minden felhasználó</option>
                       <option value="user_id_1">Egyedi felhasználó (ID alapján)</option>
@@ -278,11 +304,11 @@ export default function AdminNotifications() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Értesítés Típusa</label>
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider">Értesítés Típusa</label>
                     <select 
                       value={notificationData.type}
                       onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                      className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-title"
                     >
                       <option value="admin">Rendszerüzenet</option>
                       <option value="news">Hír</option>
@@ -292,7 +318,7 @@ export default function AdminNotifications() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Ikon Kiválasztása</label>
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider">Ikon Kiválasztása</label>
                   <div className="grid grid-cols-5 gap-3">
                     {[
                       { id: 'Bell', icon: Bell },
@@ -312,7 +338,7 @@ export default function AdminNotifications() {
                         className={`p-4 rounded-2xl border transition-all flex items-center justify-center ${
                           notificationData.icon === item.id 
                             ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
-                            : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10'
+                            : 'bg-hover border-main text-muted hover:bg-hover/80'
                         }`}
                       >
                         <item.icon className="w-5 h-5" />
@@ -322,7 +348,7 @@ export default function AdminNotifications() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Értesítés Címe</label>
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider">Értesítés Címe</label>
                   <input 
                     type="text" 
                     value={notificationData.title}
@@ -330,24 +356,24 @@ export default function AdminNotifications() {
                     onFocus={(e) => e.target.select()}
                     onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: Karbantartás várható..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Üzenet</label>
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider">Üzenet</label>
                   <textarea 
                     value={notificationData.message}
                     onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
                     onFocus={(e) => e.target.select()}
                     onClick={(e) => e.currentTarget.select()}
                     placeholder="Az értesítés részletes tartalma..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none"
+                    className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors min-h-[120px] resize-none text-body placeholder:text-muted"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Link (opcionális)</label>
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider">Link (opcionális)</label>
                   <input 
                     type="text" 
                     value={notificationData.link}
@@ -355,7 +381,7 @@ export default function AdminNotifications() {
                     onFocus={(e) => e.target.select()}
                     onClick={(e) => e.currentTarget.select()}
                     placeholder="Pl: /news/1"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                   />
                 </div>
 
@@ -388,17 +414,17 @@ export default function AdminNotifications() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-[#111] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+              className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl"
             >
               <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <Trash2 className="text-red-500 w-8 h-8" />
               </div>
-              <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
-              <p className="text-gray-400 text-center mb-8">Ez a művelet nem vonható vissza. Az értesítés véglegesen törlődik a rendszerből.</p>
+              <h2 className="text-xl font-bold text-center mb-2 text-title">Biztosan törölni szeretnéd?</h2>
+              <p className="text-muted text-center mb-8">Ez a művelet nem vonható vissza. Az értesítés véglegesen törlődik a rendszerből.</p>
               <div className="flex gap-4">
                 <button 
                   onClick={() => setIsDeleteConfirmOpen(false)}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>

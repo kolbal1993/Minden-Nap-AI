@@ -10,8 +10,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { 
   Calendar, 
-  User, 
-  Clock, 
   ChevronLeft,
   Share2,
   Bookmark,

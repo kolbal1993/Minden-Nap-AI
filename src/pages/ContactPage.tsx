@@ -10,17 +10,14 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { 
-  Cpu, 
   Mail, 
   Phone, 
   MapPin, 
   Send, 
   MessageSquare,
-  Globe,
   Github,
   Twitter,
-  Linkedin,
-  ChevronRight
+  Linkedin
 } from 'lucide-react';
 
 // Mock contact data (this would come from a database/state in a real app)

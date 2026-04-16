@@ -14,14 +14,11 @@ import {
   Clock, 
   Star, 
   BarChart, 
-  PlayCircle,
-  CheckCircle2,
+  CheckCircle2, 
   ArrowRight,
-  Cpu,
   Zap,
   Crown,
   Sparkles,
-  Book,
   Wrench
 } from 'lucide-react';
 import { COURSES } from '../constants/courses';
@@ -190,7 +187,7 @@ export default function CoursesPage() {
               const className = `p-8 rounded-[2.5rem] border transition-all relative overflow-hidden group flex flex-col h-full ${
                 selectedCategory === module.id 
                   ? 'bg-gradient-to-br border-blue-500/50 ring-2 ring-blue-500/10' 
-                  : 'bg-card border-main hover:border-main shadow-sm hover:shadow-xl'
+                  : 'bg-card border-none shadow-lg hover:shadow-2xl transition-all duration-300'
               } ${module.color}`;
 
               const GlowEffect = (
@@ -292,7 +289,7 @@ export default function CoursesPage() {
                       >
                         <Link 
                           to={`/tudastar/${course.id}`}
-                          className="flex flex-col bg-card border border-main rounded-[2.5rem] overflow-hidden hover:border-blue-500/30 transition-all shadow-sm hover:shadow-xl h-full group"
+                          className="flex flex-col bg-card border-none rounded-[2.5rem] overflow-hidden transition-all shadow-lg hover:shadow-2xl h-full group"
                         >
                           <div className="relative aspect-[16/10] overflow-hidden">
                             <img 

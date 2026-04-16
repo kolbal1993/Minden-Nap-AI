@@ -8,30 +8,16 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
-  LayoutDashboard, 
-  FileText, 
-  Settings, 
-  LogOut,
-  Cpu,
-  BookOpen,
-  Contact2,
-  BarChart3,
-  Users,
-  Tag,
-  Plus,
-  Calendar,
-  Clock,
-  Trash2,
-  Edit2,
-  CheckCircle2,
-  AlertCircle,
-  X,
-  Percent,
-  Gift,
-  Target,
-  Megaphone,
+  BookOpen, 
+  Plus, 
+  Calendar, 
+  Trash2, 
+  Edit2, 
+  X, 
+  Target, 
+  Megaphone, 
   Crown,
-  Bell
+  Menu
 } from 'lucide-react';
 import AdminSidebar from '../components/AdminSidebar';
 
@@ -92,6 +78,7 @@ const MOCK_CAMPAIGNS: Campaign[] = [
 ];
 
 export default function AdminCampaigns() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
@@ -171,35 +158,63 @@ export default function AdminCampaigns() {
   );
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 flex font-sans">
-      <AdminSidebar />
+    <div className="min-h-screen bg-main text-body flex font-sans transition-colors duration-300">
+      {/* Sidebar Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+        <AdminSidebar onClose={() => setIsMobileMenuOpen(false)} />
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Header */}
-        <header className="h-20 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md flex items-center justify-between px-8">
-          <div className="flex items-center gap-6">
-            <h1 className="text-xl font-bold">Kampányok Kezelése</h1>
+        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 hover:bg-hover rounded-xl transition-colors md:hidden text-muted hover:text-title"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-lg sm:text-xl font-bold text-title truncate">Kampányok</h1>
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-600/20"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-600/20 text-white"
             >
               <Plus className="w-4 h-4" /> Új Kampány
             </button>
           </div>
           <div className="flex items-center gap-4">
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+            <div className="relative hidden lg:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
-                placeholder="Keresés kampányok között..." 
-                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-80"
+                placeholder="Keresés..." 
+                className="bg-card border border-main rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-48 text-title placeholder:text-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
                 onClick={(e) => e.currentTarget.select()}
               />
             </div>
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="sm:hidden bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-xl transition-all shadow-lg shadow-blue-600/20"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
           </div>
         </header>
 
@@ -211,14 +226,14 @@ export default function AdminCampaigns() {
                 key={campaign.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#0d0d0d] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group"
+                className="bg-card rounded-[2rem] p-6 relative overflow-hidden group shadow-xl border-none hover:shadow-2xl transition-all"
               >
                 {/* Status Badge */}
                 <div className="absolute top-6 right-6">
                   <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
-                    campaign.status === 'active' ? 'text-green-400 bg-green-400/10 border-green-400/20' :
-                    campaign.status === 'scheduled' ? 'text-blue-400 bg-blue-400/10 border-blue-400/20' :
-                    'text-gray-500 bg-white/5 border-white/10'
+                    campaign.status === 'active' ? 'text-green-500 bg-green-500/10 border-green-500/20' :
+                    campaign.status === 'scheduled' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
+                    'text-muted bg-hover border-main'
                   }`}>
                     {campaign.status === 'active' ? 'Aktív' : campaign.status === 'scheduled' ? 'Ütemezett' : 'Lejárt'}
                   </span>
@@ -235,8 +250,8 @@ export default function AdminCampaigns() {
                      <Crown className="w-6 h-6" />}
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">{campaign.name}</h3>
-                    <p className="text-xs text-gray-500">
+                    <h3 className="font-bold text-lg text-title">{campaign.name}</h3>
+                    <p className="text-xs text-muted">
                       {campaign.type === 'all' ? 'Teljes oldal' : 
                        campaign.type === 'course' ? `Tananyag: ${campaign.targetName}` : 
                        'Prémium tagság'}
@@ -244,22 +259,22 @@ export default function AdminCampaigns() {
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-400 mb-6 line-clamp-2">{campaign.description}</p>
+                <p className="text-sm text-body mb-6 line-clamp-2">{campaign.description}</p>
 
-                <div className="bg-white/5 rounded-2xl p-4 mb-6 flex items-center justify-between">
+                <div className="bg-hover rounded-2xl p-4 mb-6 flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Kedvezmény</p>
-                    <p className="text-2xl font-black text-white">
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Kedvezmény</p>
+                    <p className="text-2xl font-black text-title">
                       {campaign.discountType === 'percentage' ? `${campaign.discountValue}%` : `-${campaign.discountValue} Ft`}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Használat</p>
-                    <p className="text-xl font-bold text-blue-400">{campaign.usageCount}</p>
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Használat</p>
+                    <p className="text-xl font-bold text-blue-500">{campaign.usageCount}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-xs text-gray-500 mb-6">
+                <div className="flex items-center gap-4 text-xs text-muted mb-6">
                   <div className="flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5" />
                     {campaign.startDate} - {campaign.endDate}
@@ -269,13 +284,13 @@ export default function AdminCampaigns() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleOpenModal(campaign)}
-                    className="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 py-3 bg-hover hover:bg-hover/80 text-title rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 border border-main"
                   >
                     <Edit2 className="w-3.5 h-3.5" /> Szerkesztés
                   </button>
                   <button 
                     onClick={() => handleDeleteClick(campaign.id)}
-                    className="p-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl transition-colors"
+                    className="p-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl transition-colors border border-red-500/20"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -301,7 +316,7 @@ export default function AdminCampaigns() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] p-8 shadow-2xl overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
               
@@ -311,21 +326,21 @@ export default function AdminCampaigns() {
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-500 hover:text-white"
+                  className="p-2 hover:bg-hover rounded-xl transition-colors text-muted hover:text-title"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <h2 className="text-2xl font-bold mb-2">
+              <h2 className="text-2xl font-bold mb-2 text-title">
                 {editingCampaign ? 'Kampány szerkesztése' : 'Új kampány létrehozása'}
               </h2>
-              <p className="text-gray-400 text-sm mb-8">Állíts be kedvezményeket egy meghatározott időszakra.</p>
+              <p className="text-muted text-sm mb-8">Állíts be kedvezményeket egy meghatározott időszakra.</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="space-y-6">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kampány neve</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Kampány neve</label>
                     <input 
                       type="text" 
                       value={newCampaign.name}
@@ -333,52 +348,52 @@ export default function AdminCampaigns() {
                       onFocus={(e) => e.target.select()}
                       onClick={(e) => e.currentTarget.select()}
                       placeholder="Pl. Nyári Akció"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Típus</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Típus</label>
                     <div className="relative">
                       <select 
                         value={newCampaign.type}
                         onChange={(e) => setNewCampaign({...newCampaign, type: e.target.value as any})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors text-title"
                       >
                         <option value="all">Teljes oldal</option>
                         <option value="course">Egyes tananyag</option>
                         <option value="premium">Prémium tagság</option>
                       </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                         <Plus className="w-4 h-4 rotate-45" />
                       </div>
                     </div>
                   </div>
                   {newCampaign.type === 'course' && (
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Tananyag kiválasztása</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Tananyag kiválasztása</label>
                       <div className="relative">
                         <select 
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                          className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors text-title"
                         >
                           <option value="1">Bevezetés az AI világába</option>
                           <option value="2">Prompt Engineering Mesterkurzus</option>
                           <option value="3">AI a marketingben</option>
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                           <Plus className="w-4 h-4 rotate-45" />
                         </div>
                       </div>
                     </div>
                   )}
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Leírás</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Leírás</label>
                     <textarea 
                       value={newCampaign.description}
                       onChange={(e) => setNewCampaign({...newCampaign, description: e.target.value})}
                       onFocus={(e) => e.target.select()}
                       onClick={(e) => e.currentTarget.select()}
                       placeholder="Rövid leírás a kampányról..."
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none"
+                      className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none text-title placeholder:text-muted"
                     />
                   </div>
                 </div>
@@ -386,23 +401,23 @@ export default function AdminCampaigns() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-[1.4fr_0.6fr] gap-4">
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kedvezmény típusa</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Kedvezmény típusa</label>
                       <div className="relative">
                         <select 
                           value={newCampaign.discountType}
                           onChange={(e) => setNewCampaign({...newCampaign, discountType: e.target.value as any})}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                          className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors text-title"
                         >
                           <option value="percentage">Százalék (%)</option>
                           <option value="fixed">Fix összeg (Ft)</option>
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                           <Plus className="w-4 h-4 rotate-45" />
                         </div>
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Érték</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Érték</label>
                       <input 
                         type="text" 
                         inputMode="numeric"
@@ -414,43 +429,43 @@ export default function AdminCampaigns() {
                         onFocus={(e) => e.target.select()}
                         onClick={(e) => e.currentTarget.select()}
                         placeholder="0"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kezdés</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Kezdés</label>
                       <input 
                         type="date" 
                         value={newCampaign.startDate}
                         onChange={(e) => setNewCampaign({...newCampaign, startDate: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Vége</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Vége</label>
                       <input 
                         type="date" 
                         value={newCampaign.endDate}
                         onChange={(e) => setNewCampaign({...newCampaign, endDate: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Státusz</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Státusz</label>
                     <div className="relative">
                       <select 
                         value={newCampaign.status}
                         onChange={(e) => setNewCampaign({...newCampaign, status: e.target.value as any})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors text-title"
                       >
                         <option value="active">Aktív</option>
                         <option value="scheduled">Ütemezett</option>
                         <option value="expired">Lejárt</option>
                       </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                         <Plus className="w-4 h-4 rotate-45" />
                       </div>
                     </div>
@@ -464,7 +479,7 @@ export default function AdminCampaigns() {
                     setIsModalOpen(false);
                     setEditingCampaign(null);
                   }}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>
@@ -495,17 +510,17 @@ export default function AdminCampaigns() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+              className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl"
             >
               <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <Trash2 className="text-red-500 w-8 h-8" />
               </div>
-              <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
-              <p className="text-gray-400 text-center mb-8">Ez a művelet nem vonható vissza. A kampány véglegesen törlődik.</p>
+              <h2 className="text-xl font-bold text-center mb-2 text-title">Biztosan törölni szeretnéd?</h2>
+              <p className="text-muted text-center mb-8">Ez a művelet nem vonható vissza. A kampány véglegesen törlődik.</p>
               <div className="flex gap-4">
                 <button 
                   onClick={() => setIsDeleteConfirmOpen(false)}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>

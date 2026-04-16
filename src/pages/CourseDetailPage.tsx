@@ -11,14 +11,12 @@ import Footer from '../components/Footer';
 import { 
   Clock, 
   Star, 
-  BarChart, 
   CheckCircle2, 
   ChevronLeft,
   PlayCircle,
   Users,
   Award,
   BookOpen,
-  ArrowRight,
   Lock,
   Zap
 } from 'lucide-react';

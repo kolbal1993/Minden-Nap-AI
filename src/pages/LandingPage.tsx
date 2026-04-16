@@ -18,8 +18,7 @@ import {
   Mail,
   CheckCircle2,
   Sparkles,
-  Calendar,
-  Clock
+  Calendar
 } from 'lucide-react';
 
 // --- Types ---
@@ -102,7 +101,7 @@ export default function LandingPage() {
               <Link to="/news" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20 group">
                 Legfrissebb Hírek <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/tudastar" className="w-full sm:w-auto bg-hover border border-main text-title px-10 py-5 rounded-2xl font-bold text-lg transition-all text-center hover:border-accent/20">
+              <Link to="/tudastar" className="w-full sm:w-auto bg-hover border-none text-title px-10 py-5 rounded-2xl font-bold text-lg transition-all text-center shadow-lg hover:shadow-xl">
                 Tudástár Böngészése
               </Link>
             </div>
@@ -137,7 +136,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all hover:-translate-y-2 shadow-[var(--shadow-main)] hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.15)] h-full"
+                  className="group bg-[var(--bg-card)] border-none rounded-3xl overflow-hidden transition-all hover:-translate-y-2 shadow-lg hover:shadow-2xl h-full"
                 >
                   <div className="relative h-56 overflow-hidden">
                     <img 
@@ -217,7 +216,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex-1 relative">
-              <div className="relative z-10 rounded-3xl overflow-hidden border border-subtle shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700 group">
+              <div className="relative z-10 rounded-3xl overflow-hidden border border-subtle shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700 group isolation-isolate transform-gpu backface-hidden">
                 <img 
                   src="https://picsum.photos/seed/learning/800/1000" 
                   alt="Learning AI" 
@@ -249,7 +248,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-card border border-subtle p-12 md:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden group"
+            className="bg-card border-none p-12 md:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden group"
           >
             {/* Background Glow */}
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/10 blur-[80px] rounded-full group-hover:bg-blue-600/20 transition-colors duration-700" />

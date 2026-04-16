@@ -13,21 +13,12 @@ import {
   Search, 
   LayoutDashboard, 
   FileText, 
-  Settings, 
-  LogOut,
   X,
   Save,
   Image as ImageIcon,
   Type,
   Calendar,
-  Cpu,
-  BookOpen,
-  Contact2,
-  ThumbsUp,
-  ThumbsDown,
   Bookmark,
-  BarChart3,
-  Users,
   Bold,
   Italic,
   List,
@@ -48,7 +39,9 @@ import {
   ShieldCheck,
   AlertCircle,
   CheckCircle2,
-  ExternalLink
+  ExternalLink,
+  BookOpen,
+  Menu
 } from 'lucide-react';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import AdminSidebar from '../components/AdminSidebar';
@@ -113,6 +106,8 @@ export default function AdminDashboard() {
     });
     setPosts(updatedPosts);
   }, []);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [notificationData, setNotificationData] = useState({
@@ -253,16 +248,41 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-main text-body flex font-sans">
-      <AdminSidebar />
+    <div className="min-h-screen bg-main text-body flex font-sans transition-colors duration-300 relative">
+      {/* Sidebar Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+        <AdminSidebar onClose={() => setIsMobileMenuOpen(false)} />
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-8">
-          <h1 className="text-xl font-bold text-title">Tartalomkezelés</h1>
+        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 md:px-8">
           <div className="flex items-center gap-4">
-            <div className="relative hidden sm:block">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 hover:bg-hover rounded-xl md:hidden text-title"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-xl font-bold text-title">Tartalomkezelés</h1>
+          </div>
+          
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="relative hidden lg:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
@@ -276,22 +296,22 @@ export default function AdminDashboard() {
             </div>
             <button 
               onClick={() => setIsNotificationModalOpen(true)}
-              className="bg-hover hover:bg-hover/80 text-title px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-main"
+              className="bg-hover hover:bg-hover/80 text-title px-3 md:px-4 py-2 rounded-xl text-[11px] md:text-sm font-bold flex items-center gap-2 transition-all border border-main"
             >
-              <Bell className="w-4 h-4" /> Értesítés küldése
+              <Bell className="w-4 h-4" /> <span className="hidden sm:inline">Értesítés</span>
             </button>
             <button 
               onClick={() => handleOpenModal()}
-              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all"
+              className="bg-blue-600 hover:bg-blue-500 text-white px-3 md:px-4 py-2 rounded-xl text-[11px] md:text-sm font-bold flex items-center gap-2 transition-all"
             >
-              <Plus className="w-4 h-4" /> Új poszt
+              <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Új poszt</span>
             </button>
           </div>
         </header>
 
         {/* Table Container */}
         <div className="flex-1 overflow-auto p-8">
-          <div className="bg-card border border-main rounded-3xl overflow-hidden">
+          <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-hover border-b border-main">

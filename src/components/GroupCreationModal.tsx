@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Search, Users, Plus, Check, Loader2, Camera } from 'lucide-react';
 import { db, auth } from '../lib/firebase';
-import { collection, query, getDocs, limit } from 'firebase/firestore';
+import { collection, query, getDocs, limit, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ChatService } from '../lib/ChatService';
 
 interface UserProfile {
@@ -65,7 +65,6 @@ export default function GroupCreationModal({ isOpen, onClose, onCreated }: Group
       // 1. Beszélgetés létrehozása a Firestore-ban
       const participants = [auth.currentUser.uid, ...selectedUsers];
       const conversationsRef = collection(db, 'conversations');
-      const { addDoc, serverTimestamp } = await import('firebase/firestore');
       
       const newConv = await addDoc(conversationsRef, {
         name: groupName,

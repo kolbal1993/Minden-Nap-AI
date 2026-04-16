@@ -12,10 +12,7 @@ import {
   Search, 
   Calendar, 
   User, 
-  ArrowRight, 
-  Tag,
-  Clock,
-  Cpu,
+  Clock, 
   MessageSquare,
   Share2,
   Check
@@ -149,7 +146,7 @@ export default function NewsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="group bg-card border border-main rounded-[2.5rem] overflow-hidden hover:border-blue-500/30 transition-all shadow-sm hover:shadow-xl"
+                className="group bg-card border-none rounded-[2.5rem] overflow-hidden transition-all shadow-lg hover:shadow-2xl"
               >
                 <Link to={`/news/${item.id}`} className="block h-full">
                   <div className="aspect-[16/9] overflow-hidden relative">

@@ -8,37 +8,31 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
-  LayoutDashboard, 
-  FileText, 
-  Settings, 
-  LogOut,
-  Cpu,
-  BookOpen,
-  Contact2,
-  BarChart3,
-  Users,
-  Crown,
-  User,
-  Filter,
-  ArrowUpDown,
-  Ban,
-  Unlock,
-  Clock,
-  ShieldAlert,
-  X as CloseIcon,
-  Download,
-  Mail,
-  Calendar,
-  CreditCard,
-  Trash2,
-  MessageSquare,
-  CheckSquare,
-  Square,
-  ChevronRight,
-  Send,
-  AlertTriangle,
+  Users, 
+  Crown, 
+  User, 
+  Filter, 
+  ArrowUpDown, 
+  Ban, 
+  Unlock, 
+  Clock, 
+  ShieldAlert, 
+  X as CloseIcon, 
+  Download, 
+  Mail, 
+  Calendar, 
+  CreditCard, 
+  Trash2, 
+  MessageSquare, 
+  CheckSquare, 
+  Square, 
+  ChevronRight, 
+  Send, 
+  AlertTriangle, 
   Megaphone,
-  Bell
+  Bell,
+  Menu,
+  X
 } from 'lucide-react';
 import AdminSidebar from '../components/AdminSidebar';
 
@@ -151,6 +145,7 @@ const MOCK_USERS: UserData[] = [
 ];
 
 export default function AdminUsers() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [users, setUsers] = useState<UserData[]>(MOCK_USERS);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'premium' | 'free'>('all');
@@ -307,50 +302,72 @@ export default function AdminUsers() {
   });
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 flex font-sans">
-      <AdminSidebar />
+    <div className="min-h-screen bg-main text-body flex font-sans transition-colors duration-300">
+      {/* Sidebar Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+        <AdminSidebar onClose={() => setIsMobileMenuOpen(false)} />
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Header */}
-        <header className="h-20 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md flex items-center justify-between px-8">
-          <div className="flex items-center gap-6">
-            <h1 className="text-xl font-bold">Felhasználók Kezelése</h1>
+        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 hover:bg-hover rounded-xl transition-colors md:hidden text-muted hover:text-title"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-lg sm:text-xl font-bold text-title truncate">Felhasználók</h1>
             <button 
               onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold transition-all"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-hover hover:bg-hover/80 border border-main rounded-xl text-xs font-bold transition-all text-title"
             >
               <Download className="w-4 h-4" /> Export CSV
             </button>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Keresés név vagy email alapján..." 
-                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-80"
+                className="bg-card border border-main rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-80 text-title placeholder:text-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchTerm('')}
               />
             </div>
-            <div className="flex bg-white/5 border border-white/10 rounded-xl p-1">
+            <div className="flex bg-hover border border-main rounded-xl p-1">
               <button 
                 onClick={() => setFilterType('all')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'all' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'all' ? 'bg-blue-600 text-white' : 'text-muted hover:text-title'}`}
               >
                 Összes
               </button>
               <button 
                 onClick={() => setFilterType('premium')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'premium' ? 'bg-orange-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'premium' ? 'bg-orange-600 text-white' : 'text-muted hover:text-title'}`}
               >
                 Prémium
               </button>
               <button 
                 onClick={() => setFilterType('free')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'free' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'free' ? 'bg-card text-title' : 'text-muted hover:text-title'}`}
               >
                 Ingyenes
               </button>
@@ -367,16 +384,16 @@ export default function AdminUsers() {
               className="mb-6 p-4 bg-blue-600 rounded-2xl flex items-center justify-between shadow-lg shadow-blue-600/20"
             >
               <div className="flex items-center gap-4">
-                <span className="font-bold text-sm">{selectedUserIds.length} felhasználó kijelölve</span>
+                <span className="font-bold text-sm text-white">{selectedUserIds.length} felhasználó kijelölve</span>
                 <div className="h-4 w-px bg-white/20" />
                 <button 
                   onClick={() => setIsMessageModalOpen(true)}
-                  className="flex items-center gap-2 text-xs font-bold hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors"
+                  className="flex items-center gap-2 text-xs font-bold hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors text-white"
                 >
                   <MessageSquare className="w-4 h-4" /> Csoportos üzenet
                 </button>
                 <button 
-                  className="flex items-center gap-2 text-xs font-bold hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors"
+                  className="flex items-center gap-2 text-xs font-bold hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors text-white"
                 >
                   <Crown className="w-4 h-4" /> Tagság módosítása
                 </button>
@@ -390,63 +407,63 @@ export default function AdminUsers() {
             </motion.div>
           )}
 
-          <div className="bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden">
+          <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white/5 border-b border-white/5">
+                <tr className="bg-hover border-b border-main">
                   <th className="px-6 py-4 w-12">
                     <button 
                       onClick={toggleAllSelection}
-                      className="text-gray-500 hover:text-white transition-colors"
+                      className="text-muted hover:text-title transition-colors"
                     >
                       {selectedUserIds.length === filteredUsers.length ? <CheckSquare className="w-5 h-5 text-blue-500" /> : <Square className="w-5 h-5" />}
                     </button>
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Felhasználó</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Szerepkör</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Tagság</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Lejárat / Churn</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Műveletek</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Felhasználó</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Szerepkör</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tagság</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Lejárat / Churn</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-main">
                 {filteredUsers.map((user) => {
                   const churn = getChurnStatus(user.lastActive);
                   return (
                     <tr 
                       key={user.id} 
-                      className={`hover:bg-white/[0.02] transition-colors group ${selectedUserIds.includes(user.id) ? 'bg-blue-600/5' : ''}`}
+                      className={`hover:bg-hover transition-colors group ${selectedUserIds.includes(user.id) ? 'bg-blue-600/5' : ''}`}
                     >
                       <td className="px-6 py-4">
                         <button 
                           onClick={() => toggleUserSelection(user.id)}
-                          className="text-gray-500 hover:text-white transition-colors"
+                          className="text-muted hover:text-title transition-colors"
                         >
                           {selectedUserIds.includes(user.id) ? <CheckSquare className="w-5 h-5 text-blue-500" /> : <Square className="w-5 h-5" />}
                         </button>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 shrink-0 border border-white/10">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-hover shrink-0 border border-main">
                             {user.avatar ? (
                               <img src={user.avatar} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-400">
+                              <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-500">
                                 <User className="w-5 h-5" />
                               </div>
                             )}
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-medium text-gray-200">{user.name}</span>
-                            <span className="text-xs text-gray-500">{user.email}</span>
+                            <span className="font-medium text-title">{user.name}</span>
+                            <span className="text-xs text-muted">{user.email}</span>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border w-fit ${
-                          user.role === 'admin' ? 'text-purple-400 bg-purple-400/10 border-purple-400/20' :
-                          user.role === 'moderator' ? 'text-blue-400 bg-blue-400/10 border-blue-400/20' :
-                          'text-gray-400 bg-white/5 border-white/10'
+                          user.role === 'admin' ? 'text-purple-500 bg-purple-500/10 border-purple-500/20' :
+                          user.role === 'moderator' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
+                          'text-muted bg-hover border-main'
                         }`}>
                           {user.role}
                         </span>
@@ -454,11 +471,11 @@ export default function AdminUsers() {
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
                           {user.isPremium ? (
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-orange-400 bg-orange-400/10 px-2 py-1 rounded-md border border-orange-400/20 w-fit">
+                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-orange-500 bg-orange-500/10 px-2 py-1 rounded-md border border-orange-500/20 w-fit">
                               <Crown className="w-3 h-3 fill-current" /> Prémium
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-white/5 px-2 py-1 rounded-md border border-white/10 w-fit">
+                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted bg-hover px-2 py-1 rounded-md border border-main w-fit">
                               Ingyenes
                             </span>
                           )}
@@ -468,17 +485,17 @@ export default function AdminUsers() {
                         <div className="flex flex-col gap-2">
                           {user.isPremium && (
                             <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-300">Lejár: {user.premiumUntil}</span>
+                              <span className="text-sm text-body">Lejár: {user.premiumUntil}</span>
                               <button 
                                 onClick={() => { setSelectedUser(user); setIsExpirationModalOpen(true); }}
-                                className="p-1 hover:bg-white/10 rounded transition-colors text-blue-400"
+                                className="p-1 hover:bg-hover rounded transition-colors text-blue-500"
                                 title="Hosszabbítás"
                               >
                                 <Calendar className="w-3.5 h-3.5" />
                               </button>
                             </div>
                           )}
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border w-fit ${churn.color}`}>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border w-fit ${churn.color.replace('text-green-400', 'text-green-500').replace('text-yellow-400', 'text-yellow-500').replace('text-red-400', 'text-red-500')}`}>
                             {churn.label}
                           </span>
                         </div>
@@ -487,21 +504,21 @@ export default function AdminUsers() {
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={() => { setSelectedUser(user); setIsBillingModalOpen(true); }}
-                            className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-all"
+                            className="p-2 bg-hover hover:bg-hover/80 text-muted hover:text-title rounded-xl transition-all border border-main"
                             title="Számlázási előzmények"
                           >
                             <CreditCard className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => { setSelectedUser(user); setIsMessageModalOpen(true); }}
-                            className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-all"
+                            className="p-2 bg-hover hover:bg-hover/80 text-muted hover:text-title rounded-xl transition-all border border-main"
                             title="Üzenet küldése"
                           >
                             <Mail className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleBlockAction(user)}
-                            className={`p-2 rounded-xl transition-all ${user.isBlocked ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                            className={`p-2 rounded-xl transition-all border ${user.isBlocked ? 'bg-green-500/10 text-green-500 border-green-500/20 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20'}`}
                             title={user.isBlocked ? "Feloldás" : "Blokkolás"}
                           >
                             {user.isBlocked ? <Unlock className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
@@ -515,10 +532,10 @@ export default function AdminUsers() {
             </table>
             {filteredUsers.length === 0 && (
               <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="text-gray-600 w-8 h-8" />
+                <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="text-muted w-8 h-8" />
                 </div>
-                <p className="text-gray-500">Nem található a keresésnek megfelelő felhasználó.</p>
+                <p className="text-muted">Nem található a keresésnek megfelelő felhasználó.</p>
               </div>
             )}
           </div>
@@ -540,7 +557,7 @@ export default function AdminUsers() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-600" />
               
@@ -550,15 +567,15 @@ export default function AdminUsers() {
                 </div>
                 <button 
                   onClick={() => setIsBlockModalOpen(false)}
-                  className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-500 hover:text-white"
+                  className="p-2 hover:bg-hover rounded-xl transition-colors text-muted hover:text-title"
                 >
                   <CloseIcon className="w-5 h-5" />
                 </button>
               </div>
 
-              <h2 className="text-xl font-bold mb-2">Felhasználó blokkolása</h2>
-              <p className="text-gray-400 text-sm mb-8">
-                Biztosan blokkolni szeretnéd <span className="text-white font-medium">{selectedUser?.name}</span> felhasználót? Válaszd ki az időtartamot.
+              <h2 className="text-xl font-bold mb-2 text-title">Felhasználó blokkolása</h2>
+              <p className="text-muted text-sm mb-8">
+                Biztosan blokkolni szeretnéd <span className="text-title font-medium">{selectedUser?.name}</span> felhasználót? Válaszd ki az időtartamot.
               </p>
 
               <div className="space-y-3 mb-8">
@@ -574,13 +591,13 @@ export default function AdminUsers() {
                     onClick={() => setBlockDuration(option.id as any)}
                     className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl border transition-all ${
                       blockDuration === option.id 
-                        ? 'bg-red-500/10 border-red-500/50 text-white' 
-                        : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10'
+                        ? 'bg-red-500/10 border-red-500/50 text-title' 
+                        : 'bg-hover border-main text-muted hover:bg-hover/80'
                     }`}
                   >
                     <span className="font-medium">{option.label}</span>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      blockDuration === option.id ? 'border-red-500' : 'border-gray-600'
+                      blockDuration === option.id ? 'border-red-500' : 'border-main'
                     }`}>
                       {blockDuration === option.id && <div className="w-2.5 h-2.5 bg-red-500 rounded-full" />}
                     </div>
@@ -591,7 +608,7 @@ export default function AdminUsers() {
               <div className="flex gap-3">
                 <button 
                   onClick={() => setIsBlockModalOpen(false)}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>
@@ -612,39 +629,39 @@ export default function AdminUsers() {
         {isBillingModalOpen && selectedUser && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsBillingModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-2xl bg-card border border-main rounded-[2rem] p-8 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
                     <CreditCard className="text-blue-500 w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">Számlázási előzmények</h2>
-                    <p className="text-gray-500 text-sm">{selectedUser.name}</p>
+                    <h2 className="text-xl font-bold text-title">Számlázási előzmények</h2>
+                    <p className="text-muted text-sm">{selectedUser.name}</p>
                   </div>
                 </div>
-                <button onClick={() => setIsBillingModalOpen(false)} className="p-2 hover:bg-white/5 rounded-xl transition-colors"><CloseIcon className="w-5 h-5" /></button>
+                <button onClick={() => setIsBillingModalOpen(false)} className="p-2 hover:bg-hover rounded-xl transition-colors text-muted hover:text-title"><CloseIcon className="w-5 h-5" /></button>
               </div>
               
-              <div className="space-y-3 max-h-[400px] overflow-auto pr-2">
+              <div className="space-y-3 max-h-[400px] overflow-auto pr-2 custom-scrollbar">
                 {selectedUser.billingHistory.length > 0 ? selectedUser.billingHistory.map(bill => (
-                  <div key={bill.id} className="bg-white/5 border border-white/5 p-4 rounded-2xl flex items-center justify-between">
+                  <div key={bill.id} className="bg-hover border border-main p-4 rounded-2xl flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className={`w-2 h-2 rounded-full ${bill.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
                       <div>
-                        <p className="font-bold text-sm">{bill.amount} {bill.currency}</p>
-                        <p className="text-xs text-gray-500">{bill.date} • {bill.method}</p>
+                        <p className="font-bold text-sm text-title">{bill.amount} {bill.currency}</p>
+                        <p className="text-xs text-muted">{bill.date} • {bill.method}</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => handleDownloadInvoice(bill.id)}
-                      className="text-xs text-blue-400 hover:underline"
+                      className="text-xs text-blue-500 hover:underline"
                     >
                       Számla letöltése
                     </button>
                   </div>
                 )) : (
-                  <div className="text-center py-12 text-gray-500">Nincsenek korábbi befizetések.</div>
+                  <div className="text-center py-12 text-muted">Nincsenek korábbi befizetések.</div>
                 )}
               </div>
             </motion.div>
@@ -657,33 +674,33 @@ export default function AdminUsers() {
         {isExpirationModalOpen && selectedUser && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsExpirationModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl">
-              <h2 className="text-xl font-bold mb-2">Lejárat kezelése</h2>
-              <p className="text-gray-400 text-sm mb-6">Manuális hosszabbítás vagy kedvezményes időszak hozzáadása.</p>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl">
+              <h2 className="text-xl font-bold mb-2 text-title">Lejárat kezelése</h2>
+              <p className="text-muted text-sm mb-6">Manuális hosszabbítás vagy kedvezményes időszak hozzáadása.</p>
               
               <div className="space-y-4 mb-8">
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Hosszabbítás (nap)</label>
+                  <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Hosszabbítás (nap)</label>
                   <div className="grid grid-cols-2 gap-2">
                     {[7, 30, 90].map(days => (
                       <button 
                         key={days}
                         onClick={() => setExtensionDays(days)}
-                        className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === days ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10'}`}
+                        className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === days ? 'bg-blue-600 border-blue-500 text-white' : 'bg-hover border-main text-muted hover:bg-hover/80'}`}
                       >
                         +{days} nap
                       </button>
                     ))}
                     <button 
                       onClick={() => setExtensionDays('forever')}
-                      className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === 'forever' ? 'bg-orange-600 border-orange-500 text-white' : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10'}`}
+                      className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === 'forever' ? 'bg-orange-600 border-orange-500 text-white' : 'bg-hover border-main text-muted hover:bg-hover/80'}`}
                     >
                       Örökre
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Egyedi érték</label>
+                  <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Egyedi érték</label>
                   <input 
                     type="number" 
                     value={extensionDays === 'forever' ? '' : extensionDays}
@@ -691,14 +708,14 @@ export default function AdminUsers() {
                     onFocus={(e) => e.target.select()}
                     onClick={(e) => e.currentTarget.select()}
                     disabled={extensionDays === 'forever'}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                    className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 disabled:opacity-50 text-title"
                   />
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => setIsExpirationModalOpen(false)} className="flex-1 py-4 bg-white/5 rounded-2xl font-bold">Mégse</button>
-                <button onClick={handleExtendPremium} className="flex-1 py-4 bg-blue-600 rounded-2xl font-bold shadow-lg shadow-blue-600/20">Hosszabbítás</button>
+                <button onClick={() => setIsExpirationModalOpen(false)} className="flex-1 py-4 bg-hover rounded-2xl font-bold text-title border border-main transition-all">Mégse</button>
+                <button onClick={handleExtendPremium} className="flex-1 py-4 bg-blue-600 rounded-2xl font-bold text-white shadow-lg shadow-blue-600/20 transition-all">Hosszabbítás</button>
               </div>
             </motion.div>
           </div>
@@ -710,18 +727,18 @@ export default function AdminUsers() {
         {isMessageModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMessageModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-lg bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl">
-              <h2 className="text-xl font-bold mb-2">Üzenet küldése</h2>
-              <p className="text-gray-400 text-sm mb-6">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-lg bg-card border border-main rounded-[2rem] p-8 shadow-2xl">
+              <h2 className="text-xl font-bold mb-2 text-title">Üzenet küldése</h2>
+              <p className="text-muted text-sm mb-6">
                 {selectedUserIds.length > 0 
                   ? `Üzenet küldése ${selectedUserIds.length} kijelölt felhasználónak.` 
                   : `Üzenet küldése: ${selectedUser?.name}`}
               </p>
 
               <div className="space-y-4 mb-8">
-                <div className="flex bg-white/5 p-1 rounded-xl">
-                  <button onClick={() => setMessageType('system')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${messageType === 'system' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}>Rendszer értesítés</button>
-                  <button onClick={() => setMessageType('email')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${messageType === 'email' ? 'bg-blue-600 text-white' : 'text-gray-500'}`}>E-mail</button>
+                <div className="flex bg-hover p-1 rounded-xl border border-main">
+                  <button onClick={() => setMessageType('system')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${messageType === 'system' ? 'bg-blue-600 text-white' : 'text-muted'}`}>Rendszer értesítés</button>
+                  <button onClick={() => setMessageType('email')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${messageType === 'email' ? 'bg-blue-600 text-white' : 'text-muted'}`}>E-mail</button>
                 </div>
                 <textarea 
                   value={messageContent}
@@ -729,13 +746,13 @@ export default function AdminUsers() {
                   onFocus={(e) => e.target.select()}
                   onClick={(e) => e.currentTarget.select()}
                   placeholder="Írd ide az üzenetet..."
-                  className="w-full h-40 bg-white/5 border border-white/10 rounded-2xl p-4 focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full h-40 bg-hover border border-main rounded-2xl p-4 focus:outline-none focus:border-blue-500 resize-none text-body placeholder:text-muted"
                 />
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => setIsMessageModalOpen(false)} className="flex-1 py-4 bg-white/5 rounded-2xl font-bold">Mégse</button>
-                <button onClick={handleSendMessage} className="flex-1 py-4 bg-blue-600 rounded-2xl font-bold flex items-center justify-center gap-2"><Send className="w-4 h-4" /> Küldés</button>
+                <button onClick={() => setIsMessageModalOpen(false)} className="flex-1 py-4 bg-hover rounded-2xl font-bold text-title border border-main transition-all">Mégse</button>
+                <button onClick={handleSendMessage} className="flex-1 py-4 bg-blue-600 rounded-2xl font-bold text-white flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20"><Send className="w-4 h-4" /> Küldés</button>
               </div>
             </motion.div>
           </div>
@@ -757,21 +774,21 @@ export default function AdminUsers() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl"
+              className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl"
             >
               <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <Trash2 className="text-red-500 w-8 h-8" />
               </div>
-              <h2 className="text-xl font-bold text-center mb-2">Biztosan törölni szeretnéd?</h2>
-              <p className="text-gray-400 text-center mb-8">
+              <h2 className="text-xl font-bold text-center mb-2 text-title">Biztosan törölni szeretnéd?</h2>
+              <p className="text-muted text-center mb-8">
                 {selectedUserIds.length > 0 
                   ? `Biztosan törölni szeretnél ${selectedUserIds.length} kijelölt felhasználót? Ez a művelet nem vonható vissza.`
-                  : "Ez a művelet nem vonható vissza. A kijelölt adatok véglegesen törlődnek."}
+                  : "Ez a művelet nem vonható vissza. A kijelölt adatok véglegesen törlődik."}
               </p>
               <div className="flex gap-4">
                 <button 
                   onClick={() => setIsDeleteConfirmOpen(false)}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>

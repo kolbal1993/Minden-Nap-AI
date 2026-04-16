@@ -9,65 +9,56 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
   FileText, 
-  Settings, 
-  LogOut,
-  Cpu,
-  BookOpen,
-  Contact2,
-  BarChart3,
-  Bookmark,
-  TrendingUp,
-  Users,
-  Eye,
-  Crown,
-  Clock,
-  User,
-  Smile,
-  Megaphone,
-  Zap,
-  ShieldCheck,
-  AlertCircle,
-  CheckCircle2,
-  ExternalLink,
-  Plus,
-  Bell,
-  Send,
-  X,
-  Save,
-  Image as ImageIcon,
-  Calendar,
-  Bold,
-  Italic,
-  List,
-  Link as LinkIcon,
-  Heading1,
-  Heading2,
-  Code,
-  Quote,
-  ListOrdered,
-  MessageSquare,
-  Edit2,
-  Trash2,
-  Search,
-  Lock,
-  CreditCard,
-  Percent,
-  Gift,
-  Target,
-  EyeOff,
-  Type,
-  ChevronRight,
-  ChevronLeft,
-  ArrowUpRight,
-  ArrowDownRight,
-  Filter,
-  Download,
-  MoreVertical,
+  Bookmark, 
+  TrendingUp, 
+  Eye, 
+  Crown, 
+  Clock, 
+  User, 
+  Smile, 
+  Zap, 
+  ShieldCheck, 
+  AlertCircle, 
+  CheckCircle2, 
+  ExternalLink, 
+  Plus, 
+  Send, 
+  X, 
+  Save, 
+  Image as ImageIcon, 
+  Calendar, 
+  Bold, 
+  Italic, 
+  List, 
+  Link as LinkIcon, 
+  Heading1, 
+  Heading2, 
+  Code, 
+  Quote, 
+  ListOrdered, 
+  MessageSquare, 
+  Edit2, 
+  Trash2, 
+  Search, 
+  Lock, 
+  CreditCard, 
+  Target, 
+  EyeOff, 
+  Type, 
+  ChevronRight, 
+  ChevronLeft, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Filter, 
+  Download, 
+  MoreVertical, 
   Activity,
-  Globe,
-  Smartphone,
-  Monitor,
-  MousePointer2
+  Bell,
+  Menu,
+  BarChart3,
+  Users,
+  BookOpen,
+  Megaphone
 } from 'lucide-react';
 import { NEWS_ITEMS } from '../constants/news';
 import EmojiPickerButton from '../components/EmojiPickerButton';
@@ -98,6 +89,8 @@ export default function AdminAnalytics() {
   const [stats, setStats] = useState<any>({});
   const [sortedNews, setSortedNews] = useState<any[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Modal States
   const [activeModal, setActiveModal] = useState<'campaign' | 'post' | 'course' | 'notification' | null>(null);
@@ -200,38 +193,55 @@ export default function AdminAnalytics() {
   const totalSaves: number = Object.values(stats).reduce((acc: number, curr: any) => acc + (curr.saves || 0), 0) as number;
 
   return (
-    <div className="min-h-screen bg-transparent text-gray-100 flex font-sans">
-      <AdminSidebar />
+    <div className="min-h-screen bg-main text-body flex font-sans transition-colors duration-300 relative">
+      <div className={`fixed inset-0 z-[100] md:relative md:z-0 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <AdminSidebar onClose={() => setIsMobileMenuOpen(false)} />
+      </div>
+
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-[90] md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-20 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md flex items-center justify-between px-8">
-          <h1 className="text-xl font-bold">Analitika</h1>
+        <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 md:px-8">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 hover:bg-hover rounded-xl md:hidden text-title"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-xl font-bold text-title">Analitika</h1>
+          </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button 
               onClick={() => setActiveModal('campaign')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-[11px] font-bold transition-all shadow-lg shadow-blue-600/20"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-[10px] md:text-[11px] font-bold transition-all shadow-lg shadow-blue-600/20 text-white"
             >
-              <Plus className="w-3.5 h-3.5" /> Új Kampány
+              <Plus className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Új Kampány</span>
             </button>
             <button 
               onClick={() => setActiveModal('post')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[11px] font-bold transition-all"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-hover hover:bg-hover/80 border border-main rounded-xl text-[10px] md:text-[11px] font-bold transition-all text-title"
             >
-              <FileText className="w-3.5 h-3.5" /> Új Poszt
+              <FileText className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Új Poszt</span>
             </button>
             <button 
               onClick={() => setActiveModal('course')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[11px] font-bold transition-all"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-hover hover:bg-hover/80 border border-main rounded-xl text-[10px] md:text-[11px] font-bold transition-all text-title"
             >
-              <BookOpen className="w-3.5 h-3.5" /> Új Kurzus
+              <BookOpen className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Új Kurzus</span>
             </button>
             <button 
               onClick={() => setActiveModal('notification')}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-600/10 hover:bg-orange-600/20 text-orange-500 border border-orange-500/20 rounded-xl text-[11px] font-bold transition-all"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 bg-orange-600/10 hover:bg-orange-600/20 text-orange-500 border border-orange-500/20 rounded-xl text-[10px] md:text-[11px] font-bold transition-all"
             >
-              <Bell className="w-3.5 h-3.5" /> Értesítés Küldése
+              <Bell className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Értesítés</span>
             </button>
           </div>
         </header>
@@ -239,54 +249,54 @@ export default function AdminAnalytics() {
         <div className="flex-1 overflow-auto p-8 space-y-8">
           {/* User Distribution Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
+            <div className="bg-card p-6 rounded-3xl relative overflow-hidden group shadow-xl border-none">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="flex items-center gap-4 mb-4 relative z-10">
                 <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center">
                   <Users className="text-blue-500 w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Összes Felhasználó</p>
-                  <h3 className="text-3xl font-bold">2,284</h3>
+                  <p className="text-muted text-sm font-bold uppercase tracking-wider">Összes Felhasználó</p>
+                  <h3 className="text-3xl font-bold text-title">2,284</h3>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-gray-500 text-xs font-medium relative z-10">
+              <div className="flex items-center gap-2 text-muted text-xs font-medium relative z-10">
                 <TrendingUp className="w-3 h-3 text-green-500" /> <span className="text-green-500">+156</span> az elmúlt 30 napban
               </div>
             </div>
 
-            <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
+            <div className="bg-card p-6 rounded-3xl relative overflow-hidden group shadow-xl border-none">
               <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/5 blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="flex items-center gap-4 mb-4 relative z-10">
                 <div className="w-12 h-12 bg-orange-600/10 rounded-2xl flex items-center justify-center">
                   <Crown className="text-orange-500 w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Prémium Tagok</p>
-                  <h3 className="text-3xl font-bold text-orange-400">428</h3>
+                  <p className="text-muted text-sm font-bold uppercase tracking-wider">Prémium Tagok</p>
+                  <h3 className="text-3xl font-bold text-orange-500">428</h3>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-gray-500 text-xs font-medium relative z-10">
-                <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+              <div className="flex items-center gap-2 text-muted text-xs font-medium relative z-10">
+                <div className="w-full bg-hover h-1.5 rounded-full overflow-hidden">
                   <div className="bg-orange-500 h-full w-[18.7%]" />
                 </div>
                 <span className="shrink-0">18.7% arány</span>
               </div>
             </div>
 
-            <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl relative overflow-hidden group">
+            <div className="bg-card p-6 rounded-3xl relative overflow-hidden group shadow-xl border-none">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gray-600/5 blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="flex items-center gap-4 mb-4 relative z-10">
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center">
-                  <User className="text-gray-400 w-6 h-6" />
+                <div className="w-12 h-12 bg-hover rounded-2xl flex items-center justify-center">
+                  <User className="text-muted w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Ingyenes Felhasználók</p>
-                  <h3 className="text-3xl font-bold">1,856</h3>
+                  <p className="text-muted text-sm font-bold uppercase tracking-wider">Ingyenes Felhasználók</p>
+                  <h3 className="text-3xl font-bold text-title">1,856</h3>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-gray-500 text-xs font-medium relative z-10">
-                <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+              <div className="flex items-center gap-2 text-muted text-xs font-medium relative z-10">
+                <div className="w-full bg-hover h-1.5 rounded-full overflow-hidden">
                   <div className="bg-gray-500 h-full w-[81.3%]" />
                 </div>
                 <span className="shrink-0">81.3% arány</span>
@@ -296,14 +306,14 @@ export default function AdminAnalytics() {
 
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl">
+            <div className="bg-card p-6 rounded-3xl shadow-xl border-none">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center">
                   <Smile className="text-blue-500 w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Összes Reakció</p>
-                  <h3 className="text-3xl font-bold">{totalReactions}</h3>
+                  <p className="text-muted text-sm font-bold uppercase tracking-wider">Összes Reakció</p>
+                  <h3 className="text-3xl font-bold text-title">{totalReactions}</h3>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-green-500 text-sm font-bold">
@@ -311,14 +321,14 @@ export default function AdminAnalytics() {
               </div>
             </div>
 
-            <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl">
+            <div className="bg-card p-6 rounded-3xl shadow-xl border-none">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-orange-600/10 rounded-2xl flex items-center justify-center">
                   <Bookmark className="text-orange-500 w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Összes Mentés</p>
-                  <h3 className="text-3xl font-bold">{totalSaves}</h3>
+                  <p className="text-muted text-sm font-bold uppercase tracking-wider">Összes Mentés</p>
+                  <h3 className="text-3xl font-bold text-title">{totalSaves}</h3>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-green-500 text-sm font-bold">
@@ -326,14 +336,14 @@ export default function AdminAnalytics() {
               </div>
             </div>
 
-            <div className="bg-[#0d0d0d] border border-white/5 p-6 rounded-3xl">
+            <div className="bg-card p-6 rounded-3xl shadow-xl border-none">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center">
                   <Users className="text-purple-500 w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-bold uppercase tracking-wider">Aktív Olvasók</p>
-                  <h3 className="text-3xl font-bold">1,284</h3>
+                  <p className="text-muted text-sm font-bold uppercase tracking-wider">Aktív Olvasók</p>
+                  <h3 className="text-3xl font-bold text-title">1,284</h3>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-blue-500 text-sm font-bold">
@@ -344,13 +354,13 @@ export default function AdminAnalytics() {
 
           {/* Premium Subscription Analytics */}
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="md:col-span-2 bg-[#0d0d0d] border border-white/5 rounded-3xl p-8">
+            <div className="md:col-span-2 bg-card border border-main rounded-3xl p-8 shadow-sm">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-xl font-bold mb-1">Prémium Előfizetés Időtartama</h2>
-                  <p className="text-sm text-gray-500">Felhasználók száma az előfizetés hossza alapján</p>
+                  <h2 className="text-xl font-bold mb-1 text-title">Prémium Előfizetés Időtartama</h2>
+                  <p className="text-sm text-muted">Felhasználók száma az előfizetés hossza alapján</p>
                 </div>
-                <div className="bg-orange-500/10 text-orange-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                <div className="bg-orange-500/10 text-orange-500 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 border border-orange-500/20">
                   <TrendingUp className="w-4 h-4" /> +12% növekedés
                 </div>
               </div>
@@ -358,26 +368,27 @@ export default function AdminAnalytics() {
               <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={PREMIUM_DURATION_DATA}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
                     <XAxis 
                       dataKey="months" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: '#9ca3af', fontSize: 12 }}
+                      tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                       dy={10}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: '#9ca3af', fontSize: 12 }}
+                      tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
                     />
                     <Tooltip 
-                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                      cursor={{ fill: 'var(--bg-hover)' }}
                       contentStyle={{ 
-                        backgroundColor: '#111', 
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        backgroundColor: 'var(--bg-card)', 
+                        border: '1px solid var(--border-main)',
                         borderRadius: '12px',
-                        fontSize: '12px'
+                        fontSize: '12px',
+                        color: 'var(--text-title)'
                       }}
                     />
                     <Bar dataKey="count" radius={[6, 6, 0, 0]}>
@@ -391,60 +402,60 @@ export default function AdminAnalytics() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-[#0d0d0d] border border-white/5 rounded-3xl p-8 flex flex-col justify-center">
+              <div className="bg-card border border-main rounded-3xl p-8 flex flex-col justify-center shadow-sm">
                 <div className="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-4">
                   <Clock className="text-orange-500 w-6 h-6" />
                 </div>
-                <h3 className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-2">Átlagos Előfizetési Idő</h3>
-                <div className="text-4xl font-bold text-white mb-2">5.4 hónap</div>
-                <p className="text-xs text-green-400 flex items-center gap-1">
+                <h3 className="text-muted text-sm font-bold uppercase tracking-widest mb-2">Átlagos Előfizetési Idő</h3>
+                <div className="text-4xl font-bold text-title mb-2">5.4 hónap</div>
+                <p className="text-xs text-green-500 flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" /> 0.8 hónap javulás
                 </p>
               </div>
 
-              <div className="bg-[#0d0d0d] border border-white/5 rounded-3xl p-8 flex flex-col justify-center">
+              <div className="bg-card border border-main rounded-3xl p-8 flex flex-col justify-center shadow-sm">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-4">
                   <Crown className="text-blue-500 w-6 h-6" />
                 </div>
-                <h3 className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-2">Megtartási Arány</h3>
-                <div className="text-4xl font-bold text-white mb-2">82%</div>
-                <p className="text-xs text-gray-500">Legalább 3 hónapig maradók</p>
+                <h3 className="text-muted text-sm font-bold uppercase tracking-widest mb-2">Megtartási Arány</h3>
+                <div className="text-4xl font-bold text-title mb-2">82%</div>
+                <p className="text-xs text-muted">Legalább 3 hónapig maradók</p>
               </div>
             </div>
           </div>
 
           {/* Most Saved News */}
-          <div className="bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden">
-            <div className="p-6 border-b border-white/5 bg-white/5">
-              <h2 className="text-lg font-bold flex items-center gap-3">
+          <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
+            <div className="p-6 border-b border-main bg-hover">
+              <h2 className="text-lg font-bold flex items-center gap-3 text-title">
                 <Bookmark className="text-orange-500 w-5 h-5" /> Legtöbbször Mentett Hírek
               </h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-white/5 border-b border-white/5">
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Hír</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Mentések</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Reakciók</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">Arány</th>
+                  <tr className="bg-hover border-b border-main">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Hír</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-center">Mentések</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-center">Reakciók</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-center">Arány</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-main">
                   {sortedNews.map((news) => (
-                    <tr key={news.id} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={news.id} className="hover:bg-hover transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/5 shrink-0">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-hover shrink-0">
                             <img src={news.imageUrl} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                           </div>
-                          <span className="font-medium text-gray-200 line-clamp-1">{news.title}</span>
+                          <span className="font-medium text-title line-clamp-1">{news.title}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center font-bold text-orange-400">{news.saves}</td>
-                      <td className="px-6 py-4 text-center font-bold text-blue-400">{news.reactions}</td>
+                      <td className="px-6 py-4 text-center font-bold text-orange-500">{news.saves}</td>
+                      <td className="px-6 py-4 text-center font-bold text-blue-500">{news.reactions}</td>
                       <td className="px-6 py-4">
-                        <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-hover h-2 rounded-full overflow-hidden">
                           <div 
                             className="bg-blue-500 h-full rounded-full" 
                             style={{ width: `${Math.min(100, (Number(news.totalInteractions) / (Number(totalReactions) + Number(totalSaves) || 1)) * 100)}%` }}
@@ -475,7 +486,7 @@ export default function AdminAnalytics() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-[2rem] p-8 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] p-8 shadow-2xl overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
               
@@ -485,19 +496,19 @@ export default function AdminAnalytics() {
                 </div>
                 <button 
                   onClick={() => setActiveModal(null)}
-                  className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-500 hover:text-white"
+                  className="p-2 hover:bg-hover rounded-xl transition-colors text-muted hover:text-title"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <h2 className="text-2xl font-bold mb-2">Új kampány létrehozása</h2>
-              <p className="text-gray-400 text-sm mb-8">Állíts be kedvezményeket egy meghatározott időszakra.</p>
+              <h2 className="text-2xl font-bold mb-2 text-title">Új kampány létrehozása</h2>
+              <p className="text-muted text-sm mb-8">Állíts be kedvezményeket egy meghatározott időszakra.</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="space-y-6">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kampány neve</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Kampány neve</label>
                     <input 
                       type="text" 
                       value={campaignForm.name}
@@ -505,35 +516,35 @@ export default function AdminAnalytics() {
                       onFocus={(e) => e.target.select()}
                       onClick={(e) => e.currentTarget.select()}
                       placeholder="Pl. Nyári Akció"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Típus</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Típus</label>
                     <div className="relative">
                       <select 
                         value={campaignForm.type}
                         onChange={(e) => setCampaignForm({...campaignForm, type: e.target.value as any})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors text-title"
                       >
                         <option value="all">Teljes oldal</option>
                         <option value="course">Egyes tananyag</option>
                         <option value="premium">Prémium tagság</option>
                       </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                         <Plus className="w-4 h-4 rotate-45" />
                       </div>
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Leírás</label>
+                    <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Leírás</label>
                     <textarea 
                       value={campaignForm.description}
                       onChange={(e) => setCampaignForm({...campaignForm, description: e.target.value})}
                       onFocus={(e) => e.target.select()}
                       onClick={(e) => e.currentTarget.select()}
                       placeholder="Rövid leírás a kampányról..."
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none"
+                      className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors h-24 resize-none text-title placeholder:text-muted"
                     />
                   </div>
                 </div>
@@ -541,23 +552,23 @@ export default function AdminAnalytics() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-[1.4fr_0.6fr] gap-4">
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kedvezmény típusa</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Kedvezmény típusa</label>
                       <div className="relative">
                         <select 
                           value={campaignForm.discountType}
                           onChange={(e) => setCampaignForm({...campaignForm, discountType: e.target.value as any})}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors"
+                          className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 appearance-none transition-colors text-title"
                         >
                           <option value="percentage">Százalék (%)</option>
                           <option value="fixed">Fix összeg (Ft)</option>
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
                           <Plus className="w-4 h-4 rotate-45" />
                         </div>
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Érték</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Érték</label>
                       <input 
                         type="text" 
                         inputMode="numeric"
@@ -569,27 +580,27 @@ export default function AdminAnalytics() {
                         onFocus={(e) => e.target.select()}
                         onClick={(e) => e.currentTarget.select()}
                         placeholder="0"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Kezdés</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Kezdés</label>
                       <input 
                         type="date" 
                         value={campaignForm.startDate}
                         onChange={(e) => setCampaignForm({...campaignForm, startDate: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Vége</label>
+                      <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Vége</label>
                       <input 
                         type="date" 
                         value={campaignForm.endDate}
                         onChange={(e) => setCampaignForm({...campaignForm, endDate: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
+                        className="w-full bg-hover border border-main rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-title"
                       />
                     </div>
                   </div>
@@ -599,7 +610,7 @@ export default function AdminAnalytics() {
               <div className="flex gap-3">
                 <button 
                   onClick={() => setActiveModal(null)}
-                  className="flex-1 bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                  className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>
@@ -635,20 +646,20 @@ export default function AdminAnalytics() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
-              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
-                <h2 className="text-2xl font-bold flex items-center gap-3">
+              <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
+                <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
                   <Plus className="text-blue-500" /> Új Poszt Létrehozása
                 </h2>
-                <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
               <div className="p-8 space-y-6 max-h-[70vh] overflow-auto custom-scrollbar">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <Type className="w-4 h-4" /> Cím
                   </label>
                   <input 
@@ -658,19 +669,19 @@ export default function AdminAnalytics() {
                     onFocus={(e) => e.target.select()}
                     onClick={(e) => e.currentTarget.select()}
                     placeholder="A bejegyzés címe..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors text-title placeholder:text-muted"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                       <LayoutDashboard className="w-4 h-4" /> Típus
                     </label>
                     <select 
                       value={postForm.type}
                       onChange={(e) => setPostForm({ ...postForm, type: e.target.value as any })}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                      className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-title"
                     >
                       <option value="Generatív AI">Generatív AI</option>
                       <option value="Üzleti Automatizáció">Üzleti Automatizáció</option>
@@ -679,7 +690,7 @@ export default function AdminAnalytics() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                       <Eye className="w-4 h-4" /> Státusz
                     </label>
                     <div className="flex items-center gap-4 h-[58px]">
@@ -688,7 +699,7 @@ export default function AdminAnalytics() {
                         className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
                           postForm.status === 'active' 
                             ? 'bg-green-500/10 border-green-500/50 text-green-400' 
-                            : 'bg-white/5 border-white/10 text-gray-500'
+                            : 'bg-hover border-main text-muted'
                         }`}
                       >
                         <Eye className="w-4 h-4" /> Aktív
@@ -698,7 +709,7 @@ export default function AdminAnalytics() {
                         className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
                           postForm.status === 'inactive' 
                             ? 'bg-red-500/10 border-red-500/50 text-red-400' 
-                            : 'bg-white/5 border-white/10 text-gray-500'
+                            : 'bg-hover border-main text-muted'
                         }`}
                       >
                         <EyeOff className="w-4 h-4" /> Inaktív
@@ -708,7 +719,7 @@ export default function AdminAnalytics() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <ImageIcon className="w-4 h-4" /> Kép feltöltése
                   </label>
                   <div className="relative group/upload">
@@ -727,13 +738,13 @@ export default function AdminAnalytics() {
                       }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
-                    <div className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 flex items-center gap-3 group-hover/upload:border-blue-500/50 transition-colors overflow-hidden">
+                    <div className="w-full bg-hover border border-main rounded-2xl px-5 py-4 flex items-center gap-3 group-hover/upload:border-blue-500/50 transition-colors overflow-hidden">
                       {postForm.imageUrl ? (
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 shrink-0">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-hover shrink-0">
                             <img src={postForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                           </div>
-                          <span className="text-sm text-gray-400 truncate flex-1">Kép kiválasztva</span>
+                          <span className="text-sm text-muted truncate flex-1">Kép kiválasztva</span>
                           <button 
                             onClick={(e) => {
                               e.stopPropagation();
@@ -746,8 +757,8 @@ export default function AdminAnalytics() {
                         </div>
                       ) : (
                         <>
-                          <Plus className="w-5 h-5 text-gray-500" />
-                          <span className="text-sm text-gray-500">Kattints a feltöltéshez</span>
+                          <Plus className="w-5 h-5 text-muted" />
+                          <span className="text-sm text-muted">Kattints a feltöltéshez</span>
                         </>
                       )}
                     </div>
@@ -755,17 +766,17 @@ export default function AdminAnalytics() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
                     <FileText className="w-4 h-4" /> Tartalom
                   </label>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-                    <div className="flex items-center gap-1 p-2 border-b border-white/10 bg-white/5 flex-wrap">
-                      <button onClick={() => insertText('# ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Heading1 className="w-4 h-4" /></button>
-                      <button onClick={() => insertText('## ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Heading2 className="w-4 h-4" /></button>
-                      <button onClick={() => insertText('**', '**')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Bold className="w-4 h-4" /></button>
-                      <button onClick={() => insertText('*', '*')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Italic className="w-4 h-4" /></button>
-                      <button onClick={() => insertText('- ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><List className="w-4 h-4" /></button>
-                      <button onClick={() => insertText('> ', '')} className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-colors"><Quote className="w-4 h-4" /></button>
+                  <div className="bg-hover border border-main rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-1 p-2 border-b border-main bg-hover flex-wrap">
+                      <button onClick={() => insertText('# ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors"><Heading1 className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('## ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors"><Heading2 className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('**', '**')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors"><Bold className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('*', '*')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors"><Italic className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('- ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors"><List className="w-4 h-4" /></button>
+                      <button onClick={() => insertText('> ', '')} className="p-2 hover:bg-hover rounded-lg text-muted transition-colors"><Quote className="w-4 h-4" /></button>
                       <EmojiPickerButton onEmojiSelect={(emoji) => insertText(emoji, '')} />
                     </div>
                     <textarea 
@@ -775,7 +786,7 @@ export default function AdminAnalytics() {
                       onFocus={(e) => e.target.select()}
                       onClick={(e) => e.currentTarget.select()}
                       placeholder="Írd ide a bejegyzés tartalmát..."
-                      className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[200px] resize-none text-gray-300 leading-relaxed font-mono text-sm"
+                      className="w-full bg-transparent px-5 py-4 focus:outline-none min-h-[200px] resize-none text-body leading-relaxed font-mono text-sm"
                     />
                   </div>
                 </div>
@@ -797,7 +808,7 @@ export default function AdminAnalytics() {
                   </button>
                   <button 
                     onClick={() => setActiveModal(null)}
-                    className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-2xl font-bold transition-all"
+                    className="px-8 bg-hover hover:bg-hover/80 border border-main text-title py-4 rounded-2xl font-bold transition-all"
                   >
                     Mégse
                   </button>

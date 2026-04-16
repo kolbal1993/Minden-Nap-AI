@@ -11,8 +11,6 @@ import {
   ArrowLeft, 
   Sparkles, 
   Book, 
-  Cpu, 
-  Zap, 
   Brain, 
   Terminal,
   MessageSquare,
@@ -159,7 +157,7 @@ export default function AIDictionaryPage() {
                   onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
                   onClick={(e) => e.currentTarget.select()}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full bg-card border border-main rounded-3xl pl-16 pr-6 py-5 focus:outline-none focus:border-blue-500 transition-all text-lg shadow-xl text-title placeholder:text-muted"
+                  className="w-full bg-card border-none rounded-3xl pl-16 pr-6 py-5 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-lg shadow-xl text-title placeholder:text-muted"
                 />
               </div>
               <button 
@@ -187,7 +185,7 @@ export default function AIDictionaryPage() {
                 <button
                   key={s.term}
                   onClick={() => handleSearch(s.term)}
-                  className="px-4 py-2 rounded-xl bg-surface border border-main hover:border-blue-500/50 hover:bg-blue-600/5 text-sm text-body hover:text-blue-600 transition-all flex flex-col items-start gap-1 shadow-sm"
+                  className="px-4 py-2 rounded-xl bg-surface border-none hover:bg-blue-600/5 text-sm text-body hover:text-blue-600 transition-all flex flex-col items-start gap-1 shadow-md hover:shadow-lg"
                 >
                   <span className="font-bold text-title">{s.term}</span>
                   <span className="text-[10px] opacity-80">{s.description}</span>
@@ -204,7 +202,7 @@ export default function AIDictionaryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-card border border-main rounded-[2.5rem] p-12 text-center shadow-xl"
+                className="bg-card border-none rounded-[2.5rem] p-12 text-center shadow-2xl"
               >
                 <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse">
                   <Brain className="w-10 h-10 text-blue-500" />
@@ -298,7 +296,7 @@ export default function AIDictionaryPage() {
                   <button
                     key={i}
                     onClick={() => handleSearch(h.term)}
-                    className="p-6 rounded-3xl bg-card border border-main hover:border-blue-500/30 transition-all text-left group shadow-lg"
+                    className="p-6 rounded-3xl bg-card border-none transition-all text-left group shadow-lg hover:shadow-2xl"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-title group-hover:text-blue-600 transition-colors">{h.term}</span>

@@ -2,30 +2,24 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageSquare, 
-  Heart, 
   Share2, 
   Image as ImageIcon, 
   Send, 
   Plus, 
   Search, 
-  Filter,
-  User,
-  HelpCircle,
-  CheckCircle2,
-  Rocket,
-  X,
-  Camera,
-  File,
-  Paperclip,
-  Reply,
-  ExternalLink,
-  Download,
-  MoreVertical,
-  Smile,
-  ShieldCheck,
-  Hash,
-  ListRestart,
-  Loader2,
+  User, 
+  HelpCircle, 
+  CheckCircle2, 
+  Rocket, 
+  X, 
+  File, 
+  Paperclip, 
+  Reply, 
+  Download, 
+  MoreVertical, 
+  Hash, 
+  ListRestart, 
+  Loader2, 
   FileText
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -255,7 +249,11 @@ export default function CommunityPage() {
     
     const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) {
-      setCurrentUser(JSON.parse(savedProfile));
+      try {
+        setCurrentUser(JSON.parse(savedProfile));
+      } catch (e) {
+        console.error("Error parsing user profile", e);
+      }
     }
 
     const savedPosts = localStorage.getItem('community_posts');
@@ -263,18 +261,20 @@ export default function CommunityPage() {
     if (savedPosts) {
       try {
         const parsedPosts = JSON.parse(savedPosts);
-        initialPosts = parsedPosts.map((post: any) => ({
-          ...post,
-          reactions: post.reactions || {},
-          comments: (post.comments || []).map((comment: any) => ({
-            ...comment,
-            reactions: comment.reactions || {},
-            replies: (comment.replies || []).map((reply: any) => ({
-              ...reply,
-              reactions: reply.reactions || {}
+        if (Array.isArray(parsedPosts)) {
+          initialPosts = parsedPosts.map((post: any) => ({
+            ...post,
+            reactions: post.reactions || {},
+            comments: (post.comments || []).map((comment: any) => ({
+              ...comment,
+              reactions: comment.reactions || {},
+              replies: (comment.replies || []).map((reply: any) => ({
+                ...reply,
+                reactions: reply.reactions || {}
+              }))
             }))
-          }))
-        }));
+          }));
+        }
       } catch (e) {
         console.error("Error parsing community posts", e);
       }
@@ -1233,7 +1233,7 @@ export default function CommunityPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   onClick={() => setSelectedPost(post)}
-                  className="bg-white dark:bg-[#0f0f0f] border border-black/[0.05] dark:border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 dark:hover:border-white/10 transition-all cursor-pointer group shadow-sm hover:shadow-xl dark:shadow-2xl"
+                  className="bg-white dark:bg-[#0f0f0f] border-none rounded-3xl overflow-hidden transition-all cursor-pointer group shadow-lg hover:shadow-2xl"
                 >
                   <div className="p-6 md:p-8">
                     {/* Post Header */}

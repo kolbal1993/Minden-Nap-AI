@@ -10,7 +10,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { 
-  Cpu, 
   User, 
   Mail, 
   Building2, 
@@ -18,9 +17,7 @@ import {
   FileText, 
   Camera, 
   Save, 
-  ChevronLeft,
   CheckCircle2,
-  AlertCircle,
   Bookmark,
   ArrowRight,
   Clock,
@@ -30,9 +27,7 @@ import {
   Edit3,
   X,
   PlayCircle,
-  BookOpen,
-  ShieldCheck,
-  ShieldAlert
+  BookOpen
 } from 'lucide-react';
 import { 
   auth, 
@@ -239,7 +234,7 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-card border border-main rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-xl transition-colors duration-300"
+              className="bg-card border-none rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-2xl transition-colors duration-300"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px] -z-10" />
               
