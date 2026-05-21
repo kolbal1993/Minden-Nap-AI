@@ -22,8 +22,9 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { GoogleGenAI } from "@google/genai";
 import Markdown from 'react-markdown';
+
+const API_URL = 'https://dashboard.mindennapai.eu/api/ai-dictionary';
 
 const SUGGESTIONS = [
   { term: 'LLM', description: 'Large Language Model' },
@@ -68,17 +69,13 @@ export default function AIDictionaryPage() {
     setSearchTerm(term);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Te egy AI szakértő vagy. Magyarázd el röviden, közérthetően, de szakmailag pontosan a következő AI szakzsargont vagy fogalmat magyarul: "${term}". 
-        Használj Markdown formázást. A magyarázat legyen strukturált, tartalmazzon egy rövid definíciót, egy példát a használatára, és hogy miért fontos az AI világában.`,
-        config: {
-          systemInstruction: "Te a Minden Nap AI platform szakértője vagy. Segíts a felhasználóknak megérteni az AI szakzsargont."
-        }
+      const response = await fetch(`${API_URL}/search`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ term: term.trim() }),
       });
-
-      const explanation = response.text || "Sajnos nem sikerült magyarázatot generálni.";
+      const data = await response.json();
+      const explanation = data.explanation || "Sajnos nem sikerült magyarázatot generálni.";
       setResult(explanation);
       saveToHistory(term, explanation);
       
@@ -154,8 +151,6 @@ export default function AIDictionaryPage() {
                   placeholder="Pl. LLM, RAG, Fine-tuning..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onFocus={(e) => { setSearchTerm(''); e.target.select(); }}
-                  onClick={(e) => e.currentTarget.select()}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   className="w-full bg-card border-none rounded-3xl pl-16 pr-6 py-5 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-lg shadow-xl text-title placeholder:text-muted"
                 />
