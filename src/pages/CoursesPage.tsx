@@ -136,7 +136,7 @@ export default function CoursesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mb-12 p-8 rounded-[2.5rem] bg-gradient-to-r from-orange-600/20 via-orange-500/10 to-transparent border border-orange-500/20 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group"
+              className="mb-12 p-8 rounded-2xl bg-gradient-to-r from-orange-600/20 via-orange-500/10 to-transparent border border-orange-500/20 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 blur-[100px] -translate-y-1/2 translate-x-1/2" />
               <div className="flex items-center gap-6 relative z-10">
@@ -184,7 +184,7 @@ export default function CoursesPage() {
                 </div>
               );
 
-              const className = `p-8 rounded-[2.5rem] border transition-all relative overflow-hidden group flex flex-col h-full ${
+              const className = `p-8 rounded-2xl border transition-all relative overflow-hidden group flex flex-col h-full ${
                 selectedCategory === module.id 
                   ? 'bg-gradient-to-br border-blue-500/50 ring-2 ring-blue-500/10' 
                   : 'bg-card border-none shadow-lg hover:shadow-2xl transition-all duration-300'
@@ -289,7 +289,7 @@ export default function CoursesPage() {
                       >
                         <Link 
                           to={`/tudastar/${course.id}`}
-                          className="flex flex-col bg-card border-none rounded-[2.5rem] overflow-hidden transition-all shadow-lg hover:shadow-2xl h-full group"
+                          className="flex flex-col bg-card border-none rounded-2xl overflow-hidden transition-all shadow-lg hover:shadow-2xl h-full group"
                         >
                           <div className="relative aspect-[16/10] overflow-hidden">
                             <img 

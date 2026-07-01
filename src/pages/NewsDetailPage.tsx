@@ -265,7 +265,7 @@ export default function NewsDetailPage() {
 
   if (!news) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-main)] text-gray-100 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">A hír nem található</h1>
           <Link to="/news" className="text-blue-500 hover:underline">Vissza a hírekhez</Link>
@@ -350,7 +350,7 @@ export default function NewsDetailPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="rounded-[3rem] overflow-hidden mb-16 shadow-2xl border border-white/5"
+            className="rounded-2xl overflow-hidden mb-16 shadow-2xl border border-white/5"
           >
             <img 
               src={news.imageUrl} 
@@ -398,7 +398,7 @@ export default function NewsDetailPage() {
 
           {/* Comment Section */}
           <div className="space-y-12">
-            <div className="bg-white dark:bg-[#0f0f0f] border border-black/[0.05] dark:border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-sm hover:shadow-xl dark:shadow-2xl transition-colors duration-300">
+            <div className="bg-white dark:bg-[var(--bg-card)] border border-black/[0.05] dark:border-white/5 rounded-2xl p-8 md:p-10 shadow-sm hover:shadow-xl dark:shadow-2xl transition-colors duration-300">
               <h3 className="text-xl font-bold mb-8 text-gray-900 dark:text-white">
                 {replyingTo ? `Válasz neki: ${replyingTo.author}` : 'Szólj hozzá a hírhez'}
               </h3>
@@ -496,7 +496,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`bg-white dark:bg-[#0f0f0f] border rounded-3xl p-6 flex gap-4 transition-all shadow-sm hover:shadow-xl dark:shadow-2xl ${comment.isPremium ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-transparent' : 'border-black/[0.05] dark:border-white/5'}`}
+        className={`bg-white dark:bg-[var(--bg-card)] border rounded-3xl p-6 flex gap-4 transition-all shadow-sm hover:shadow-xl dark:shadow-2xl ${comment.isPremium ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/5 to-transparent' : 'border-black/[0.05] dark:border-white/5'}`}
       >
         <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-black/10 dark:border-white/10 hover:border-blue-500 transition-colors relative">
           <img src={comment.userAvatar} alt="" className="w-full h-full object-cover" />

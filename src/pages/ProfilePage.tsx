@@ -234,7 +234,7 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-card border-none rounded-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-2xl transition-colors duration-300"
+              className="bg-card border-none rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 shadow-2xl transition-colors duration-300"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px] -z-10" />
               
@@ -347,7 +347,7 @@ export default function ProfilePage() {
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  className="relative w-full max-w-2xl bg-[#0d0d0d] border border-white/10 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                  className="relative w-full max-w-2xl bg-[var(--bg-card)] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
                 >
                   <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                     <h2 className="text-2xl font-bold tracking-tight">Profil szerkesztése</h2>
@@ -519,7 +519,7 @@ export default function ProfilePage() {
                   >
                     <motion.div
                       layout
-                      className="group bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all flex flex-col sm:flex-row shadow-xl h-full"
+                      className="group bg-[var(--bg-card)] border border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all flex flex-col sm:flex-row shadow-xl h-full"
                     >
                       <div className="w-full sm:w-48 h-48 sm:h-auto overflow-hidden shrink-0">
                         <img 
@@ -566,7 +566,7 @@ export default function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-12 text-center">
+              <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-12 text-center">
                 <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                   <PlayCircle className="text-gray-600 w-8 h-8" />
                 </div>
@@ -602,7 +602,7 @@ export default function ProfilePage() {
                   >
                     <motion.div
                       layout
-                      className="group bg-[#0d0d0d] border border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all flex flex-col sm:flex-row shadow-xl h-full"
+                      className="group bg-[var(--bg-card)] border border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all flex flex-col sm:flex-row shadow-xl h-full"
                     >
                       <div className="w-full sm:w-48 h-48 sm:h-auto overflow-hidden shrink-0">
                         <img 
@@ -626,7 +626,7 @@ export default function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-12 text-center">
+              <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-12 text-center">
                 <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Bookmark className="text-gray-600 w-8 h-8" />
                 </div>

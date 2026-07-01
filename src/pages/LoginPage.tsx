@@ -167,7 +167,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden border-none">
+        <div className="bg-card rounded-2xl p-8 md:p-10 shadow-2xl relative overflow-hidden border-none">
           <AnimatePresence mode="wait">
             {!show2FA ? (
               <motion.div

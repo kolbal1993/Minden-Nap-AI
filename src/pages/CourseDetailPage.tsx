@@ -160,7 +160,7 @@ export default function CourseDetailPage() {
                   {course.curriculum?.map((item, index) => {
                     const isLocked = course.accessType === 'premium' && !isPremium;
                     return (
-                      <div key={item.title} className={`flex items-center justify-between p-6 rounded-2xl bg-white dark:bg-[#0f0f0f] border border-black/[0.05] dark:border-white/5 transition-all group shadow-sm dark:shadow-none ${isLocked ? 'opacity-50 grayscale' : 'hover:border-blue-500/30'}`}>
+                      <div key={item.title} className={`flex items-center justify-between p-6 rounded-2xl bg-white dark:bg-[var(--bg-card)] border border-black/[0.05] dark:border-white/5 transition-all group shadow-sm dark:shadow-none ${isLocked ? 'opacity-50 grayscale' : 'hover:border-blue-500/30'}`}>
                         <div className="flex items-center gap-6">
                           <div className="text-gray-400 dark:text-gray-600 font-bold text-lg">{String(index + 1).padStart(2, '0')}</div>
                           <div className="flex items-center gap-4">
@@ -206,7 +206,7 @@ export default function CourseDetailPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-white dark:bg-[#0f0f0f] border border-black/[0.08] dark:border-white/10 rounded-[3rem] p-8 md:p-10 shadow-xl dark:shadow-3xl overflow-hidden relative"
+                  className="bg-white dark:bg-[var(--bg-card)] border border-black/[0.08] dark:border-white/10 rounded-2xl p-8 md:p-10 shadow-xl dark:shadow-2xl overflow-hidden relative"
                 >
                   {/* Image Preview */}
                   <div className="relative aspect-video rounded-2xl overflow-hidden mb-10 group">
@@ -269,7 +269,7 @@ export default function CourseDetailPage() {
                 </motion.div>
 
                 {/* Promo Card */}
-                <div className="mt-8 p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-black/10 dark:border-white/10 text-center shadow-lg dark:shadow-none">
+                <div className="mt-8 p-8 rounded-xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-black/10 dark:border-white/10 text-center shadow-lg dark:shadow-none">
                   <h4 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Csoportos kedvezmény?</h4>
                   <p className="text-gray-600 dark:text-gray-200 text-sm mb-6">Cégeknek és csapatoknak egyedi árajánlatot biztosítunk.</p>
                   <Link to="/contact" className="text-blue-600 dark:text-blue-400 font-bold text-sm hover:underline">Vedd fel velünk a kapcsolatot</Link>

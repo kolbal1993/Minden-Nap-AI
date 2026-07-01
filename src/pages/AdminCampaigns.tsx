@@ -226,7 +226,7 @@ export default function AdminCampaigns() {
                 key={campaign.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-card rounded-[2rem] p-6 relative overflow-hidden group shadow-xl border-none hover:shadow-2xl transition-all"
+                className="bg-card rounded-xl p-6 relative overflow-hidden group shadow-xl border-none hover:shadow-2xl transition-all"
               >
                 {/* Status Badge */}
                 <div className="absolute top-6 right-6">
@@ -316,7 +316,7 @@ export default function AdminCampaigns() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-card border border-main rounded-[2.5rem] p-8 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-card border border-main rounded-2xl p-8 shadow-2xl overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
               
@@ -510,7 +510,7 @@ export default function AdminCampaigns() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl"
+              className="relative w-full max-w-md bg-card border border-main rounded-xl p-8 shadow-2xl"
             >
               <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <Trash2 className="text-red-500 w-8 h-8" />

@@ -198,7 +198,7 @@ export default function ToolsPage() {
                 transition={{ delay: index * 0.05 }}
                 className="group"
               >
-                <div className="bg-card border-none rounded-[2.5rem] p-8 h-full flex flex-col transition-all shadow-lg hover:shadow-2xl relative overflow-hidden">
+                <div className="bg-card border-none rounded-2xl p-8 h-full flex flex-col transition-all shadow-lg hover:shadow-2xl relative overflow-hidden">
                   {/* Background Glow */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/5 blur-[60px] -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
                   

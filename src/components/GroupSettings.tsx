@@ -112,7 +112,7 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
             initial={{ opacity: 0, scale: 0.95, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.95, x: 20 }}
-            className="relative w-full max-w-md bg-white dark:bg-[#0d0d0d] border border-black/10 dark:border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+            className="relative w-full max-w-md bg-white dark:bg-[var(--bg-card)] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
           >
             <div className="p-8 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
               <div>
@@ -205,7 +205,7 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
 
             {isProcessing && (
               <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-[#1a1a1a] p-6 rounded-3xl border border-black/10 dark:border-white/10 flex flex-col items-center gap-4 shadow-2xl">
+                <div className="bg-white dark:bg-[var(--bg-surface)] p-6 rounded-3xl border border-black/10 dark:border-white/10 flex flex-col items-center gap-4 shadow-2xl">
                   <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-500 animate-spin" />
                   <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Kulcsok frissítése...</p>
                 </div>

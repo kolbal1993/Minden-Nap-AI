@@ -859,7 +859,7 @@ export default function CommunityPage() {
   );
 
   const renderCommentsSection = (post: Post) => (
-    <div className={`flex flex-col bg-gray-50 dark:bg-[#0a0a0a] ${modalViewMode === 'side' ? 'w-full md:w-[400px]' : 'w-full'}`}>
+    <div className={`flex flex-col bg-gray-50 dark:bg-[var(--bg-main)] ${modalViewMode === 'side' ? 'w-full md:w-[400px]' : 'w-full'}`}>
       <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between">
         <h3 className="font-bold flex items-center gap-2 text-gray-900 dark:text-white">
           <MessageSquare className="w-5 h-5 text-blue-500" />
@@ -916,7 +916,7 @@ export default function CommunityPage() {
       </div>
 
       {/* Comment Input */}
-      <div className="p-6 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#0d0d0d]">
+      <div className="p-6 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[var(--bg-card)]">
         {replyingTo && (
           <div className="mb-3 flex items-center justify-between bg-blue-600/10 px-3 py-2 rounded-lg border border-blue-500/20">
             <span className="text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-2">
@@ -1093,7 +1093,7 @@ export default function CommunityPage() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white dark:bg-[#0f0f0f] border border-black/10 dark:border-white/10 rounded-3xl p-8 shadow-xl dark:shadow-2xl transition-colors duration-300"
+                className="bg-white dark:bg-[var(--bg-card)] border border-black/10 dark:border-white/10 rounded-3xl p-8 shadow-xl dark:shadow-2xl transition-colors duration-300"
               >
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">Új bejegyzés létrehozása</h2>
@@ -1233,7 +1233,7 @@ export default function CommunityPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   onClick={() => setSelectedPost(post)}
-                  className="bg-white dark:bg-[#0f0f0f] border-none rounded-3xl overflow-hidden transition-all cursor-pointer group shadow-lg hover:shadow-2xl"
+                  className="bg-white dark:bg-[var(--bg-card)] border-none rounded-3xl overflow-hidden transition-all cursor-pointer group shadow-lg hover:shadow-2xl"
                 >
                   <div className="p-6 md:p-8">
                     {/* Post Header */}
@@ -1353,7 +1353,7 @@ export default function CommunityPage() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className={`relative w-full max-w-5xl h-full max-h-[90vh] bg-white dark:bg-[#0f0f0f] border border-black/10 dark:border-white/10 rounded-[2rem] flex ${modalViewMode === 'side' ? 'flex-col md:flex-row overflow-hidden' : 'flex-col overflow-y-auto custom-scrollbar'} transition-colors duration-300`}
+              className={`relative w-full max-w-5xl h-full max-h-[90vh] bg-white dark:bg-[var(--bg-card)] border border-black/10 dark:border-white/10 rounded-xl flex ${modalViewMode === 'side' ? 'flex-col md:flex-row overflow-hidden' : 'flex-col overflow-y-auto custom-scrollbar'} transition-colors duration-300`}
             >
               <div className="absolute top-6 right-6 z-10 flex gap-2">
                 <button 

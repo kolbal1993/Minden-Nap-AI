@@ -50,7 +50,7 @@ export default function PrivacyPage() {
 
           {/* Content */}
           <div className="space-y-12 text-gray-700 dark:text-gray-100 leading-relaxed">
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Info className="text-blue-500 w-6 h-6" /> 1. Bevezetés
               </h2>
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Database className="text-blue-500 w-6 h-6" /> 2. Gyűjtött adatok köre
               </h2>
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
               </div>
             </section>
 
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Lock className="text-blue-500 w-6 h-6" /> 3. Az adatkezelés célja
               </h2>
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                 <Shield className="text-blue-500 w-6 h-6" /> 4. Az Ön jogai
               </h2>
@@ -131,7 +131,7 @@ export default function PrivacyPage() {
               </div>
             </section>
 
-            <div className="p-8 rounded-[2rem] bg-blue-600/5 border border-blue-500/10 text-center">
+            <div className="p-8 rounded-xl bg-blue-600/5 border border-blue-500/10 text-center">
               <p className="text-gray-700 dark:text-gray-100 text-sm italic">
                 Adatvédelmi kérdésekben írjon nekünk az <a href="mailto:privacy@mindennapai.hu" className="text-blue-400 font-bold hover:underline">privacy@mindennapai.hu</a> címen.
               </p>

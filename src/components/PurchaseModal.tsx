@@ -49,7 +49,7 @@ export default function PurchaseModal({ isOpen, onClose, courseTitle, coursePric
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-4xl bg-[#0d0d0d] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row"
+            className="relative w-full max-w-4xl bg-[var(--bg-card)] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row"
           >
             {/* Left Side: Premium Subscription */}
             <div className="flex-1 p-8 md:p-12 border-b md:border-b-0 md:border-r border-white/5 bg-gradient-to-br from-orange-600/5 to-transparent">

@@ -50,7 +50,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.9 }}
-              className="pointer-events-auto min-w-[300px] max-w-md bg-[#1a1a1a] border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-4"
+              className="pointer-events-auto min-w-[300px] max-w-md bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-4"
             >
               <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
                 toast.type === 'success' ? 'bg-green-500/10 text-green-500' :

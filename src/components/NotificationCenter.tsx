@@ -104,7 +104,7 @@ export default function NotificationCenter() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 mt-4 w-80 md:w-96 bg-white dark:bg-[#0a0a0a] border border-black/10 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden z-[100]"
+            className="absolute right-0 mt-4 w-80 md:w-96 bg-white dark:bg-[var(--bg-main)] border border-black/10 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden z-[100]"
           >
             <div className="p-4 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-black/[0.02] dark:bg-white/5">
               <h3 className="font-bold text-sm text-gray-900 dark:text-white">Értesítések</h3>

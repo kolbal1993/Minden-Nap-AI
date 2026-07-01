@@ -50,7 +50,7 @@ export default function TermsPage() {
 
           {/* Content */}
           <div className="space-y-12 text-gray-700 dark:text-gray-100 leading-relaxed">
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <FileText className="text-blue-500 w-6 h-6" /> 1. Általános rendelkezések
               </h2>
@@ -62,7 +62,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <ShieldCheck className="text-blue-500 w-6 h-6" /> 2. Szolgáltatások köre
               </h2>
@@ -82,7 +82,7 @@ export default function TermsPage() {
               </ul>
             </section>
 
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <Lock className="text-blue-500 w-6 h-6" /> 3. Regisztráció és adatvédelem
               </h2>
@@ -94,7 +94,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section className="bg-white dark:bg-[#0d0d0d] border border-black/5 dark:border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+            <section className="bg-white dark:bg-[var(--bg-card)] border border-black/5 dark:border-white/5 rounded-2xl p-8 md:p-12 shadow-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                 <AlertCircle className="text-blue-500 w-6 h-6" /> 4. Felelősségkorlátozás
               </h2>
@@ -106,7 +106,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <div className="p-8 rounded-[2rem] bg-blue-600/5 border border-blue-500/10 text-center">
+            <div className="p-8 rounded-xl bg-blue-600/5 border border-blue-500/10 text-center">
               <p className="text-gray-700 dark:text-gray-100 text-sm italic">
                 Kérdés esetén forduljon hozzánk bizalommal az <a href="mailto:info@mindennapai.hu" className="text-blue-400 font-bold hover:underline">info@mindennapai.hu</a> e-mail címen.
               </p>

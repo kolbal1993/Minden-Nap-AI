@@ -8,11 +8,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { 
-  ChevronRight, 
-  Cpu, 
-  BookOpen, 
-  Zap, 
+import { Container, Section, Card, Pill } from '../components/ui';
+import {
+  ChevronRight,
+  Cpu,
+  BookOpen,
+  Zap,
   ArrowRight,
   Newspaper,
   Mail,
@@ -76,38 +77,39 @@ export default function LandingPage() {
       <Navbar transparent />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-40 overflow-hidden">
+      <Section spacing="lg" className="relative pt-32 md:pt-48 overflow-hidden">
         {/* Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full -z-10" />
-        
-        <div className="max-w-7xl mx-auto px-6 text-center">
+
+        <Container size="xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="text-center"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-bold uppercase tracking-widest mb-8">
+            <Pill variant="accent" className="mb-8 uppercase tracking-widest text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" /> Minden Nap AI
-            </div>
+            </Pill>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-8 bg-gradient-to-br from-[var(--text-title)] via-[var(--text-title)] to-blue-100 bg-clip-text text-transparent leading-[1.1] drop-shadow-2xl">
               Az AI érthetően. <br />
               <span className="text-blue-600 dark:text-blue-400 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]">Hírek és tudás</span> <span className="text-[var(--text-title)]">minden nap.</span>
             </h1>
-            <p className="max-w-2xl mx-auto text-desc text-lg md:text-xl mb-12 leading-relaxed">
-              Maradj naprakész a legfrissebb AI hírekkel és sajátítsd el a jövő technológiáját 
+            <p className="max-w-2xl mx-auto text-[var(--text-desc)] text-lg md:text-xl mb-12 leading-relaxed">
+              Maradj naprakész a legfrissebb AI hírekkel és sajátítsd el a jövő technológiáját
               gyakorlatias kurzusaink segítségével.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-              <Link to="/news" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20 group">
+              <Link to="/news" className="w-full sm:w-auto bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-blue-600/20 group">
                 Legfrissebb Hírek <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/tudastar" className="w-full sm:w-auto bg-hover border-none text-title px-10 py-5 rounded-2xl font-bold text-lg transition-all text-center shadow-lg hover:shadow-xl">
+              <Link to="/tudastar" className="w-full sm:w-auto bg-[var(--bg-hover)] text-[var(--text-title)] px-10 py-5 rounded-2xl font-bold text-lg transition-all text-center shadow-lg hover:shadow-xl">
                 Tudástár Böngészése
               </Link>
             </div>
           </motion.div>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
       {/* News Quick View */}
       <section className="py-24 bg-surface border-y border-subtle transition-colors duration-300">
@@ -248,7 +250,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-card border-none p-12 md:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden group"
+            className="bg-card border-none p-12 md:p-20 rounded-2xl shadow-2xl relative overflow-hidden group"
           >
             {/* Background Glow */}
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/10 blur-[80px] rounded-full group-hover:bg-blue-600/20 transition-colors duration-700" />

@@ -76,7 +76,7 @@ export default function Reactions({ reactions, userReaction, onReact, variant = 
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className={`absolute bottom-full mb-2 left-0 z-50 bg-[#1a1a1a] border border-white/10 rounded-2xl p-2 shadow-2xl flex gap-1 backdrop-blur-xl ${
+              className={`absolute bottom-full mb-2 left-0 z-50 bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-2 shadow-2xl flex gap-1 backdrop-blur-xl ${
                 variant === 'news' ? 'mb-4' : ''
               }`}
             >

@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
           <span className="text-2xl font-bold tracking-tighter">Minden Nap AI</span>
         </Link>
 
-        <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
+        <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-8 md:p-10 shadow-2xl">
           {!isSubmitted ? (
             <>
               <h2 className="text-2xl font-bold mb-4">Elfelejtett jelszó?</h2>

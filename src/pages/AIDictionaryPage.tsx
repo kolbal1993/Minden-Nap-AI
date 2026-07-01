@@ -197,7 +197,7 @@ export default function AIDictionaryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="bg-card border-none rounded-[2.5rem] p-12 text-center shadow-2xl"
+                className="bg-card border-none rounded-2xl p-12 text-center shadow-2xl"
               >
                 <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse">
                   <Brain className="w-10 h-10 text-blue-500" />
@@ -211,7 +211,7 @@ export default function AIDictionaryPage() {
                 ref={resultRef}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-card border border-blue-500/20 rounded-[2.5rem] overflow-hidden shadow-xl relative"
+                className="bg-card border border-blue-500/20 rounded-2xl overflow-hidden shadow-xl relative"
               >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600" />
                 

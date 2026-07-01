@@ -836,7 +836,7 @@ export default function MessagesPage() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="w-32 h-32 bg-blue-600/5 rounded-[3rem] flex items-center justify-center mb-10 relative"
+                className="w-32 h-32 bg-blue-600/5 rounded-2xl flex items-center justify-center mb-10 relative"
               >
                 <div className="absolute inset-0 bg-blue-600/10 blur-2xl rounded-full" />
                 <Shield className="w-16 h-16 text-blue-500 relative z-10" />
@@ -882,7 +882,7 @@ export default function MessagesPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-card border border-main rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+              className="relative w-full max-w-md bg-card border border-main rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
             >
               <div className="p-8 border-b border-main flex items-center justify-between bg-hover">
                 <h2 className="text-xl font-bold tracking-tight text-title">Új beszélgetés</h2>

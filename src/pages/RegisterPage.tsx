@@ -117,7 +117,7 @@ export default function RegisterPage() {
           <p className="text-gray-500 text-sm">Csatlakozz a jövő tanulóihoz még ma!</p>
         </div>
 
-        <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
+        <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-8 md:p-10 shadow-2xl">
           <form onSubmit={handleRegister} className="space-y-5">
             {error && (
               <motion.div 

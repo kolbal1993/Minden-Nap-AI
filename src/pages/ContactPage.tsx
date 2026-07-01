@@ -90,7 +90,7 @@ export default function ContactPage() {
               className="space-y-12"
             >
               <div className="grid sm:grid-cols-2 gap-8">
-                <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
+                <div className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
                   <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <Mail className="text-blue-500 w-6 h-6" />
                   </div>
@@ -99,7 +99,7 @@ export default function ContactPage() {
                   <a href={`mailto:${contactInfo.email}`} className="text-blue-400 font-medium hover:underline">{contactInfo.email}</a>
                 </div>
 
-                <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
+                <div className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
                   <div className="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <Phone className="text-purple-500 w-6 h-6" />
                   </div>
@@ -108,7 +108,7 @@ export default function ContactPage() {
                   <a href={`tel:${contactInfo.phone}`} className="text-purple-400 font-medium hover:underline">{contactInfo.phone}</a>
                 </div>
 
-                <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group sm:col-span-2">
+                <div className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group sm:col-span-2">
                   <div className="w-12 h-12 bg-green-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <MapPin className="text-green-500 w-6 h-6" />
                   </div>
@@ -139,7 +139,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative"
+              className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-8 md:p-10 shadow-2xl relative"
             >
               {isSent ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">

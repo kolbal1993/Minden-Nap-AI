@@ -164,7 +164,7 @@ export default function SecuritySettings() {
   }
 
   return (
-    <div className="bg-[#0d0d0d] border border-white/5 rounded-[2.5rem] p-8 shadow-2xl overflow-hidden relative">
+    <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-8 shadow-2xl overflow-hidden relative">
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-[60px] -z-10" />
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -253,7 +253,7 @@ export default function SecuritySettings() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-[#0d0d0d] border border-white/10 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl"
+              className="bg-[var(--bg-card)] border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl"
             >
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Biztonsági mentés</h3>
@@ -303,7 +303,7 @@ export default function SecuritySettings() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-[#0d0d0d] border border-white/10 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl"
+              className="bg-[var(--bg-card)] border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl"
             >
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Kulcs visszaállítása</h3>

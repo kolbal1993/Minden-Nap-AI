@@ -239,7 +239,7 @@ export default function AdminContacts() {
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  className="bg-card border border-main w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl relative z-10"
+                  className="bg-card border border-main w-full max-w-lg rounded-2xl p-10 shadow-2xl relative z-10"
                 >
                   <h2 className="text-2xl font-bold mb-8 text-title">
                     {editingContact ? 'Elérhetőség szerkesztése' : 'Új elérhetőség hozzáadása'}
@@ -321,7 +321,7 @@ export default function AdminContacts() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="relative w-full max-w-md bg-card border border-main rounded-[2rem] p-8 shadow-2xl"
+                  className="relative w-full max-w-md bg-card border border-main rounded-xl p-8 shadow-2xl"
                 >
                   <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                     <Trash2 className="text-red-500 w-8 h-8" />
