@@ -210,7 +210,7 @@ export default function LoginPage() {
                       <label className="text-xs font-bold text-muted uppercase tracking-widest">Jelszó</label>
                       <Link 
                         to="/forgot-password"
-                        className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                        className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
                       >
                         Elfelejtetted?
                       </Link>
@@ -274,7 +274,7 @@ export default function LoginPage() {
                 className="space-y-6"
               >
                 <div className="flex flex-col items-center text-center mb-4">
-                  <div className="w-16 h-16 bg-blue-600/10 text-blue-500 rounded-2xl flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-blue-600/10 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
                     <ShieldCheck className="w-8 h-8" />
                   </div>
                   <h2 className="text-xl font-bold text-title">2FA Hitelesítés</h2>
@@ -341,7 +341,7 @@ export default function LoginPage() {
           <p className="text-muted text-sm">
             Nincs még fiókod? <Link 
               to="/register"
-              className="text-blue-400 font-bold hover:text-blue-300 transition-colors"
+              className="text-blue-600 font-bold hover:text-blue-700 transition-colors"
             >
               Regisztrálj ingyen
             </Link>
@@ -362,7 +362,7 @@ export default function LoginPage() {
         {/* Admin Hint */}
         <div className="mt-12 p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl text-center">
           <p className="text-[10px] text-muted uppercase tracking-[0.2em]">Admin teszt adatok</p>
-          <p className="text-xs text-blue-400/70 mt-1 font-mono">
+          <p className="text-xs text-blue-600/70 mt-1 font-mono">
             <a href="mailto:admin@mindennapai.hu" className="hover:underline">admin@mindennapai.hu</a> / admin123
           </p>
         </div>

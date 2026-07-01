@@ -530,7 +530,7 @@ export default function MessagesPage() {
                 <button 
                   onClick={() => setIsNewChatModalOpen(true)}
                   title="Új chat"
-                  className="w-10 h-10 bg-blue-600/10 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
+                  className="w-10 h-10 bg-blue-600/10 text-blue-600 dark:text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
                 >
                   <Plus className="w-5 h-5" />
                 </button>
@@ -559,7 +559,7 @@ export default function MessagesPage() {
                 <p className="text-body text-sm">Nincsenek még beszélgetéseid.</p>
                 <button 
                   onClick={() => setIsNewChatModalOpen(true)}
-                  className="text-blue-600 dark:text-blue-400 text-sm font-bold mt-2 hover:underline"
+                  className="text-blue-600 dark:text-blue-600 text-sm font-bold mt-2 hover:underline"
                 >
                   Indíts egyet most!
                 </button>
@@ -639,7 +639,7 @@ export default function MessagesPage() {
                   </div>
                   <div>
                     <h2 className="font-bold text-sm text-title">{activeConversation.isGroup ? activeConversation.name : activeConversation.otherUser?.displayName}</h2>
-                    <p className={`text-[10px] uppercase tracking-widest font-bold ${activeConversation.isGroup ? 'text-blue-600 dark:text-blue-400' : 'text-green-500'}`}>
+                    <p className={`text-[10px] uppercase tracking-widest font-bold ${activeConversation.isGroup ? 'text-blue-600 dark:text-blue-600' : 'text-green-500'}`}>
                       {activeConversation.isGroup ? `${activeConversation.participants.length} tag • E2EE` : (activeConversation.otherUser?.status === 'online' ? 'Online' : 'Offline')}
                     </p>
                   </div>
@@ -647,8 +647,8 @@ export default function MessagesPage() {
                 <div className="flex items-center gap-2">
                   {activeConversation.isGroup && (
                     <div className="flex items-center gap-1 mr-2 px-3 py-1.5 bg-blue-600/10 rounded-lg border border-blue-600/20">
-                      <Shield className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Csoportos E2EE</span>
+                      <Shield className="w-3.5 h-3.5 text-blue-600 dark:text-blue-600" />
+                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-600 uppercase tracking-widest">Csoportos E2EE</span>
                     </div>
                   )}
                   <button className="p-2.5 text-muted hover:text-title hover:bg-hover rounded-xl transition-all">
@@ -725,7 +725,7 @@ export default function MessagesPage() {
                         <div className={`flex items-center gap-1.5 px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
                           <span className="text-[9px] text-muted font-medium">{formatTime(msg.timestamp)}</span>
                           {isMe && (
-                            <CheckCheck className="w-3 h-3 text-blue-600 dark:text-blue-500" />
+                            <CheckCheck className="w-3 h-3 text-blue-600 dark:text-blue-600" />
                           )}
                         </div>
                       </div>
@@ -768,8 +768,8 @@ export default function MessagesPage() {
                     className="px-6 py-3 bg-blue-600/5 border-t border-blue-600/10"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{uploadProgress.phase}</span>
-                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">{uploadProgress.percent}%</span>
+                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-600 uppercase tracking-widest">{uploadProgress.phase}</span>
+                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-600">{uploadProgress.percent}%</span>
                     </div>
                     <div className="h-1 bg-hover rounded-full overflow-hidden">
                       <motion.div 
@@ -839,7 +839,7 @@ export default function MessagesPage() {
                 className="w-32 h-32 bg-blue-600/5 rounded-2xl flex items-center justify-center mb-10 relative"
               >
                 <div className="absolute inset-0 bg-blue-600/10 blur-2xl rounded-full" />
-                <Shield className="w-16 h-16 text-blue-500 relative z-10" />
+                <Shield className="w-16 h-16 text-blue-600 relative z-10" />
                 <motion.div 
                   animate={{ rotate: 360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -923,12 +923,12 @@ export default function MessagesPage() {
                         className="w-12 h-12 rounded-full object-cover border border-main"
                       />
                       <div className="flex-1">
-                        <h3 className="font-bold text-sm text-title group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.displayName}</h3>
+                        <h3 className="font-bold text-sm text-title group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors">{user.displayName}</h3>
                         <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
                           {user.status || 'Offline'}
                         </p>
                       </div>
-                      <Plus className="w-5 h-5 text-muted group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors" />
+                      <Plus className="w-5 h-5 text-muted group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors" />
                     </button>
                   ))
                 )}

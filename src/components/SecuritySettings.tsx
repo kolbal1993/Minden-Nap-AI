@@ -158,7 +158,7 @@ export default function SecuritySettings() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
       </div>
     );
   }
@@ -224,7 +224,7 @@ export default function SecuritySettings() {
               onClick={() => setShowBackupModal(true)}
               className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-2xl transition-all group"
             >
-              <Download className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
+              <Download className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
               <div className="text-left">
                 <p className="text-sm font-bold">Biztonsági mentés</p>
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest">Kulcs exportálása</p>
@@ -264,7 +264,7 @@ export default function SecuritySettings() {
               
               <form onSubmit={handleBackup} className="space-y-6">
                 <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-blue-400 shrink-0" />
+                  <AlertTriangle className="w-5 h-5 text-blue-600 shrink-0" />
                   <p className="text-xs text-blue-200/80">
                     Adj meg egy jelszót a kulcs titkosításához. Ezt a jelszót nem tudjuk visszaállítani!
                   </p>

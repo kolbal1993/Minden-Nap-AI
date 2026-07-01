@@ -253,7 +253,7 @@ export default function AdminAnalytics() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="flex items-center gap-4 mb-4 relative z-10">
                 <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center">
-                  <Users className="text-blue-500 w-6 h-6" />
+                  <Users className="text-blue-600 w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-muted text-sm font-bold uppercase tracking-wider">Összes Felhasználó</p>
@@ -309,7 +309,7 @@ export default function AdminAnalytics() {
             <div className="bg-card p-6 rounded-3xl shadow-xl border-none">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center">
-                  <Smile className="text-blue-500 w-6 h-6" />
+                  <Smile className="text-blue-600 w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-muted text-sm font-bold uppercase tracking-wider">Összes Reakció</p>
@@ -346,7 +346,7 @@ export default function AdminAnalytics() {
                   <h3 className="text-3xl font-bold text-title">1,284</h3>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-blue-500 text-sm font-bold">
+              <div className="flex items-center gap-2 text-blue-600 text-sm font-bold">
                 <Eye className="w-4 h-4" /> Valós idejű adat
               </div>
             </div>
@@ -415,7 +415,7 @@ export default function AdminAnalytics() {
 
               <div className="bg-card border border-main rounded-3xl p-8 flex flex-col justify-center shadow-sm">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-4">
-                  <Crown className="text-blue-500 w-6 h-6" />
+                  <Crown className="text-blue-600 w-6 h-6" />
                 </div>
                 <h3 className="text-muted text-sm font-bold uppercase tracking-widest mb-2">Megtartási Arány</h3>
                 <div className="text-4xl font-bold text-title mb-2">82%</div>
@@ -453,7 +453,7 @@ export default function AdminAnalytics() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center font-bold text-orange-500">{news.saves}</td>
-                      <td className="px-6 py-4 text-center font-bold text-blue-500">{news.reactions}</td>
+                      <td className="px-6 py-4 text-center font-bold text-blue-600">{news.reactions}</td>
                       <td className="px-6 py-4">
                         <div className="w-full bg-hover h-2 rounded-full overflow-hidden">
                           <div 
@@ -492,7 +492,7 @@ export default function AdminAnalytics() {
               
               <div className="flex justify-between items-start mb-6">
                 <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center">
-                  <Megaphone className="text-blue-500 w-6 h-6" />
+                  <Megaphone className="text-blue-600 w-6 h-6" />
                 </div>
                 <button 
                   onClick={() => setActiveModal(null)}
@@ -650,7 +650,7 @@ export default function AdminAnalytics() {
             >
               <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
-                  <Plus className="text-blue-500" /> Új Poszt Létrehozása
+                  <Plus className="text-blue-600" /> Új Poszt Létrehozása
                 </h2>
                 <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />
@@ -835,7 +835,7 @@ export default function AdminAnalytics() {
             >
               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[#151515]">
                 <h2 className="text-2xl font-bold flex items-center gap-3">
-                  <Plus className="text-blue-500" /> Új Kurzus Létrehozása
+                  <Plus className="text-blue-600" /> Új Kurzus Létrehozása
                 </h2>
                 <button onClick={() => setActiveModal(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
                   <X className="w-6 h-6" />

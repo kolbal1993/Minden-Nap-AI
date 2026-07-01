@@ -93,7 +93,7 @@ export default function LandingPage() {
             </Pill>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-8 bg-gradient-to-br from-[var(--text-title)] via-[var(--text-title)] to-blue-100 bg-clip-text text-transparent leading-[1.1] drop-shadow-2xl">
               Az AI érthetően. <br />
-              <span className="text-blue-600 dark:text-blue-400 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]">Hírek és tudás</span> <span className="text-[var(--text-title)]">minden nap.</span>
+              <span className="text-blue-600 dark:text-blue-600 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]">Hírek és tudás</span> <span className="text-[var(--text-title)]">minden nap.</span>
             </h1>
             <p className="max-w-2xl mx-auto text-[var(--text-desc)] text-lg md:text-xl mb-12 leading-relaxed">
               Maradj naprakész a legfrissebb AI hírekkel és sajátítsd el a jövő technológiáját
@@ -117,11 +117,11 @@ export default function LandingPage() {
           <div className="flex items-end justify-between mb-16">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4 flex items-center gap-3 text-title">
-                <Newspaper className="text-blue-500 w-8 h-8" /> Friss Hírek
+                <Newspaper className="text-blue-600 w-8 h-8" /> Friss Hírek
               </h2>
               <p className="text-body">A legfontosabb események az AI világából.</p>
             </div>
-            <Link to="/news" className="hidden md:flex items-center gap-2 text-blue-600 font-bold hover:text-blue-500 transition-colors group">
+            <Link to="/news" className="hidden md:flex items-center gap-2 text-blue-600 font-bold hover:text-blue-600 transition-colors group">
               Összes hír <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -171,7 +171,7 @@ export default function LandingPage() {
           </div>
           
           <div className="mt-12 text-center md:hidden">
-            <Link to="/news" className="inline-flex items-center gap-2 text-blue-400 font-bold hover:text-blue-300 transition-colors">
+            <Link to="/news" className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors">
               Összes hír böngészése <ChevronRight className="w-5 h-5" />
             </Link>
           </div>

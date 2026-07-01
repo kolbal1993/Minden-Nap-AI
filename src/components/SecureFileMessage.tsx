@@ -53,7 +53,7 @@ export default function SecureFileMessage({ message }: SecureFileMessageProps) {
   if (isDecrypting) {
     return (
       <div className="flex items-center gap-3 p-4 bg-gray-100 dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10 min-w-[200px]">
-        <Loader2 className="w-5 h-5 text-blue-600 dark:text-blue-500 animate-spin" />
+        <Loader2 className="w-5 h-5 text-blue-600 dark:text-blue-600 animate-spin" />
         <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Fájl visszafejtése...</span>
       </div>
     );
@@ -98,7 +98,7 @@ export default function SecureFileMessage({ message }: SecureFileMessageProps) {
         </div>
       ) : (
         <div className="p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+          <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600 dark:text-blue-600">
             {isImage ? <ImageIcon className="w-6 h-6" /> : <FileIcon className="w-6 h-6" />}
           </div>
           <div className="flex-1 min-w-0">

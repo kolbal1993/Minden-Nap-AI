@@ -32,7 +32,7 @@ export default function EmojiPickerButton({ onEmojiSelect, className = "" }: Emo
       <button
         type="button"
         onClick={() => setShowPicker(!showPicker)}
-        className="p-2 text-gray-500 hover:text-blue-500 transition-colors rounded-full hover:bg-white/5"
+        className="p-2 text-gray-500 hover:text-blue-600 transition-colors rounded-full hover:bg-white/5"
         title="Emoji beszúrása"
       >
         <Smile className="w-5 h-5" />

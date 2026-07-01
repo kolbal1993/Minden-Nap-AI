@@ -148,7 +148,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {comment.authorAvatar ? (
             <img src={comment.authorAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-400">
+            <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-600">
               <User className="w-4 h-4" />
             </div>
           )}
@@ -170,9 +170,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
                   className="flex items-center gap-2 bg-hover border border-main px-2 py-1 rounded-lg hover:bg-hover transition-colors"
                 >
                   {att.type.startsWith('image/') ? (
-                    <ImageIcon className="w-3 h-3 text-blue-500" />
+                    <ImageIcon className="w-3 h-3 text-blue-600" />
                   ) : (
-                    <File className="w-3 h-3 text-blue-500" />
+                    <File className="w-3 h-3 text-blue-600" />
                   )}
                   <span className="text-[10px] text-muted truncate max-w-[100px]">{att.name}</span>
                 </a>
@@ -183,7 +183,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           <div className="flex items-center gap-4">
             <button 
               onClick={() => onReply(comment.id, comment.author)}
-              className="text-[10px] font-bold text-blue-500 hover:text-blue-400 flex items-center gap-1 uppercase tracking-wider"
+              className="text-[10px] font-bold text-blue-600 hover:text-blue-600 flex items-center gap-1 uppercase tracking-wider"
             >
               <Reply className="w-3 h-3" /> Válasz
             </button>
@@ -767,7 +767,7 @@ export default function CommunityPage() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'experience': return 'text-green-400 bg-green-400/10 border-green-400/20';
-      case 'project': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+      case 'project': return 'text-blue-600 bg-blue-400/10 border-blue-400/20';
       case 'help': return 'text-orange-400 bg-orange-400/10 border-orange-400/20';
       default: return '';
     }
@@ -780,7 +780,7 @@ export default function CommunityPage() {
           {post.authorAvatar ? (
             <img src={post.authorAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-blue-600/20 flex items-center justify-center text-blue-400">
+            <div className="w-full h-full bg-blue-600/20 flex items-center justify-center text-blue-600">
               <User className="w-6 h-6" />
             </div>
           )}
@@ -800,7 +800,7 @@ export default function CommunityPage() {
       {post.tags && post.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
           {post.tags.map(tag => (
-            <span key={tag} className="text-[10px] font-bold text-blue-500 dark:text-blue-400 bg-blue-500/5 dark:bg-blue-400/10 px-2 py-1 rounded-md border border-blue-500/10 dark:border-blue-400/20 flex items-center gap-1">
+            <span key={tag} className="text-[10px] font-bold text-blue-600 dark:text-blue-600 bg-blue-500/5 dark:bg-blue-400/10 px-2 py-1 rounded-md border border-blue-500/10 dark:border-blue-400/20 flex items-center gap-1">
               <Hash className="w-3 h-3" /> {tag}
             </span>
           ))}
@@ -836,7 +836,7 @@ export default function CommunityPage() {
               ) : (
                 <div className="p-8 flex items-center gap-6">
                   <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center">
-                    <File className="w-8 h-8 text-blue-500" />
+                    <File className="w-8 h-8 text-blue-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h5 className="font-bold text-lg truncate text-gray-900 dark:text-white">{att.name}</h5>
@@ -862,14 +862,14 @@ export default function CommunityPage() {
     <div className={`flex flex-col bg-gray-50 dark:bg-[var(--bg-main)] ${modalViewMode === 'side' ? 'w-full md:w-[400px]' : 'w-full'}`}>
       <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between">
         <h3 className="font-bold flex items-center gap-2 text-gray-900 dark:text-white">
-          <MessageSquare className="w-5 h-5 text-blue-500" />
+          <MessageSquare className="w-5 h-5 text-blue-600" />
           Hozzászólások ({post.comments.length})
         </h3>
         {post.comments.length >= 2 && (
           <button 
             onClick={() => handleGenerateSummary(post)}
             disabled={isSummarizing}
-            className="text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 flex items-center gap-1 uppercase tracking-wider bg-blue-600/10 dark:bg-blue-400/10 px-3 py-1.5 rounded-full border border-blue-500/20 dark:border-blue-400/20 transition-all disabled:opacity-50"
+            className="text-[10px] font-bold text-blue-600 dark:text-blue-600 hover:text-blue-600 dark:hover:text-blue-700 flex items-center gap-1 uppercase tracking-wider bg-blue-600/10 dark:bg-blue-400/10 px-3 py-1.5 rounded-full border border-blue-500/20 dark:border-blue-400/20 transition-all disabled:opacity-50"
           >
             {isSummarizing ? (
               <Loader2 className="w-3 h-3 animate-spin" />
@@ -888,7 +888,7 @@ export default function CommunityPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 mb-6"
           >
-            <div className="flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-400">
+            <div className="flex items-center gap-2 mb-3 text-blue-600 dark:text-blue-600">
               <FileText className="w-4 h-4" />
               <h4 className="text-xs font-bold uppercase tracking-widest">AI Összefoglaló</h4>
             </div>
@@ -919,10 +919,10 @@ export default function CommunityPage() {
       <div className="p-6 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[var(--bg-card)]">
         {replyingTo && (
           <div className="mb-3 flex items-center justify-between bg-blue-600/10 px-3 py-2 rounded-lg border border-blue-500/20">
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-2">
+            <span className="text-xs text-blue-600 dark:text-blue-600 font-medium flex items-center gap-2">
               <Reply className="w-3 h-3" /> Válasz neki: <strong>{replyingTo.author}</strong>
             </span>
-            <button onClick={() => setReplyingTo(null)} className="text-blue-600 dark:text-blue-400 hover:text-gray-900 dark:hover:text-white">
+            <button onClick={() => setReplyingTo(null)} className="text-blue-600 dark:text-blue-600 hover:text-gray-900 dark:hover:text-white">
               <X className="w-3 h-3" />
             </button>
           </div>
@@ -972,7 +972,7 @@ export default function CommunityPage() {
             {commentAttachments.map((att) => (
               <div key={att.id} className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-3 py-2 rounded-lg border border-black/10 dark:border-white/10">
                 <div className="flex items-center gap-2 min-w-0">
-                  <File className="w-3 h-3 text-blue-500 shrink-0" />
+                  <File className="w-3 h-3 text-blue-600 shrink-0" />
                   <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate">{att.name}</span>
                 </div>
                 <button onClick={() => setCommentAttachments(commentAttachments.filter(a => a.id !== att.id))}>
@@ -1079,7 +1079,7 @@ export default function CommunityPage() {
               {selectedTags.length > 0 && (
                 <button
                   onClick={() => setSelectedTags([])}
-                  className="shrink-0 text-xs text-blue-500 hover:text-blue-400 font-bold flex items-center gap-1 whitespace-nowrap"
+                  className="shrink-0 text-xs text-blue-600 hover:text-blue-600 font-bold flex items-center gap-1 whitespace-nowrap"
                 >
                   <X className="w-3 h-3" /> Törlés
                 </button>
@@ -1162,7 +1162,7 @@ export default function CommunityPage() {
                           onClick={() => fileInputRef.current?.click()}
                           className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-200 hover:text-white transition-colors"
                         >
-                          <Paperclip className="w-5 h-5 text-blue-500" />
+                          <Paperclip className="w-5 h-5 text-blue-600" />
                           Fájl csatolása
                         </button>
                         <input 
@@ -1200,7 +1200,7 @@ export default function CommunityPage() {
                               </div>
                             ) : (
                               <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center shrink-0">
-                                <File className="w-5 h-5 text-blue-500" />
+                                <File className="w-5 h-5 text-blue-600" />
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
@@ -1243,7 +1243,7 @@ export default function CommunityPage() {
                           {post.authorAvatar ? (
                             <img src={post.authorAvatar} alt={post.author} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-400">
+                            <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-600">
                               <User className="w-5 h-5" />
                             </div>
                           )}
@@ -1261,12 +1261,12 @@ export default function CommunityPage() {
 
                     {/* Post Content */}
                     <div className="space-y-4">
-                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{post.title}</h3>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors">{post.title}</h3>
                       
                       {post.tags && post.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {post.tags.map(tag => (
-                            <span key={tag} className="text-[9px] font-bold text-blue-500 dark:text-blue-400/70 bg-blue-500/5 dark:bg-blue-400/5 px-2 py-0.5 rounded border border-blue-500/10 dark:border-blue-400/10 flex items-center gap-1">
+                            <span key={tag} className="text-[9px] font-bold text-blue-600 dark:text-blue-600/70 bg-blue-500/5 dark:bg-blue-400/5 px-2 py-0.5 rounded border border-blue-500/10 dark:border-blue-400/10 flex items-center gap-1">
                               <Hash className="w-2.5 h-2.5" /> {tag}
                             </span>
                           ))}
@@ -1283,7 +1283,7 @@ export default function CommunityPage() {
                                 <img src={att.data} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                               ) : (
                                 <div className="w-full h-full bg-white/5 flex flex-col items-center justify-center gap-2">
-                                  <File className="w-8 h-8 text-blue-500" />
+                                  <File className="w-8 h-8 text-blue-600" />
                                   <span className="text-xs text-gray-400 px-4 text-center truncate w-full">{att.name}</span>
                                 </div>
                               )}

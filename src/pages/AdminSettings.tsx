@@ -93,7 +93,7 @@ export default function AdminSettings() {
             {/* General Settings */}
             <section className="bg-card rounded-3xl p-8 space-y-6 shadow-xl border-none">
               <div className="flex items-center gap-3 mb-2">
-                <Globe className="text-blue-500 w-6 h-6" />
+                <Globe className="text-blue-600 w-6 h-6" />
                 <h2 className="text-xl font-bold text-title">Általános beállítások</h2>
               </div>
               

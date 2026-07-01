@@ -341,7 +341,7 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-600 border border-blue-500/20">
                         {post.type}
                       </span>
                     </td>
@@ -361,7 +361,7 @@ export default function AdminDashboard() {
                     <td className="px-6 py-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-1.5 text-[10px] text-muted">
-                          <Clock className="w-3 h-3 text-blue-400" />
+                          <Clock className="w-3 h-3 text-blue-600" />
                           <span>Publikálás: {post.publishDate}</span>
                         </div>
                         {post.expiryDate && (
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5 text-blue-400" title="Reakciók">
+                        <div className="flex items-center gap-1.5 text-blue-600" title="Reakciók">
                           <Smile className="w-3.5 h-3.5" />
                           <span className="text-xs font-bold">{(post as any).reactionCount || 0}</span>
                         </div>
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                             e.stopPropagation();
                             handleOpenModal(post);
                           }}
-                          className="p-2 rounded-lg hover:bg-blue-500/10 text-muted hover:text-blue-400 transition-all"
+                          className="p-2 rounded-lg hover:bg-blue-500/10 text-muted hover:text-blue-600 transition-all"
                           title="Szerkesztés"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -448,7 +448,7 @@ export default function AdminDashboard() {
             >
               <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
-                  {editingPost ? <Edit2 className="text-blue-500" /> : <Plus className="text-blue-500" />}
+                  {editingPost ? <Edit2 className="text-blue-600" /> : <Plus className="text-blue-600" />}
                   {editingPost ? 'Poszt Szerkesztése' : 'Új Poszt Létrehozása'}
                 </h2>
                 <button onClick={handleCloseModal} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
@@ -667,7 +667,7 @@ export default function AdminDashboard() {
             >
               <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
-                  <Bell className="text-blue-500" /> Rendszerértesítés Küldése
+                  <Bell className="text-blue-600" /> Rendszerértesítés Küldése
                 </h2>
                 <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />

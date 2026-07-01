@@ -268,18 +268,18 @@ export default function ProfilePage() {
                 
                 <div className="flex flex-wrap justify-center md:justify-start gap-y-2 gap-x-6 text-body">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-blue-500" />
+                    <Mail className="w-4 h-4 text-blue-600" />
                     <span className="text-sm">{formData.email}</span>
                   </div>
                   {formData.company && (
                     <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-blue-500" />
+                      <Building2 className="w-4 h-4 text-blue-600" />
                       <span className="text-sm">{formData.company}</span>
                     </div>
                   )}
                   {formData.profession && (
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-blue-500" />
+                      <Briefcase className="w-4 h-4 text-blue-600" />
                       <span className="text-sm">{formData.profession}</span>
                     </div>
                   )}
@@ -504,7 +504,7 @@ export default function ProfilePage() {
           >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold flex items-center gap-3">
-                <PlayCircle className="text-blue-500 w-6 h-6" /> Elkezdett Kurzusok
+                <PlayCircle className="text-blue-600 w-6 h-6" /> Elkezdett Kurzusok
               </h2>
               <span className="text-sm text-gray-500 dark:text-gray-300 font-medium">{startedCourses.length} kurzus</span>
             </div>
@@ -532,13 +532,13 @@ export default function ProfilePage() {
                       <div className="p-6 flex flex-col justify-center flex-1">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-4 text-[10px] text-gray-700 dark:text-gray-100 uppercase tracking-widest font-bold">
-                            <span className="text-blue-400">{course.category}</span>
+                            <span className="text-blue-600">{course.category}</span>
                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Utoljára: {course.lastAccessed}</span>
                           </div>
-                          <span className="text-blue-400 font-bold text-sm">{course.progress}%</span>
+                          <span className="text-blue-600 font-bold text-sm">{course.progress}%</span>
                         </div>
                         
-                        <h3 className="text-lg font-bold group-hover:text-blue-400 transition-colors mb-4">
+                        <h3 className="text-lg font-bold group-hover:text-blue-600 transition-colors mb-4">
                           {course.title}
                         </h3>
 
@@ -555,7 +555,7 @@ export default function ProfilePage() {
                             <span className="flex items-center gap-1.5">
                               <BookOpen className="w-3.5 h-3.5" /> {course.completedModules} / {course.totalModules} modul kész
                             </span>
-                            <span className="flex items-center gap-1 group-hover:text-blue-400 transition-colors">
+                            <span className="flex items-center gap-1 group-hover:text-blue-600 transition-colors">
                               Folytatás <ArrowRight className="w-3 h-3" />
                             </span>
                           </div>
@@ -571,7 +571,7 @@ export default function ProfilePage() {
                   <PlayCircle className="text-gray-600 w-8 h-8" />
                 </div>
                 <p className="text-gray-500 dark:text-gray-300 mb-6">Még nem kezdtél el egy kurzust sem.</p>
-                <Link to="/courses" className="text-blue-400 font-bold hover:underline">
+                <Link to="/courses" className="text-blue-600 font-bold hover:underline">
                   Fedezd fel a Tudástárat
                 </Link>
               </div>
@@ -587,7 +587,7 @@ export default function ProfilePage() {
           >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold flex items-center gap-3">
-                <Bookmark className="text-blue-500 w-6 h-6" /> Elmentett Hírek
+                <Bookmark className="text-blue-600 w-6 h-6" /> Elmentett Hírek
               </h2>
               <span className="text-sm text-gray-500 dark:text-gray-300 font-medium">{savedNews.length} bejegyzés</span>
             </div>
@@ -614,10 +614,10 @@ export default function ProfilePage() {
                       </div>
                       <div className="p-6 flex flex-col justify-center flex-1">
                         <div className="flex items-center gap-4 text-[10px] text-gray-700 dark:text-gray-100 mb-3 uppercase tracking-widest font-bold">
-                          <span className="text-blue-400">{news.category}</span>
+                          <span className="text-blue-600">{news.category}</span>
                           <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {news.date}</span>
                         </div>
-                        <h3 className="text-lg font-bold group-hover:text-blue-400 transition-colors line-clamp-2">
+                        <h3 className="text-lg font-bold group-hover:text-blue-600 transition-colors line-clamp-2">
                           {news.title}
                         </h3>
                       </div>
@@ -631,7 +631,7 @@ export default function ProfilePage() {
                   <Bookmark className="text-gray-600 w-8 h-8" />
                 </div>
                 <p className="text-gray-500 dark:text-gray-300 mb-6">Még nincsenek elmentett híreid.</p>
-                <Link to="/news" className="text-blue-400 font-bold hover:underline">
+                <Link to="/news" className="text-blue-600 font-bold hover:underline">
                   Böngéssz a hírek között
                 </Link>
               </div>

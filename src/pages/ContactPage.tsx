@@ -66,7 +66,7 @@ export default function ContactPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-bold uppercase tracking-widest mb-6"
             >
               <MessageSquare className="w-3 h-3" /> Kapcsolat
             </motion.div>
@@ -92,11 +92,11 @@ export default function ContactPage() {
               <div className="grid sm:grid-cols-2 gap-8">
                 <div className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
                   <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <Mail className="text-blue-500 w-6 h-6" />
+                    <Mail className="text-blue-600 w-6 h-6" />
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">E-mail</h3>
                   <p className="text-gray-700 dark:text-gray-100 text-sm mb-4">Írj nekünk bármikor, 24 órán belül válaszolunk.</p>
-                  <a href={`mailto:${contactInfo.email}`} className="text-blue-400 font-medium hover:underline">{contactInfo.email}</a>
+                  <a href={`mailto:${contactInfo.email}`} className="text-blue-600 font-medium hover:underline">{contactInfo.email}</a>
                 </div>
 
                 <div className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
@@ -127,7 +127,7 @@ export default function ContactPage() {
                       href={social.url}
                       className="w-12 h-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 hover:border-blue-500/50 transition-all group"
                     >
-                      <social.icon className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
+                      <social.icon className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                     </a>
                   ))}
                 </div>
@@ -150,7 +150,7 @@ export default function ContactPage() {
                   <p className="text-gray-300 max-w-xs mx-auto">Köszönjük a megkeresést. Hamarosan felvesszük veled a kapcsolatot.</p>
                   <button 
                     onClick={() => setIsSent(false)}
-                    className="mt-8 text-blue-400 font-bold hover:text-blue-300 transition-colors"
+                    className="mt-8 text-blue-600 font-bold hover:text-blue-700 transition-colors"
                   >
                     Új üzenet küldése
                   </button>

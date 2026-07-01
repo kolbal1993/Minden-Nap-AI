@@ -54,7 +54,7 @@ export default function Reactions({ reactions, userReaction, onReact, variant = 
         <button
           onClick={() => setShowPicker(!showPicker)}
           className={`flex items-center gap-2 transition-colors ${
-            showPicker ? 'text-blue-400' : 'text-gray-500 hover:text-blue-400'
+            showPicker ? 'text-blue-600' : 'text-gray-500 hover:text-blue-600'
           }`}
           title="Reakció hozzáadása"
         >

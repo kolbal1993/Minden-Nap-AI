@@ -268,7 +268,7 @@ export default function NewsDetailPage() {
       <div className="min-h-screen bg-[var(--bg-main)] text-gray-100 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">A hír nem található</h1>
-          <Link to="/news" className="text-blue-500 hover:underline">Vissza a hírekhez</Link>
+          <Link to="/news" className="text-blue-600 hover:underline">Vissza a hírekhez</Link>
         </div>
       </div>
     );
@@ -292,7 +292,7 @@ export default function NewsDetailPage() {
             className="mb-12"
           >
             <div className="flex items-center gap-3 mb-6">
-              <span className="bg-blue-600/20 text-blue-600 dark:text-blue-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
+              <span className="bg-blue-600/20 text-blue-600 dark:text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
                 {news.category}
               </span>
               <span className="text-gray-600 dark:text-gray-100 text-xs font-medium">• {news.readTime} olvasás</span>
@@ -388,7 +388,7 @@ export default function NewsDetailPage() {
           {/* Footer Actions */}
           <div className="mt-20 pt-12 border-t border-black/5 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
             <div className="flex items-center gap-4">
-              <MessageSquare className="text-blue-500 w-6 h-6" />
+              <MessageSquare className="text-blue-600 w-6 h-6" />
               <span className="text-gray-600 dark:text-gray-100">Hozzászólások ({comments.length})</span>
             </div>
             <Link to="/news" className="bg-gray-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-gray-800 dark:hover:bg-gray-200 transition-all">
@@ -405,10 +405,10 @@ export default function NewsDetailPage() {
               <form onSubmit={(e) => handleAddComment(e, replyingTo?.commentId)} className="space-y-6">
                 {replyingTo && (
                   <div className="flex items-center justify-between bg-blue-600/10 px-4 py-2 rounded-xl border border-blue-500/20">
-                    <span className="text-sm text-blue-600 dark:text-blue-400 font-medium flex items-center gap-2">
+                    <span className="text-sm text-blue-600 dark:text-blue-600 font-medium flex items-center gap-2">
                       <Smile className="w-4 h-4" /> Válasz neki: <strong>{replyingTo.author}</strong>
                     </span>
-                    <button type="button" onClick={() => setReplyingTo(null)} className="text-blue-600 dark:text-blue-400 hover:text-gray-900 dark:hover:text-white">
+                    <button type="button" onClick={() => setReplyingTo(null)} className="text-blue-600 dark:text-blue-600 hover:text-gray-900 dark:hover:text-white">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
@@ -509,7 +509,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Link to="/profile" className={`font-bold transition-colors ${comment.isPremium ? 'text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300' : 'text-gray-900 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400'}`}>
+              <Link to="/profile" className={`font-bold transition-colors ${comment.isPremium ? 'text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300' : 'text-gray-900 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-600'}`}>
                 {comment.userName}
               </Link>
               {comment.isPremium && (
@@ -526,7 +526,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
           <div className="flex items-center gap-4">
             <button 
               onClick={() => onReply(comment.id, comment.userName)}
-              className="text-[10px] font-bold text-blue-500 hover:text-blue-400 flex items-center gap-1 uppercase tracking-wider"
+              className="text-[10px] font-bold text-blue-600 hover:text-blue-600 flex items-center gap-1 uppercase tracking-wider"
             >
               <Smile className="w-3 h-3" /> Válasz
             </button>

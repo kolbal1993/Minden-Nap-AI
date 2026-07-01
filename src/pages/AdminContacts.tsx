@@ -185,16 +185,16 @@ export default function AdminContacts() {
                 >
                   <div className="flex items-center gap-6">
                     <div className="w-14 h-14 bg-hover rounded-2xl flex items-center justify-center group-hover:bg-blue-600/10 transition-colors">
-                      <contact.icon className="w-6 h-6 text-muted group-hover:text-blue-500 transition-colors" />
+                      <contact.icon className="w-6 h-6 text-muted group-hover:text-blue-600 transition-colors" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-muted uppercase tracking-widest mb-1">{contact.label}</p>
                       {contact.type === 'email' ? (
-                        <a href={`mailto:${contact.value}`} className="text-lg font-medium text-title hover:text-blue-500 transition-colors">{contact.value}</a>
+                        <a href={`mailto:${contact.value}`} className="text-lg font-medium text-title hover:text-blue-600 transition-colors">{contact.value}</a>
                       ) : contact.type === 'social' || contact.type === 'phone' ? (
                         <a 
                           href={contact.type === 'phone' ? `tel:${contact.value}` : contact.value} 
-                          className="text-lg font-medium text-title hover:text-blue-500 transition-colors"
+                          className="text-lg font-medium text-title hover:text-blue-600 transition-colors"
                           target={contact.type === 'social' ? "_blank" : undefined}
                           rel={contact.type === 'social' ? "noopener noreferrer" : undefined}
                         >

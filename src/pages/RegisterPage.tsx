@@ -234,7 +234,7 @@ export default function RegisterPage() {
 
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm">
-            Van már fiókod? <Link to="/login" className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Jelentkezz be</Link>
+            Van már fiókod? <Link to="/login" className="text-blue-600 font-bold hover:text-blue-700 transition-colors">Jelentkezz be</Link>
           </p>
           <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-400 text-sm mt-6 transition-colors">
             <ChevronLeft className="w-4 h-4" /> Vissza a főoldalra

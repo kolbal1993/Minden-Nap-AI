@@ -128,7 +128,7 @@ export default function AIDictionaryPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 text-title"
             >
-              Értsd meg az <span className="text-blue-500">AI Nyelvét</span>
+              Értsd meg az <span className="text-blue-600">AI Nyelvét</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -200,7 +200,7 @@ export default function AIDictionaryPage() {
                 className="bg-card border-none rounded-2xl p-12 text-center shadow-2xl"
               >
                 <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse">
-                  <Brain className="w-10 h-10 text-blue-500" />
+                  <Brain className="w-10 h-10 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-title">Az AI gondolkodik...</h3>
                 <p className="text-body">Pillanatokon belül érkezik a magyarázat.</p>
@@ -219,7 +219,7 @@ export default function AIDictionaryPage() {
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-blue-600/20 rounded-2xl flex items-center justify-center">
-                        <Book className="text-blue-500 w-6 h-6" />
+                        <Book className="text-blue-600 w-6 h-6" />
                       </div>
                       <div>
                         <h2 className="text-2xl font-bold text-title">{searchTerm}</h2>
@@ -277,7 +277,7 @@ export default function AIDictionaryPage() {
             >
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-bold flex items-center gap-3 text-title">
-                  <History className="text-blue-500 w-5 h-5" /> Korábbi keresések
+                  <History className="text-blue-600 w-5 h-5" /> Korábbi keresések
                 </h2>
                 <button 
                   onClick={clearHistory}

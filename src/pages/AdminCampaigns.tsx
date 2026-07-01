@@ -232,7 +232,7 @@ export default function AdminCampaigns() {
                 <div className="absolute top-6 right-6">
                   <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
                     campaign.status === 'active' ? 'text-green-500 bg-green-500/10 border-green-500/20' :
-                    campaign.status === 'scheduled' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
+                    campaign.status === 'scheduled' ? 'text-blue-600 bg-blue-500/10 border-blue-500/20' :
                     'text-muted bg-hover border-main'
                   }`}>
                     {campaign.status === 'active' ? 'Aktív' : campaign.status === 'scheduled' ? 'Ütemezett' : 'Lejárt'}
@@ -242,7 +242,7 @@ export default function AdminCampaigns() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                     campaign.type === 'all' ? 'bg-purple-500/10 text-purple-500' :
-                    campaign.type === 'course' ? 'bg-blue-500/10 text-blue-500' :
+                    campaign.type === 'course' ? 'bg-blue-500/10 text-blue-600' :
                     'bg-orange-500/10 text-orange-500'
                   }`}>
                     {campaign.type === 'all' ? <Target className="w-6 h-6" /> :
@@ -270,7 +270,7 @@ export default function AdminCampaigns() {
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Használat</p>
-                    <p className="text-xl font-bold text-blue-500">{campaign.usageCount}</p>
+                    <p className="text-xl font-bold text-blue-600">{campaign.usageCount}</p>
                   </div>
                 </div>
 
@@ -322,7 +322,7 @@ export default function AdminCampaigns() {
               
               <div className="flex justify-between items-start mb-6">
                 <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center">
-                  <Megaphone className="text-blue-500 w-6 h-6" />
+                  <Megaphone className="text-blue-600 w-6 h-6" />
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(false)}

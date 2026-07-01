@@ -63,7 +63,7 @@ export default function CourseDetailPage() {
       <div className="min-h-screen bg-transparent text-gray-100 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">A tartalom nem található</h1>
-          <Link to="/tudastar" className="text-blue-500 hover:underline">Vissza a tudástárhoz</Link>
+          <Link to="/tudastar" className="text-blue-600 hover:underline">Vissza a tudástárhoz</Link>
         </div>
       </div>
     );
@@ -88,7 +88,7 @@ export default function CourseDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="bg-blue-600/20 text-blue-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
+                  <span className="bg-blue-600/20 text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
                     {course.category}
                   </span>
                   <span className="text-gray-600 dark:text-gray-100 text-xs font-medium">• {course.level} szint</span>
@@ -116,7 +116,7 @@ export default function CourseDetailPage() {
                   </div>
                   <div className="text-center md:text-left">
                     <div className="text-gray-700 dark:text-gray-100 text-xs font-bold uppercase tracking-widest mb-2 flex items-center justify-center md:justify-start gap-2">
-                      <Users className="w-3.5 h-3.5 text-blue-400" /> Tanulók
+                      <Users className="w-3.5 h-3.5 text-blue-600" /> Tanulók
                     </div>
                     <div className="text-2xl font-bold text-gray-900 dark:text-white">{course.students}+</div>
                   </div>
@@ -137,13 +137,13 @@ export default function CourseDetailPage() {
               {/* What you will learn */}
               <div>
                 <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                  <CheckCircle2 className="text-blue-500 w-6 h-6" /> Mit fogsz tanulni?
+                  <CheckCircle2 className="text-blue-600 w-6 h-6" /> Mit fogsz tanulni?
                 </h2>
                 <div className="grid md:grid-cols-2 gap-6">
                   {course.features.map((feature) => (
                     <div key={feature} className="flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-white/5 border border-black/[0.05] dark:border-white/5 shadow-sm dark:shadow-none">
                       <div className="w-6 h-6 bg-blue-600/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                        <CheckCircle2 className="text-blue-500 w-3.5 h-3.5" />
+                        <CheckCircle2 className="text-blue-600 w-3.5 h-3.5" />
                       </div>
                       <span className="text-gray-700 dark:text-gray-100 font-medium">{feature}</span>
                     </div>
@@ -154,7 +154,7 @@ export default function CourseDetailPage() {
               {/* Curriculum */}
               <div>
                 <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                  <BookOpen className="text-blue-500 w-6 h-6" /> Tananyag felépítése
+                  <BookOpen className="text-blue-600 w-6 h-6" /> Tananyag felépítése
                 </h2>
                 <div className="space-y-4 relative">
                   {course.curriculum?.map((item, index) => {
@@ -167,7 +167,7 @@ export default function CourseDetailPage() {
                             {isLocked ? (
                               <Lock className="text-gray-400 dark:text-gray-600 w-5 h-5" />
                             ) : (
-                              <PlayCircle className="text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors w-5 h-5" />
+                              <PlayCircle className="text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors w-5 h-5" />
                             )}
                             <span className="text-gray-800 dark:text-gray-300 font-bold">{item.title}</span>
                           </div>
@@ -259,7 +259,7 @@ export default function CourseDetailPage() {
                           { icon: Lock, label: 'Biztonságos fizetés' }
                         ].map((item) => (
                           <div key={item.label} className="flex items-center gap-3 text-gray-600 dark:text-gray-100 text-sm">
-                            <item.icon className="w-4 h-4 text-blue-500" />
+                            <item.icon className="w-4 h-4 text-blue-600" />
                             <span>{item.label}</span>
                           </div>
                         ))}
@@ -272,7 +272,7 @@ export default function CourseDetailPage() {
                 <div className="mt-8 p-8 rounded-xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-black/10 dark:border-white/10 text-center shadow-lg dark:shadow-none">
                   <h4 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Csoportos kedvezmény?</h4>
                   <p className="text-gray-600 dark:text-gray-200 text-sm mb-6">Cégeknek és csapatoknak egyedi árajánlatot biztosítunk.</p>
-                  <Link to="/contact" className="text-blue-600 dark:text-blue-400 font-bold text-sm hover:underline">Vedd fel velünk a kapcsolatot</Link>
+                  <Link to="/contact" className="text-blue-600 dark:text-blue-600 font-bold text-sm hover:underline">Vedd fel velünk a kapcsolatot</Link>
                 </div>
               </div>
             </div>

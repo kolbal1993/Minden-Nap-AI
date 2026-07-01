@@ -56,11 +56,11 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
             onClick={onClose}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
               item.active 
-                ? 'bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold shadow-sm' 
+                ? 'bg-blue-600/10 text-blue-600 dark:text-blue-600 font-bold shadow-sm' 
                 : 'hover:bg-hover text-muted hover:text-title'
             }`}
           >
-            <item.icon className={`w-5 h-5 ${item.active ? 'text-blue-600 dark:text-blue-400' : ''}`} /> 
+            <item.icon className={`w-5 h-5 ${item.active ? 'text-blue-600 dark:text-blue-600' : ''}`} /> 
             <span className="text-sm">{item.label}</span>
           </Link>
         ))}

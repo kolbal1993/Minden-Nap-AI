@@ -416,7 +416,7 @@ export default function AdminUsers() {
                       onClick={toggleAllSelection}
                       className="text-muted hover:text-title transition-colors"
                     >
-                      {selectedUserIds.length === filteredUsers.length ? <CheckSquare className="w-5 h-5 text-blue-500" /> : <Square className="w-5 h-5" />}
+                      {selectedUserIds.length === filteredUsers.length ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5" />}
                     </button>
                   </th>
                   <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Felhasználó</th>
@@ -439,7 +439,7 @@ export default function AdminUsers() {
                           onClick={() => toggleUserSelection(user.id)}
                           className="text-muted hover:text-title transition-colors"
                         >
-                          {selectedUserIds.includes(user.id) ? <CheckSquare className="w-5 h-5 text-blue-500" /> : <Square className="w-5 h-5" />}
+                          {selectedUserIds.includes(user.id) ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5" />}
                         </button>
                       </td>
                       <td className="px-6 py-4">
@@ -448,7 +448,7 @@ export default function AdminUsers() {
                             {user.avatar ? (
                               <img src={user.avatar} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-500">
+                              <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-600">
                                 <User className="w-5 h-5" />
                               </div>
                             )}
@@ -462,7 +462,7 @@ export default function AdminUsers() {
                       <td className="px-6 py-4">
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border w-fit ${
                           user.role === 'admin' ? 'text-purple-500 bg-purple-500/10 border-purple-500/20' :
-                          user.role === 'moderator' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
+                          user.role === 'moderator' ? 'text-blue-600 bg-blue-500/10 border-blue-500/20' :
                           'text-muted bg-hover border-main'
                         }`}>
                           {user.role}
@@ -488,7 +488,7 @@ export default function AdminUsers() {
                               <span className="text-sm text-body">Lejár: {user.premiumUntil}</span>
                               <button 
                                 onClick={() => { setSelectedUser(user); setIsExpirationModalOpen(true); }}
-                                className="p-1 hover:bg-hover rounded transition-colors text-blue-500"
+                                className="p-1 hover:bg-hover rounded transition-colors text-blue-600"
                                 title="Hosszabbítás"
                               >
                                 <Calendar className="w-3.5 h-3.5" />
@@ -633,7 +633,7 @@ export default function AdminUsers() {
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                    <CreditCard className="text-blue-500 w-5 h-5" />
+                    <CreditCard className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-title">Számlázási előzmények</h2>
@@ -655,7 +655,7 @@ export default function AdminUsers() {
                     </div>
                     <button 
                       onClick={() => handleDownloadInvoice(bill.id)}
-                      className="text-xs text-blue-500 hover:underline"
+                      className="text-xs text-blue-600 hover:underline"
                     >
                       Számla letöltése
                     </button>

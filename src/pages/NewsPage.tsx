@@ -95,7 +95,7 @@ export default function NewsPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-5xl md:text-6xl font-bold tracking-tighter mb-6 text-title"
             >
-              Legfrissebb <span className="text-blue-500">Hírek</span>
+              Legfrissebb <span className="text-blue-600">Hírek</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -193,11 +193,11 @@ export default function NewsPage() {
                       <div className="flex items-center gap-2">
                         <User className="w-3.5 h-3.5" /> {item.author}
                       </div>
-                      <div className="flex items-center gap-2 text-blue-400 font-bold">
+                      <div className="flex items-center gap-2 text-blue-600 font-bold">
                         <MessageSquare className="w-3.5 h-3.5" /> {getCommentCount(item.id)}
                       </div>
                     </div>
-                    <h2 className="text-2xl font-bold mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight text-title">
+                    <h2 className="text-2xl font-bold mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors leading-tight text-title">
                       {item.title}
                     </h2>
                     <p className="text-body mb-4 line-clamp-3 leading-relaxed">

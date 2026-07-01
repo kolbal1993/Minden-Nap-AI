@@ -76,7 +76,7 @@ export default function NotificationCenter() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'course': return <BookOpen className="w-4 h-4 text-blue-400" />;
+      case 'course': return <BookOpen className="w-4 h-4 text-blue-600" />;
       case 'comment': return <MessageSquare className="w-4 h-4 text-emerald-400" />;
       case 'reaction': return <Heart className="w-4 h-4 text-rose-400" />;
       case 'news': return <Zap className="w-4 h-4 text-orange-400" />;
@@ -88,9 +88,9 @@ export default function NotificationCenter() {
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-all group"
+        className="relative p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-600 hover:bg-black/5 dark:hover:bg-white/10 rounded-xl transition-all group"
       >
-        <Bell className={`w-5 h-5 ${isOpen ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+        <Bell className={`w-5 h-5 ${isOpen ? 'text-blue-600 dark:text-blue-600' : ''}`} />
         {unreadCount > 0 && (
           <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-[#050505]">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -111,7 +111,7 @@ export default function NotificationCenter() {
               {unreadCount > 0 && (
                 <button 
                   onClick={handleMarkAllRead}
-                  className="text-[10px] uppercase tracking-wider font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors flex items-center gap-1"
+                  className="text-[10px] uppercase tracking-wider font-bold text-blue-600 dark:text-blue-600 hover:text-blue-600 dark:hover:text-blue-700 transition-colors flex items-center gap-1"
                 >
                   <Check className="w-3 h-3" /> Összes olvasott
                 </button>

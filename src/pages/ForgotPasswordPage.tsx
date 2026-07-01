@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
               </p>
               <Link 
                 to="/login"
-                className="inline-flex items-center gap-2 text-blue-400 font-bold hover:text-blue-300 transition-colors"
+                className="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors"
               >
                 Vissza a bejelentkezéshez
               </Link>

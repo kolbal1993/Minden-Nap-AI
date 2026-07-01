@@ -55,8 +55,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
                 toast.type === 'success' ? 'bg-green-500/10 text-green-500' :
                 toast.type === 'error' ? 'bg-red-500/10 text-red-500' :
-                toast.type === 'loading' ? 'bg-blue-500/10 text-blue-500' :
-                'bg-blue-500/10 text-blue-500'
+                toast.type === 'loading' ? 'bg-blue-500/10 text-blue-600' :
+                'bg-blue-500/10 text-blue-600'
               }`}>
                 {toast.type === 'success' && <CheckCircle className="w-5 h-5" />}
                 {toast.type === 'error' && <AlertCircle className="w-5 h-5" />}

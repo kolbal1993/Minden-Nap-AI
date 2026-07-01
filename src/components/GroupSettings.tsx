@@ -117,7 +117,7 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
             <div className="p-8 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
               <div>
                 <h2 className="text-xl font-bold tracking-tight truncate max-w-[200px] text-gray-900 dark:text-white">{groupName}</h2>
-                <p className="text-[10px] text-blue-600 dark:text-blue-400 uppercase tracking-widest font-bold mt-1">Csoportbeállítások</p>
+                <p className="text-[10px] text-blue-600 dark:text-blue-600 uppercase tracking-widest font-bold mt-1">Csoportbeállítások</p>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors text-gray-500 dark:text-gray-400">
                 <X className="w-5 h-5" />
@@ -127,13 +127,13 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
             <div className="flex border-b border-black/5 dark:border-white/5">
               <button 
                 onClick={() => setActiveTab('members')}
-                className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all border-b-2 ${activeTab === 'members' ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-blue-600/5 dark:bg-blue-400/5' : 'text-gray-500 border-transparent hover:text-gray-700 dark:hover:text-gray-300'}`}
+                className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all border-b-2 ${activeTab === 'members' ? 'text-blue-600 dark:text-blue-600 border-blue-600 dark:border-blue-400 bg-blue-600/5 dark:bg-blue-400/5' : 'text-gray-500 border-transparent hover:text-gray-700 dark:hover:text-gray-300'}`}
               >
                 Tagok ({participants.length})
               </button>
               <button 
                 onClick={() => setActiveTab('add')}
-                className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all border-b-2 ${activeTab === 'add' ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-blue-600/5 dark:bg-blue-400/5' : 'text-gray-500 border-transparent hover:text-gray-700 dark:hover:text-gray-300'}`}
+                className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all border-b-2 ${activeTab === 'add' ? 'text-blue-600 dark:text-blue-600 border-blue-600 dark:border-blue-400 bg-blue-600/5 dark:bg-blue-400/5' : 'text-gray-500 border-transparent hover:text-gray-700 dark:hover:text-gray-300'}`}
               >
                 Hozzáadás
               </button>
@@ -186,7 +186,7 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
                           <h3 className="font-bold text-sm text-gray-900 dark:text-white">{user.displayName}</h3>
                           <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">E2EE Elérhető</p>
                         </div>
-                        <UserPlus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <UserPlus className="w-5 h-5 text-blue-600 dark:text-blue-600" />
                       </button>
                     ))}
                   </div>
@@ -196,8 +196,8 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
 
             <div className="p-6 bg-blue-600/5 border-t border-black/5 dark:border-white/5">
               <div className="flex items-start gap-3 p-4 bg-blue-600/10 rounded-2xl border border-blue-600/20">
-                <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-                <p className="text-[10px] text-blue-700 dark:text-blue-300 leading-relaxed font-medium">
+                <Shield className="w-5 h-5 text-blue-600 dark:text-blue-600 shrink-0 mt-0.5" />
+                <p className="text-[10px] text-blue-700 dark:text-blue-700 leading-relaxed font-medium">
                   A tagok módosítása automatikusan frissíti a titkosítási kulcsokat. Az eltávolított tagok nem férhetnek hozzá az új üzenetekhez.
                 </p>
               </div>
@@ -206,7 +206,7 @@ export default function GroupSettings({ isOpen, onClose, groupId, participants, 
             {isProcessing && (
               <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50">
                 <div className="bg-white dark:bg-[var(--bg-surface)] p-6 rounded-3xl border border-black/10 dark:border-white/10 flex flex-col items-center gap-4 shadow-2xl">
-                  <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-500 animate-spin" />
+                  <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-600 animate-spin" />
                   <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Kulcsok frissítése...</p>
                 </div>
               </div>

@@ -320,12 +320,12 @@ export default function AdminCourses() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-blue-500 font-medium">{course.category}</span>
+                      <span className="text-xs text-blue-600 font-medium">{course.category}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                         course.level === 'Kezdő' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 
-                        course.level === 'Haladó' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 
+                        course.level === 'Haladó' ? 'bg-blue-500/10 text-blue-600 border border-blue-500/20' : 
                         'bg-purple-500/10 text-purple-500 border border-purple-500/20'
                       }`}>
                         {course.level}
@@ -352,7 +352,7 @@ export default function AdminCourses() {
                     <td className="px-6 py-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-1.5 text-[10px] text-muted">
-                          <Clock className="w-3 h-3 text-blue-500" />
+                          <Clock className="w-3 h-3 text-blue-600" />
                           <span>Publikálás: {course.publishDate}</span>
                         </div>
                         {course.expiryDate && (
@@ -367,7 +367,7 @@ export default function AdminCourses() {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => handleOpenModal(course)}
-                          className="p-2 rounded-lg hover:bg-blue-500/10 text-muted hover:text-blue-500 transition-all"
+                          className="p-2 rounded-lg hover:bg-blue-500/10 text-muted hover:text-blue-600 transition-all"
                           title="Szerkesztés"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -416,7 +416,7 @@ export default function AdminCourses() {
             >
               <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
-                  {editingCourse ? <Edit2 className="text-blue-500" /> : <Plus className="text-blue-500" />}
+                  {editingCourse ? <Edit2 className="text-blue-600" /> : <Plus className="text-blue-600" />}
                   {editingCourse ? 'Kurzus Szerkesztése' : 'Új Kurzus Létrehozása'}
                 </h2>
                 <button onClick={handleCloseModal} className="p-2 hover:bg-card rounded-full transition-colors text-muted hover:text-title">

@@ -126,16 +126,16 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                   : 'text-[var(--text-body)] hover:text-[var(--text-title)]'
               }`}
             >
-              {link.icon && <link.icon className={`w-4 h-4 ${location.pathname === link.to ? 'text-blue-600' : 'text-blue-500'}`} />}
+              {link.icon && <link.icon className={`w-4 h-4 ${location.pathname === link.to ? 'text-blue-600' : 'text-blue-600'}`} />}
               {link.label}
             </Link>
           ))}
           
           <div className="flex items-center gap-6 border-l border-[var(--border-main)] pl-8">
-            <button 
+            <button
               onClick={toggleTheme}
+              aria-label={theme === 'light' ? 'Sötét mód bekapcsolása' : 'Világos mód bekapcsolása'}
               className="w-10 h-10 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] transition-all flex items-center justify-center text-[var(--text-body)] hover:text-blue-600 border border-[var(--border-subtle)]"
-              title={theme === 'light' ? 'Sötét mód' : 'Világos mód'}
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
@@ -152,7 +152,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
             ) : (
               <div className="flex items-center gap-4">
                 {userRole === 'admin' && (
-                  <Link to="/admin" className="text-blue-500 hover:text-blue-400 transition-colors font-bold">
+                  <Link to="/admin" className="text-blue-600 hover:text-blue-600 transition-colors font-bold">
                     Admin Panel
                   </Link>
                 )}
@@ -192,15 +192,18 @@ export default function Navbar({ transparent = false }: NavbarProps) {
 
         {/* Mobile Menu Toggle */}
         <div className="flex items-center gap-2 md:hidden">
-          <button 
+          <button
             onClick={toggleTheme}
+            aria-label={theme === 'light' ? 'Sötét mód bekapcsolása' : 'Világos mód bekapcsolása'}
             className="w-10 h-10 rounded-xl hover:bg-hover transition-all flex items-center justify-center text-body hover:text-blue-600"
           >
             {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
           </button>
-          <button 
-            className="w-10 h-10 rounded-xl hover:bg-hover transition-all flex items-center justify-center text-title hover:text-blue-600" 
+          <button
+            className="w-10 h-10 rounded-xl hover:bg-hover transition-all flex items-center justify-center text-title hover:text-blue-600"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? 'Menü bezárása' : 'Menü megnyitása'}
+            aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -233,7 +236,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                     : 'text-body hover:bg-hover hover:text-blue-600'
                 }`}
               >
-                {link.icon && <link.icon className={`w-5 h-5 ${location.pathname === link.to ? 'text-white' : 'text-blue-500'}`} />}
+                {link.icon && <link.icon className={`w-5 h-5 ${location.pathname === link.to ? 'text-white' : 'text-blue-600'}`} />}
                 {link.label}
               </Link>
             ))}
@@ -268,7 +271,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                   </div>
                 </Link>
                 {userRole === 'admin' && (
-                  <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="p-4 text-blue-500 font-bold hover:bg-blue-500/5 rounded-xl transition-all">Admin Vezérlőpult</Link>
+                  <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="p-4 text-blue-600 font-bold hover:bg-blue-500/5 rounded-xl transition-all">Admin Vezérlőpult</Link>
                 )}
                 <button 
                   onClick={() => {

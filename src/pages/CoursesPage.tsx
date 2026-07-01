@@ -118,7 +118,7 @@ export default function CoursesPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-5xl md:text-6xl font-bold tracking-tighter mb-6 text-title"
             >
-              Tanulj az <span className="text-blue-500">AI Jövőjéről</span>
+              Tanulj az <span className="text-blue-600">AI Jövőjéről</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -170,14 +170,14 @@ export default function CoursesPage() {
                     <module.icon className="w-8 h-8" />
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-title">{module.title}</h3>
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors text-title">{module.title}</h3>
                     <p className="text-body leading-relaxed text-xs sm:text-sm">
                       {module.description}
                     </p>
                   </div>
                   {/* Arrow indicator at the bottom center instead of absolute corner */}
                   <div className={`mt-6 transition-all duration-300 ${
-                    selectedCategory === module.id ? 'text-blue-500 opacity-100' : 'text-muted opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'
+                    selectedCategory === module.id ? 'text-blue-600 opacity-100' : 'text-muted opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'
                   }`}>
                     <ArrowRight className="w-5 h-5" />
                   </div>
@@ -244,7 +244,7 @@ export default function CoursesPage() {
               {selectedCategory !== 'Összes' && (
                 <button 
                   onClick={() => setSelectedCategory('Összes')}
-                  className="text-xs text-blue-500 hover:underline"
+                  className="text-xs text-blue-600 hover:underline"
                 >
                   Összes mutatása
                 </button>
@@ -313,13 +313,13 @@ export default function CoursesPage() {
                           
                           <div className="p-8 flex flex-col flex-1">
                             <div className="flex items-center justify-between mb-4">
-                              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em]">{course.category}</span>
+                              <span className="text-blue-600 dark:text-blue-600 text-[10px] font-bold uppercase tracking-[0.2em]">{course.category}</span>
                               <div className="flex items-center gap-1.5 text-orange-500 dark:text-orange-400 text-sm font-bold">
                                 <Star className="w-4 h-4 fill-current" /> {course.rating}
                               </div>
                             </div>
                             
-                            <h3 className="text-xl font-bold mb-4 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-title">
+                            <h3 className="text-xl font-bold mb-4 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-600 transition-colors text-title">
                               {course.title}
                             </h3>
                             

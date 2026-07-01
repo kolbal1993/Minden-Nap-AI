@@ -116,7 +116,7 @@ export default function AdminNotifications() {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'news': return <Megaphone className="w-4 h-4 text-orange-400" />;
-      case 'course': return <BookOpen className="w-4 h-4 text-blue-400" />;
+      case 'course': return <BookOpen className="w-4 h-4 text-blue-600" />;
       case 'admin': return <ShieldCheck className="w-4 h-4 text-purple-400" />;
       default: return <Bell className="w-4 h-4 text-gray-400" />;
     }
@@ -212,7 +212,7 @@ export default function AdminNotifications() {
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
                         n.userId === 'all' 
-                          ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                          ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' 
                           : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
                       }`}>
                         {n.userId === 'all' ? 'Mindenki' : `ID: ${n.userId}`}
@@ -282,7 +282,7 @@ export default function AdminNotifications() {
             >
               <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
-                  <Bell className="text-blue-500" /> Új Értesítés Küldése
+                  <Bell className="text-blue-600" /> Új Értesítés Küldése
                 </h2>
                 <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
                   <X className="w-6 h-6" />

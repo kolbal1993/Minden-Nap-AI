@@ -46,7 +46,7 @@ const TOOLS = [
     url: 'https://www.midjourney.com',
     isAffiliate: false,
     rating: 4.8,
-    color: 'bg-blue-500/10 text-blue-500'
+    color: 'bg-blue-500/10 text-blue-600'
   },
   {
     id: '3',
@@ -90,7 +90,7 @@ const TOOLS = [
     url: 'https://www.cursor.com',
     isAffiliate: false,
     rating: 4.9,
-    color: 'bg-blue-600/10 text-blue-400'
+    color: 'bg-blue-600/10 text-blue-600'
   },
   {
     id: '7',
@@ -125,7 +125,7 @@ export default function ToolsPage() {
           {/* Back Link */}
           <Link 
             to="/tudastar" 
-            className="inline-flex items-center gap-2 text-muted hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8 group"
+            className="inline-flex items-center gap-2 text-muted hover:text-blue-600 dark:hover:text-blue-600 transition-colors mb-8 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Vissza a Tudástárhoz

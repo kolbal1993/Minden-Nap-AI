@@ -116,7 +116,7 @@ export default function GroupCreationModal({ isOpen, onClose, onCreated }: Group
           >
             <div className="p-8 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-600 dark:text-blue-600">
                   <Users className="w-5 h-5" />
                 </div>
                 <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Új titkosított csoport</h2>
