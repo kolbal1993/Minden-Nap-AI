@@ -58,7 +58,7 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/news/:id" element={<NewsDetailPage />} />
-              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/community" element={<AuthGuard><CommunityPage /></AuthGuard>} />
               <Route path="/tudastar" element={<CoursesPage />} />
               <Route path="/tudastar/szotar" element={<AIDictionaryPage />} />
               <Route path="/tudastar/eszkoztar" element={<ToolsPage />} />
