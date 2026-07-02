@@ -163,6 +163,7 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold tracking-tighter text-title">Minden Nap AI</span>
           </Link>
+          <h1 className="sr-only">Bejelentkezés</h1>
           <p className="text-muted text-sm">Üdvözlünk újra! Jelentkezz be a folytatáshoz.</p>
         </div>
 

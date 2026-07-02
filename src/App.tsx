@@ -35,6 +35,7 @@ const AdminNotifications = lazy(() => import('./pages/AdminNotifications'));
 // Background + scroll + auth-sync are needed at top level
 import ScrollToTop from './components/ScrollToTop';
 import DynamicBackground from './components/DynamicBackground';
+import AuthGuard from './components/AuthGuard';
 import { useAuthSync } from './lib/useAuthSync';
 
 const PageLoader = () => (
@@ -68,17 +69,17 @@ export default function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/messages" element={<MessagesPage />} />
-              <Route path="/admin" element={<AdminAnalytics />} />
-              <Route path="/admin/posts" element={<AdminDashboard />} />
-              <Route path="/admin/tudastar" element={<AdminCourses />} />
-              <Route path="/admin/contacts" element={<AdminContacts />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/notifications" element={<AdminNotifications />} />
-              <Route path="/admin/campaigns" element={<AdminCampaigns />} />
-              <Route path="/admin/analytics" element={<AdminAnalytics />} />
-              <Route path="/admin/settings" element={<AdminSettings />} />
+              <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+              <Route path="/messages" element={<AuthGuard><MessagesPage /></AuthGuard>} />
+              <Route path="/admin" element={<AuthGuard requireRole="admin"><AdminAnalytics /></AuthGuard>} />
+              <Route path="/admin/posts" element={<AuthGuard requireRole="admin"><AdminDashboard /></AuthGuard>} />
+              <Route path="/admin/tudastar" element={<AuthGuard requireRole="admin"><AdminCourses /></AuthGuard>} />
+              <Route path="/admin/contacts" element={<AuthGuard requireRole="admin"><AdminContacts /></AuthGuard>} />
+              <Route path="/admin/users" element={<AuthGuard requireRole="admin"><AdminUsers /></AuthGuard>} />
+              <Route path="/admin/notifications" element={<AuthGuard requireRole="admin"><AdminNotifications /></AuthGuard>} />
+              <Route path="/admin/campaigns" element={<AuthGuard requireRole="admin"><AdminCampaigns /></AuthGuard>} />
+              <Route path="/admin/analytics" element={<AuthGuard requireRole="admin"><AdminAnalytics /></AuthGuard>} />
+              <Route path="/admin/settings" element={<AuthGuard requireRole="admin"><AdminSettings /></AuthGuard>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

@@ -30,7 +30,25 @@ import { addNotification } from '../utils/notifications';
 import { GoogleGenAI, Type } from "@google/genai";
 import Markdown from 'react-markdown';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Lazy AI client — only instantiate when GEMINI_API_KEY is present.
+// If missing, AI-powered features gracefully degrade to no-op fallbacks
+// (the page itself still loads and works for everything else).
+let _ai: GoogleGenAI | null = null;
+function getAI(): GoogleGenAI | null {
+  // Vite exposes env vars via import.meta.env (VITE_*) — at runtime in browser.
+  // process.env works in Node/test contexts.
+  const viteKey = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_GEMINI_API_KEY) as string | undefined;
+  const nodeKey = (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) as string | undefined;
+  const key = viteKey || nodeKey;
+  if (!key || key === '***' || key === 'MY_APP_URL') {
+    console.warn('[CommunityPage] GEMINI_API_KEY not set — AI features disabled, page works without them.');
+    return null;
+  }
+  if (!_ai) {
+    _ai = new GoogleGenAI({ apiKey: key });
+  }
+  return _ai;
+}
 
 interface Attachment {
   id: string;
@@ -302,6 +320,8 @@ export default function CommunityPage() {
       
       for (const post of batch) {
         try {
+          const ai = getAI();
+          if (!ai) return; // AI disabled — skip
           const response = await ai.models.generateContent({
             model: "gemini-3-flash-preview",
             contents: `Generálj 3-4 releváns hashtaget a következő poszthoz (csak a szavakat, '#' nélkül).
@@ -371,6 +391,17 @@ export default function CommunityPage() {
 
     setIsAnalyzing(true);
     try {
+      const ai = getAI();
+      if (!ai) {
+        setIsAnalyzing(false);
+        addNotification({
+          userId: 'all',
+          type: 'admin',
+          title: 'AI moderáció',
+          message: 'Az AI moderáció jelenleg nem elérhető (GEMINI_API_KEY hiányzik).',
+        });
+        return;
+      }
       // AI Moderation & Auto-Tagging
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
@@ -687,6 +718,17 @@ export default function CommunityPage() {
 
     setIsSummarizing(true);
     try {
+      const ai = getAI();
+      if (!ai) {
+        setIsSummarizing(false);
+        addNotification({
+          userId: 'all',
+          type: 'admin',
+          title: 'AI összefoglaló',
+          message: 'Az AI összefoglaló jelenleg nem elérhető (GEMINI_API_KEY hiányzik).',
+        });
+        return;
+      }
       const commentsText = post.comments.map(c => `${c.author}: ${c.text}`).join('\n');
       
       const response = await ai.models.generateContent({

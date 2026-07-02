@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
         <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-8 md:p-10 shadow-2xl">
           {!isSubmitted ? (
             <>
-              <h2 className="text-2xl font-bold mb-4">Elfelejtett jelszó?</h2>
+              <h1 className="text-2xl font-bold mb-4">Elfelejtett jelszó?</h1>
               <p className="text-gray-500 text-sm mb-8 leading-relaxed">
                 Add meg az e-mail címedet, és küldünk egy linket, amivel visszaállíthatod a jelszavadat.
               </p>

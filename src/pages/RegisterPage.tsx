@@ -118,6 +118,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="bg-[var(--bg-card)] border border-white/5 rounded-2xl p-8 md:p-10 shadow-2xl">
+          <h1 className="sr-only">Regisztráció</h1>
           <form onSubmit={handleRegister} className="space-y-5">
             {error && (
               <motion.div 
