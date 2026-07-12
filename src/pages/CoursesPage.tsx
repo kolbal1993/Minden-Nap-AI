@@ -47,6 +47,27 @@ export default function CoursesPage() {
   if (loading) {
     return <div className="min-h-screen bg-transparent text-main font-sans"><Navbar /><div className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-3 gap-8">{Array.from({length:3}).map((_,i) => <Skeleton key={i} className="h-80 w-full rounded-3xl" />)}</div></div>;
   }
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    const updatePremiumStatus = () => {
+      const savedProfile = localStorage.getItem('userProfile');
+      if (savedProfile) {
+        const profile = JSON.parse(savedProfile);
+        setIsPremium(profile.isPremium || false);
+      }
+    };
+
+    updatePremiumStatus();
+    
+    const handleStorageChange = () => {
+      updatePremiumStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   if (error) {
     console.error('[CoursesPage] Firestore error:', error);
   }
@@ -78,28 +99,6 @@ const MODULE_INFO = [
     link: '/tudastar/eszkoztar'
   }
 ];
-
-
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  useEffect(() => {
-    const updatePremiumStatus = () => {
-      const savedProfile = localStorage.getItem('userProfile');
-      if (savedProfile) {
-        const profile = JSON.parse(savedProfile);
-        setIsPremium(profile.isPremium || false);
-      }
-    };
-
-    updatePremiumStatus();
-    
-    const handleStorageChange = () => {
-      updatePremiumStatus();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
 
   const handlePurchaseSuccess = (premiumPurchased: boolean) => {
     if (premiumPurchased) {
