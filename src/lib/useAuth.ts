@@ -24,7 +24,6 @@ export function useAuth() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      setLoading(false);
       if (!u) {
         setRole('guest');
         try {
@@ -38,6 +37,7 @@ export function useAuth() {
         const tokenResult = await u.getIdTokenResult(true); // forceRefresh=true to get latest claims
         const isAdmin = !!tokenResult.claims.admin;
         setRole(isAdmin ? 'admin' : 'user');
+        setLoading(false);
         // Sync to localStorage for backwards compatibility with any legacy code
         try {
           localStorage.setItem('userRole', isAdmin ? 'admin' : 'user');
@@ -46,6 +46,7 @@ export function useAuth() {
       } catch (err) {
         console.error('[useAuth] token claims error:', err);
         setRole('user');
+        setLoading(false);
       }
     });
     return () => unsubscribe();
