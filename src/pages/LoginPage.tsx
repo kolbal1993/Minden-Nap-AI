@@ -359,13 +359,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Admin Hint */}
-        <div className="mt-12 p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl text-center">
-          <p className="text-[10px] text-muted uppercase tracking-[0.2em]">Admin teszt adatok</p>
-          <p className="text-xs text-blue-600/70 mt-1 font-mono">
-            <a href="mailto:admin@mindennapai.hu" className="hover:underline">admin@mindennapai.hu</a> / admin123
-          </p>
-        </div>
+        {/* Admin hint removed: credentials are not exposed publicly for security */}
       </motion.div>
     </div>
   );

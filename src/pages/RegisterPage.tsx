@@ -34,15 +34,10 @@ export default function RegisterPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const userEmail = user.email || '';
-        localStorage.setItem('isLoggedIn', 'true');
-        if (userEmail === 'admin@mindennapai.hu' || userEmail === 'kolesbalazs93@gmail.com') {
-          localStorage.setItem('userRole', 'admin');
-          navigate('/admin');
-        } else {
-          localStorage.setItem('userRole', 'user');
-          navigate('/');
-        }
+        // After register/login, ALWAYS go to the homepage (/)
+        // Admin role is determined by Firebase Auth custom claim (server-verified),
+        // read by useAuth.ts via user.getIdTokenResult(). Admins also land on /.
+        navigate('/');
       }
     });
     return () => unsubscribe();
@@ -82,16 +77,10 @@ export default function RegisterPage() {
     try {
       if (provider === 'Google') {
         const result = await signInWithPopup(auth, googleProvider);
-        const userEmail = result.user.email || '';
-        localStorage.setItem('isLoggedIn', 'true');
-        
-        if (userEmail === 'admin@mindennapai.hu' || userEmail === 'kolesbalazs93@gmail.com') {
-          localStorage.setItem('userRole', 'admin');
-          navigate('/admin');
-        } else {
-          localStorage.setItem('userRole', 'user');
-          navigate('/');
-        }
+        // After register/login, ALWAYS go to the homepage (/)
+        // Admin role is determined by Firebase Auth custom claim (server-verified),
+        // read by useAuth.ts via user.getIdTokenResult(). Admins also land on /.
+        navigate('/');
       }
     } catch (err: any) {
       setError(err.message || 'Hiba történt a bejelentkezés során.');

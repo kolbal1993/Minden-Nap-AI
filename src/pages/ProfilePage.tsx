@@ -52,13 +52,13 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
-    name: 'Kovács János',
-    email: 'admin@mindennapai.hu', // Fixed
-    company: 'AI Solutions Kft.',
-    profession: 'AI Tanácsadó',
-    bio: 'Szenvedélyem a mesterséges intelligencia és annak gyakorlati alkalmazása a mindennapi üzleti folyamatokban.',
-    avatar: 'https://picsum.photos/seed/user123/200/200',
-    isPremium: true,
+    name: '',
+    email: '',
+    company: '',
+    profession: '',
+    bio: '',
+    avatar: '',
+    isPremium: false,
     is2FAEnabled: false
   });
 
