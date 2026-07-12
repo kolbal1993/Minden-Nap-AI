@@ -42,17 +42,27 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Mock send logic
-    setTimeout(() => {
+    try {
+      await addDoc(collection(db, 'contacts'), {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        createdAt: serverTimestamp(),
+        status: 'unread',
+      });
       setIsSubmitting(false);
       setIsSent(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setIsSent(false), 5000);
-    }, 1500);
+    } catch (err) {
+      console.error('[ContactPage] Firestore write error:', err);
+      setIsSubmitting(false);
+    }
   };
 
   return (

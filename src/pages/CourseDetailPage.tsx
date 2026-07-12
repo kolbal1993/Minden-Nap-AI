@@ -38,7 +38,11 @@ export default function CourseDetailPage() {
     if (!id) { setDetailLoading(false); return; }
     (async () => {
       try {
-        const snap = await getDoc(doc(db, 'courses', id));
+        // Try numeric ID first, then course_ prefix (backward compat)
+        let snap = await getDoc(doc(db, 'courses', id));
+        if (!snap.exists() && !/^\d+$/.test(id)) {
+          snap = await getDoc(doc(db, 'courses', id.startsWith('course_') ? id : 'course_' + id));
+        }
         if (snap.exists()) {
           setCourse({ id: snap.id, ...snap.data() });
         } else {

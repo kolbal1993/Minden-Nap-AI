@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
+import Skeleton from '../components/Skeleton';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   MessageSquare, 
@@ -233,6 +235,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 };
 
 export default function CommunityPage() {
+  const { data: firestorePosts, loading: fsLoading } = useFirestoreCollection('posts', { realtime: false, orderBy: 'publishDate', max: 100 });
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);

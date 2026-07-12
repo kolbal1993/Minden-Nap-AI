@@ -30,6 +30,7 @@ export function useAuth() {
           localStorage.removeItem('isLoggedIn');
           localStorage.removeItem('userRole');
         } catch {}
+        setLoading(false);
         return;
       }
       // Read role from Firebase Auth ID token custom claims (server-verified)

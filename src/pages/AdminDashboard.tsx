@@ -92,7 +92,7 @@ export default function AdminDashboard() {
     loading,
     error,
   } = useFirestoreCollection('posts', {
-    orderBy: 'createdAt',
+    orderBy: 'publishDate',
     orderDirection: 'desc',
     realtime: true,
     max: 200,
