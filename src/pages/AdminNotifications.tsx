@@ -1,55 +1,77 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * AdminNotifications — backed by Firestore `notifications/{auto-id}`.
+ * Realtime onSnapshot, full CRUD with EmptyState and Skeleton.
  */
-
-import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Bell, 
-  Trash2, 
-  Search, 
-  LayoutDashboard, 
-  FileText, 
-  Settings, 
-  LogOut,
+import {
+  Bell,
+  Trash2,
+  Search,
   X,
-  Cpu,
   BookOpen,
-  Contact2,
-  BarChart3,
-  Users,
-  Megaphone,
   Clock,
   CheckCircle2,
   AlertCircle,
   Zap,
   Plus,
-  ExternalLink,
   ShieldCheck,
-  Menu
+  Megaphone,
+  Menu,
+  AlertOctagon,
 } from 'lucide-react';
-import { Notification, addNotification, deleteNotification } from '../utils/notifications';
+import { doc, addDoc, deleteDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import AdminSidebar from '../components/AdminSidebar';
+import Skeleton from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
+import { useFirestoreCollection, FirestoreDoc } from '../hooks/useFirestoreCollection';
+
+type NotificationType = 'admin' | 'news' | 'course' | 'comment' | 'reaction';
+
+interface NotificationDoc extends FirestoreDoc {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+  icon?: string;
+  read?: boolean;
+  createdAt?: { seconds: number; nanoseconds: number } | string;
+}
 
 export default function AdminNotifications() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const navigate = useNavigate();
+
+  const {
+    data: notifications,
+    loading,
+    error,
+  } = useFirestoreCollection('notifications', {
+    orderBy: 'createdAt',
+    orderDirection: 'desc',
+    realtime: true,
+    max: 200,
+  });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
   const [notificationData, setNotificationData] = useState({
     title: '',
     message: '',
-    type: 'admin' as any,
+    type: 'admin' as NotificationType,
     icon: 'Bell',
     link: '',
-    userId: 'all'
+    userId: 'all',
   });
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const handleNotificationClick = (link?: string) => {
     if (!link) return;
@@ -60,65 +82,65 @@ export default function AdminNotifications() {
     }
   };
 
-  useEffect(() => {
-    const loadNotifications = () => {
-      const stored = localStorage.getItem('notifications');
-      if (stored) {
-        setNotifications(JSON.parse(stored));
-      }
-    };
-
-    loadNotifications();
-    window.addEventListener('storage', loadNotifications);
-    return () => window.removeEventListener('storage', loadNotifications);
-  }, []);
-
   const handleDeleteClick = (id: string) => {
     setNotificationToDelete(id);
     setIsDeleteConfirmOpen(true);
   };
 
-  const confirmDelete = () => {
-    if (notificationToDelete) {
-      deleteNotification(notificationToDelete);
-      setNotifications(notifications.filter(n => n.id !== notificationToDelete));
+  const confirmDelete = async () => {
+    if (!notificationToDelete) return;
+    try {
+      await deleteDoc(doc(db, 'notifications', notificationToDelete));
       setIsDeleteConfirmOpen(false);
       setNotificationToDelete(null);
+    } catch (err) {
+      console.error('[AdminNotifications] delete error:', err);
     }
   };
 
-  const handleSendNotification = () => {
+  const handleSendNotification = async () => {
     if (!notificationData.title || !notificationData.message) return;
-    
-    addNotification({
-      userId: notificationData.userId,
-      type: notificationData.type,
-      title: notificationData.title,
-      message: notificationData.message,
-      icon: notificationData.icon,
-      link: notificationData.link || undefined
-    } as any);
-    
-    setIsNotificationModalOpen(false);
-    setNotificationData({ title: '', message: '', type: 'admin', icon: 'Bell', link: '', userId: 'all' });
+    setSending(true);
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        userId: notificationData.userId,
+        type: notificationData.type,
+        title: notificationData.title,
+        message: notificationData.message,
+        icon: notificationData.icon,
+        link: notificationData.link || null,
+        read: false,
+        createdAt: serverTimestamp(),
+      });
+      setIsNotificationModalOpen(false);
+      setNotificationData({ title: '', message: '', type: 'admin', icon: 'Bell', link: '', userId: 'all' });
+    } catch (err) {
+      console.error('[AdminNotifications] create error:', err);
+    } finally {
+      setSending(false);
+    }
   };
 
-  const filteredNotifications = notifications.filter(n => 
-    n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    n.message.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredNotifications = (notifications as NotificationDoc[]).filter((n) =>
+    (n.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (n.message || '').toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userRole');
+  const formatDate = (val: NotificationDoc['createdAt']) => {
+    if (!val) return '—';
+    if (typeof val === 'string') return new Date(val).toLocaleString('hu-HU');
+    if (typeof val === 'object' && 'seconds' in val) {
+      return new Date(val.seconds * 1000).toLocaleString('hu-HU');
+    }
+    return '—';
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'news': return <Megaphone className="w-4 h-4 text-orange-400" />;
-      case 'course': return <BookOpen className="w-4 h-4 text-blue-600" />;
+      case 'course': return <BookOpen className="w-4 h-4 text-blue-500" />;
       case 'admin': return <ShieldCheck className="w-4 h-4 text-purple-400" />;
-      default: return <Bell className="w-4 h-4 text-gray-400" />;
+      default: return <Bell className="w-4 h-4 text-muted" />;
     }
   };
 
@@ -127,7 +149,7 @@ export default function AdminNotifications() {
       {/* Sidebar Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -147,7 +169,7 @@ export default function AdminNotifications() {
         {/* Header */}
         <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
           <div className="flex items-center gap-4 sm:gap-6">
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="p-2 hover:bg-hover rounded-xl transition-colors md:hidden text-muted hover:text-title"
             >
@@ -158,9 +180,9 @@ export default function AdminNotifications() {
           <div className="flex items-center gap-4">
             <div className="relative hidden lg:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Keresés..." 
+              <input
+                type="text"
+                placeholder="Keresés..."
                 className="bg-card border border-main rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-48 text-title placeholder:text-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -168,7 +190,7 @@ export default function AdminNotifications() {
                 onClick={(e) => e.currentTarget.select()}
               />
             </div>
-            <button 
+            <button
               onClick={() => setIsNotificationModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-600/20"
             >
@@ -179,87 +201,105 @@ export default function AdminNotifications() {
 
         {/* Table Container */}
         <div className="flex-1 overflow-auto p-8">
-          <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-hover border-b border-main">
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Típus</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Cím / Üzenet</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Címzett</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Dátum</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Státusz</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-main">
-                {filteredNotifications.map((n) => (
-                  <tr 
-                    key={n.id} 
-                    className={`hover:bg-hover transition-colors group ${n.link ? 'cursor-pointer' : ''}`}
-                    onClick={() => handleNotificationClick(n.link)}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="w-8 h-8 rounded-lg bg-hover flex items-center justify-center">
-                        {getTypeIcon(n.type)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 max-w-md">
-                      <div className="space-y-1">
-                        <div className="font-medium text-title">{n.title}</div>
-                        <div className="text-xs text-muted line-clamp-1">{n.message}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
-                        n.userId === 'all' 
-                          ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' 
-                          : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
-                      }`}>
-                        {n.userId === 'all' ? 'Mindenki' : `ID: ${n.userId}`}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-xs text-muted">
-                        <Clock className="w-3 h-3" />
-                        {new Date(n.createdAt).toLocaleString('hu-HU')}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {n.read ? (
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-green-400">
-                          <CheckCircle2 className="w-3 h-3" /> Olvasott
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-orange-400">
-                          <AlertCircle className="w-3 h-3" /> Új
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteClick(n.id);
-                        }}
-                        className="p-2 rounded-lg hover:bg-red-500/10 text-muted hover:text-red-400 transition-all"
-                        title="Visszavonás / Törlés"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+          {loading ? (
+            <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none p-6 space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : error ? (
+            <EmptyState
+              icon={AlertOctagon}
+              title="Nem sikerült betölteni az értesítéseket"
+              description={error.message}
+              cta={{ label: 'Új értesítés küldése', onClick: () => setIsNotificationModalOpen(true), icon: Plus }}
+            />
+          ) : filteredNotifications.length === 0 ? (
+            <EmptyState
+              icon={Bell}
+              title={searchTerm ? 'Nincs találat' : 'Még nincsenek értesítések'}
+              description={
+                searchTerm
+                  ? 'A keresésedre nincs találat. Próbálj más kulcsszót.'
+                  : 'Amikor új értesítést küldesz, itt fog megjelenni a teljes előzmény.'
+              }
+              cta={!searchTerm ? { label: 'Új értesítés küldése', onClick: () => setIsNotificationModalOpen(true), icon: Plus } : undefined}
+            />
+          ) : (
+            <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-hover border-b border-main">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Típus</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Cím / Üzenet</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Címzett</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Dátum</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Státusz</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {filteredNotifications.length === 0 && (
-              <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Bell className="text-muted w-8 h-8" />
-                </div>
-                <p className="text-muted">Nem található értesítés.</p>
-              </div>
-            )}
-          </div>
+                </thead>
+                <tbody className="divide-y divide-main">
+                  {filteredNotifications.map((n) => (
+                    <tr
+                      key={n.id}
+                      className={`hover:bg-hover transition-colors group ${n.link ? 'cursor-pointer' : ''}`}
+                      onClick={() => handleNotificationClick(n.link)}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="w-8 h-8 rounded-lg bg-hover flex items-center justify-center">
+                          {getTypeIcon(n.type)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 max-w-md">
+                        <div className="space-y-1">
+                          <div className="font-medium text-title">{n.title}</div>
+                          <div className="text-xs text-muted line-clamp-1">{n.message}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
+                          n.userId === 'all'
+                            ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                            : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                        }`}>
+                          {n.userId === 'all' ? 'Mindenki' : `ID: ${n.userId}`}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-xs text-muted">
+                          <Clock className="w-3 h-3" />
+                          {formatDate(n.createdAt)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {n.read ? (
+                          <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-green-500">
+                            <CheckCircle2 className="w-3 h-3" /> Olvasott
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-orange-400">
+                            <AlertCircle className="w-3 h-3" /> Új
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(n.id);
+                          }}
+                          className="p-2 rounded-lg hover:bg-red-500/10 text-muted hover:text-red-500 transition-all"
+                          title="Visszavonás / Törlés"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
 
@@ -267,14 +307,14 @@ export default function AdminNotifications() {
       <AnimatePresence>
         {isNotificationModalOpen && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsNotificationModalOpen(false)}
+              onClick={() => !sending && setIsNotificationModalOpen(false)}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -282,9 +322,13 @@ export default function AdminNotifications() {
             >
               <div className="p-8 border-b border-main flex justify-between items-center bg-hover">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-title">
-                  <Bell className="text-blue-600" /> Új Értesítés Küldése
+                  <Bell className="text-blue-500" /> Új Értesítés Küldése
                 </h2>
-                <button onClick={() => setIsNotificationModalOpen(false)} className="p-2 hover:bg-hover rounded-full transition-colors text-muted">
+                <button
+                  onClick={() => setIsNotificationModalOpen(false)}
+                  disabled={sending}
+                  className="p-2 hover:bg-hover rounded-full transition-colors text-muted disabled:opacity-50"
+                >
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -293,7 +337,7 @@ export default function AdminNotifications() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-muted uppercase tracking-wider">Címzett</label>
-                    <select 
+                    <select
                       value={notificationData.userId}
                       onChange={(e) => setNotificationData({ ...notificationData, userId: e.target.value })}
                       className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-title"
@@ -305,9 +349,9 @@ export default function AdminNotifications() {
 
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-muted uppercase tracking-wider">Értesítés Típusa</label>
-                    <select 
+                    <select
                       value={notificationData.type}
-                      onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as any })}
+                      onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as NotificationType })}
                       className="w-full bg-hover border border-main rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500 transition-colors appearance-none text-title"
                     >
                       <option value="admin">Rendszerüzenet</option>
@@ -330,14 +374,13 @@ export default function AdminNotifications() {
                       { id: 'CheckCircle2', icon: CheckCircle2 },
                       { id: 'Clock', icon: Clock },
                       { id: 'Plus', icon: Plus },
-                      { id: 'ExternalLink', icon: ExternalLink }
                     ].map((item) => (
                       <button
                         key={item.id}
                         onClick={() => setNotificationData({ ...notificationData, icon: item.id })}
                         className={`p-4 rounded-2xl border transition-all flex items-center justify-center ${
-                          notificationData.icon === item.id 
-                            ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                          notificationData.icon === item.id
+                            ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
                             : 'bg-hover border-main text-muted hover:bg-hover/80'
                         }`}
                       >
@@ -349,8 +392,8 @@ export default function AdminNotifications() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-muted uppercase tracking-wider">Értesítés Címe</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={notificationData.title}
                     onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
                     onFocus={(e) => e.target.select()}
@@ -362,7 +405,7 @@ export default function AdminNotifications() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-muted uppercase tracking-wider">Üzenet</label>
-                  <textarea 
+                  <textarea
                     value={notificationData.message}
                     onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
                     onFocus={(e) => e.target.select()}
@@ -374,8 +417,8 @@ export default function AdminNotifications() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-muted uppercase tracking-wider">Link (opcionális)</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={notificationData.link}
                     onChange={(e) => setNotificationData({ ...notificationData, link: e.target.value })}
                     onFocus={(e) => e.target.select()}
@@ -386,11 +429,12 @@ export default function AdminNotifications() {
                 </div>
 
                 <div className="pt-4 flex gap-4">
-                  <button 
+                  <button
                     onClick={handleSendNotification}
-                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20"
+                    disabled={sending || !notificationData.title || !notificationData.message}
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Zap className="w-5 h-5" /> Értesítés Kiküldése
+                    <Zap className="w-5 h-5" /> {sending ? 'Küldés...' : 'Értesítés Kiküldése'}
                   </button>
                 </div>
               </div>
@@ -403,14 +447,14 @@ export default function AdminNotifications() {
       <AnimatePresence>
         {isDeleteConfirmOpen && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsDeleteConfirmOpen(false)}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -422,13 +466,13 @@ export default function AdminNotifications() {
               <h2 className="text-xl font-bold text-center mb-2 text-title">Biztosan törölni szeretnéd?</h2>
               <p className="text-muted text-center mb-8">Ez a művelet nem vonható vissza. Az értesítés véglegesen törlődik a rendszerből.</p>
               <div className="flex gap-4">
-                <button 
+                <button
                   onClick={() => setIsDeleteConfirmOpen(false)}
                   className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>
-                <button 
+                <button
                   onClick={confirmDelete}
                   className="flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
                 >

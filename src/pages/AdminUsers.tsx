@@ -1,40 +1,40 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * AdminUsers — backed by Firestore `users/{uid}` collection.
+ * Realtime onSnapshot, search/filter, block/unblock, premium extension,
+ * billing history, bulk actions. EmptyState + Skeleton.
  */
-
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Search, 
-  Users, 
-  Crown, 
-  User, 
-  Filter, 
-  ArrowUpDown, 
-  Ban, 
-  Unlock, 
-  Clock, 
-  ShieldAlert, 
-  X as CloseIcon, 
-  Download, 
-  Mail, 
-  Calendar, 
-  CreditCard, 
-  Trash2, 
-  MessageSquare, 
-  CheckSquare, 
-  Square, 
-  ChevronRight, 
-  Send, 
-  AlertTriangle, 
-  Megaphone,
-  Bell,
+import {
+  Search,
+  Users,
+  Crown,
+  User as UserIcon,
+  Ban,
+  Unlock,
+  ShieldAlert,
+  X as CloseIcon,
+  Download,
+  Mail,
+  Calendar,
+  CreditCard,
+  Trash2,
+  MessageSquare,
+  CheckSquare,
+  Square,
+  Send,
+  AlertOctagon,
   Menu,
-  X
 } from 'lucide-react';
+import { doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import AdminSidebar from '../components/AdminSidebar';
+import Skeleton from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
+import { useFirestoreCollection, FirestoreDoc } from '../hooks/useFirestoreCollection';
 
 interface BillingRecord {
   id: string;
@@ -45,116 +45,64 @@ interface BillingRecord {
   method: string;
 }
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'moderator' | 'user';
-  isPremium: boolean;
+interface UserDataDoc extends FirestoreDoc {
+  uid?: string;
+  name?: string;
+  displayName?: string;
+  email?: string;
+  role?: 'admin' | 'moderator' | 'user';
+  isPremium?: boolean;
   premiumSince?: string;
   premiumUntil?: string;
-  totalPremiumMonths: number;
-  registrationDate: string;
-  lastLogin: string;
-  lastActive: string;
+  totalPremiumMonths?: number;
+  registrationDate?: string;
+  createdAt?: { seconds: number; nanoseconds: number } | string;
+  lastLogin?: string;
+  lastActive?: string;
+  lastSeen?: { seconds: number; nanoseconds: number } | string;
   avatar?: string;
+  photoURL?: string;
   isBlocked?: boolean;
-  blockedUntil?: string; // ISO string or 'permanent'
-  billingHistory: BillingRecord[];
+  blockedUntil?: string;
+  billingHistory?: BillingRecord[];
 }
 
-const MOCK_USERS: UserData[] = [
-  {
-    id: '1',
-    name: 'Kovács János',
-    email: 'janos.kovacs@example.com',
-    role: 'admin',
-    isPremium: true,
-    premiumSince: '2026-01-15',
-    premiumUntil: '2026-05-15',
-    totalPremiumMonths: 3,
-    registrationDate: '2026-01-15',
-    lastLogin: '2026-04-04',
-    lastActive: '2026-04-05T08:00:00Z',
-    avatar: 'https://picsum.photos/seed/user1/200/200',
-    billingHistory: [
-      { id: 'inv_1', date: '2026-01-15', amount: 2990, currency: 'Ft', status: 'success', method: 'Card' },
-      { id: 'inv_2', date: '2026-02-15', amount: 2990, currency: 'Ft', status: 'success', method: 'Card' },
-      { id: 'inv_3', date: '2026-03-15', amount: 2990, currency: 'Ft', status: 'success', method: 'Card' },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Szabó Anna',
-    email: 'anna.szabo@example.com',
-    role: 'user',
-    isPremium: false,
-    totalPremiumMonths: 0,
-    registrationDate: '2026-02-10',
-    lastLogin: '2026-04-03',
-    lastActive: '2026-04-03T14:20:00Z',
-    avatar: 'https://picsum.photos/seed/user2/200/200',
-    billingHistory: []
-  },
-  {
-    id: '3',
-    name: 'Nagy Péter',
-    email: 'peter.nagy@example.com',
-    role: 'moderator',
-    isPremium: true,
-    premiumSince: '2026-03-05',
-    premiumUntil: '2026-04-05',
-    totalPremiumMonths: 1,
-    registrationDate: '2026-03-05',
-    lastLogin: '2026-04-04',
-    lastActive: '2026-04-04T22:10:00Z',
-    avatar: 'https://picsum.photos/seed/user3/200/200',
-    billingHistory: [
-      { id: 'inv_4', date: '2026-03-05', amount: 2990, currency: 'Ft', status: 'success', method: 'PayPal' },
-    ]
-  },
-  {
-    id: '4',
-    name: 'Kiss Eszter',
-    email: 'eszter.kiss@example.com',
-    role: 'user',
-    isPremium: false,
-    totalPremiumMonths: 2,
-    registrationDate: '2026-01-20',
-    lastLogin: '2026-04-01',
-    lastActive: '2026-04-01T09:45:00Z',
-    avatar: 'https://picsum.photos/seed/user4/200/200',
-    billingHistory: [
-      { id: 'inv_5', date: '2026-01-20', amount: 2990, currency: 'Ft', status: 'success', method: 'Card' },
-      { id: 'inv_6', date: '2026-02-20', amount: 2990, currency: 'Ft', status: 'failed', method: 'Card' },
-    ]
-  },
-  {
-    id: '5',
-    name: 'Tóth Gábor',
-    email: 'gabor.toth@example.com',
-    role: 'user',
-    isPremium: false,
-    totalPremiumMonths: 0,
-    registrationDate: '2026-03-25',
-    lastLogin: '2026-04-04',
-    lastActive: '2026-04-05T07:30:00Z',
-    avatar: 'https://picsum.photos/seed/user5/200/200',
-    billingHistory: []
+type FilterType = 'all' | 'premium' | 'free';
+type BlockDuration = '1h' | '24h' | '7d' | '30d' | 'permanent';
+
+const formatTimestamp = (val: unknown): string | null => {
+  if (!val) return null;
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object' && val !== null && 'seconds' in val) {
+    const ts = val as { seconds: number; nanoseconds: number };
+    return new Date(ts.seconds * 1000).toISOString();
   }
-];
+  return null;
+};
+
+const dateFromAny = (val: unknown): Date | null => {
+  if (!val) return null;
+  if (typeof val === 'string') {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof val === 'object' && val !== null && 'seconds' in val) {
+    const ts = val as { seconds: number; nanoseconds: number };
+    return new Date(ts.seconds * 1000);
+  }
+  return null;
+};
 
 export default function AdminUsers() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [users, setUsers] = useState<UserData[]>(MOCK_USERS);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'premium' | 'free'>('all');
+  const [filterType, setFilterType] = useState<FilterType>('all');
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-  const [blockDuration, setBlockDuration] = useState<'1h' | '24h' | '7d' | '30d' | 'permanent'>('24h');
-  
-  // New states
+  const [selectedUser, setSelectedUser] = useState<UserDataDoc | null>(null);
+  const [blockDuration, setBlockDuration] = useState<BlockDuration>('24h');
+
+  // Bulk + secondary modals
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [isBillingModalOpen, setIsBillingModalOpen] = useState(false);
   const [isExpirationModalOpen, setIsExpirationModalOpen] = useState(false);
@@ -162,26 +110,42 @@ export default function AdminUsers() {
   const [messageType, setMessageType] = useState<'system' | 'email'>('system');
   const [messageContent, setMessageContent] = useState('');
   const [extensionDays, setExtensionDays] = useState<number | 'forever'>(30);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const location = useLocation();
+  const {
+    data: users,
+    loading,
+    error,
+  } = useFirestoreCollection('users', {
+    orderBy: 'createdAt',
+    orderDirection: 'desc',
+    realtime: true,
+    max: 500,
+  });
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userRole');
-  };
-
-  const handleBlockAction = (user: UserData) => {
+  const handleBlockAction = (user: UserDataDoc) => {
     if (user.isBlocked) {
-      setUsers(users.map(u => u.id === user.id ? { ...u, isBlocked: false, blockedUntil: undefined } : u));
+      // unblock immediately
+      (async () => {
+        try {
+          await updateDoc(doc(db, 'users', user.id), {
+            isBlocked: false,
+            blockedUntil: null,
+            updatedAt: serverTimestamp(),
+          });
+        } catch (err) {
+          console.error('[AdminUsers] unblock error:', err);
+        }
+      })();
     } else {
       setSelectedUser(user);
       setIsBlockModalOpen(true);
     }
   };
 
-  const confirmBlock = () => {
+  const confirmBlock = async () => {
     if (!selectedUser) return;
-    let until = '';
+    let until: string | null = null;
     const now = new Date();
     if (blockDuration === '1h') until = new Date(now.getTime() + 60 * 60 * 1000).toISOString();
     else if (blockDuration === '24h') until = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
@@ -189,22 +153,45 @@ export default function AdminUsers() {
     else if (blockDuration === '30d') until = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
     else until = 'permanent';
 
-    setUsers(users.map(u => u.id === selectedUser.id ? { ...u, isBlocked: true, blockedUntil: until } : u));
-    setIsBlockModalOpen(false);
-    setSelectedUser(null);
+    try {
+      await updateDoc(doc(db, 'users', selectedUser.id), {
+        isBlocked: true,
+        blockedUntil: until,
+        updatedAt: serverTimestamp(),
+      });
+      setIsBlockModalOpen(false);
+      setSelectedUser(null);
+    } catch (err) {
+      console.error('[AdminUsers] block error:', err);
+      setActionError(err instanceof Error ? err.message : 'Hiba a blokkolásnál.');
+    }
   };
 
   const toggleUserSelection = (userId: string) => {
-    setSelectedUserIds(prev => 
-      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    setSelectedUserIds((prev) =>
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId],
     );
   };
+
+  const filteredUsers = useMemo(() => {
+    const list = users as UserDataDoc[];
+    return list.filter((user) => {
+      const name = (user.name || user.displayName || '').toLowerCase();
+      const email = (user.email || '').toLowerCase();
+      const matchesSearch = name.includes(searchTerm.toLowerCase()) || email.includes(searchTerm.toLowerCase());
+      const matchesFilter =
+        filterType === 'all' ||
+        (filterType === 'premium' && !!user.isPremium) ||
+        (filterType === 'free' && !user.isPremium);
+      return matchesSearch && matchesFilter;
+    });
+  }, [users, searchTerm, filterType]);
 
   const toggleAllSelection = () => {
     if (selectedUserIds.length === filteredUsers.length) {
       setSelectedUserIds([]);
     } else {
-      setSelectedUserIds(filteredUsers.map(u => u.id));
+      setSelectedUserIds(filteredUsers.map((u) => u.id));
     }
   };
 
@@ -213,16 +200,21 @@ export default function AdminUsers() {
     setIsDeleteConfirmOpen(true);
   };
 
-  const confirmBulkDelete = () => {
-    setUsers(users.filter(u => !selectedUserIds.includes(u.id)));
-    setSelectedUserIds([]);
-    setIsDeleteConfirmOpen(false);
+  const confirmBulkDelete = async () => {
+    try {
+      await Promise.all(selectedUserIds.map((id) => deleteDoc(doc(db, 'users', id))));
+      setSelectedUserIds([]);
+      setIsDeleteConfirmOpen(false);
+    } catch (err) {
+      console.error('[AdminUsers] bulk delete error:', err);
+      setActionError(err instanceof Error ? err.message : 'Hiba a törlésnél.');
+    }
   };
 
   const handleDownloadInvoice = (billId: string) => {
-    const bill = selectedUser?.billingHistory.find(b => b.id === billId);
+    const bill = selectedUser?.billingHistory?.find((b) => b.id === billId);
     if (!bill) return;
-    
+
     const content = `Számla: ${bill.id}\nDátum: ${bill.date}\nÖsszeg: ${bill.amount} ${bill.currency}\nStátusz: ${bill.status}\nMód: ${bill.method}\n\nKöszönjük a vásárlást!\nMinden Nap AI Csapata`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -238,42 +230,57 @@ export default function AdminUsers() {
 
   const handleExportCSV = () => {
     const headers = ['ID', 'Név', 'Email', 'Szerepkör', 'Prémium', 'Regisztráció', 'Utoljára aktív'];
-    const rows = users.map(u => [
-      u.id, u.name, u.email, u.role, u.isPremium ? 'Igen' : 'Nem', u.registrationDate, u.lastActive
-    ]);
-    
-    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const rows = filteredUsers.map((u) => {
+      const name = u.name || u.displayName || '—';
+      const reg = u.registrationDate || formatTimestamp(u.createdAt) || '—';
+      const last = u.lastActive || formatTimestamp(u.lastSeen) || '—';
+      return [
+        u.id,
+        name,
+        u.email || '—',
+        u.role || 'user',
+        u.isPremium ? 'Igen' : 'Nem',
+        reg,
+        last,
+      ];
+    });
+
+    const csvContent = [headers, ...rows].map((e) => e.join(',')).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "felhasznalok_export.csv");
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'felhasznalok_export.csv');
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleExtendPremium = () => {
+  const handleExtendPremium = async () => {
     if (!selectedUser) return;
-    
-    let newUntil = '';
-    if (extensionDays === 'forever') {
-      newUntil = 'Végtelen';
-    } else {
-      const currentUntil = selectedUser.premiumUntil && selectedUser.premiumUntil !== 'Végtelen' 
-        ? new Date(selectedUser.premiumUntil) 
-        : new Date();
-      const date = new Date(currentUntil.getTime() + (extensionDays as number) * 24 * 60 * 60 * 1000);
-      newUntil = date.toISOString().split('T')[0];
+    try {
+      let newUntil: string;
+      if (extensionDays === 'forever') {
+        newUntil = '9999-12-31';
+      } else {
+        const currentUntil = selectedUser.premiumUntil && selectedUser.premiumUntil !== 'Végtelen'
+          ? new Date(selectedUser.premiumUntil)
+          : new Date();
+        const date = new Date(currentUntil.getTime() + (extensionDays as number) * 24 * 60 * 60 * 1000);
+        newUntil = date.toISOString().split('T')[0];
+      }
+
+      await updateDoc(doc(db, 'users', selectedUser.id), {
+        isPremium: true,
+        premiumUntil: newUntil,
+        updatedAt: serverTimestamp(),
+      });
+      setIsExpirationModalOpen(false);
+    } catch (err) {
+      console.error('[AdminUsers] extend premium error:', err);
+      setActionError(err instanceof Error ? err.message : 'Hiba a hosszabbításnál.');
     }
-    
-    setUsers(users.map(u => u.id === selectedUser.id ? { 
-      ...u, 
-      isPremium: true, 
-      premiumUntil: newUntil 
-    } : u));
-    setIsExpirationModalOpen(false);
   };
 
   const handleSendMessage = () => {
@@ -282,31 +289,23 @@ export default function AdminUsers() {
     setMessageContent('');
   };
 
-  const getChurnStatus = (lastActive: string) => {
+  const getChurnStatus = (lastActive: string | null) => {
+    if (!lastActive) return { label: 'Ismeretlen', color: 'text-muted bg-hover border-main' };
     const last = new Date(lastActive);
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 3) return { label: 'Aktív', color: 'text-green-400 bg-green-400/10 border-green-400/20' };
-    if (diffDays < 7) return { label: 'Inaktív', color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20' };
-    return { label: 'Churn veszély', color: 'text-red-400 bg-red-400/10 border-red-400/20' };
-  };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || 
-                         (filterType === 'premium' && user.isPremium) || 
-                         (filterType === 'free' && !user.isPremium);
-    return matchesSearch && matchesFilter;
-  });
+    if (diffDays < 3) return { label: 'Aktív', color: 'text-green-500 bg-green-500/10 border-green-500/20' };
+    if (diffDays < 7) return { label: 'Inaktív', color: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' };
+    return { label: 'Churn veszély', color: 'text-red-500 bg-red-500/10 border-red-500/20' };
+  };
 
   return (
     <div className="min-h-screen bg-main text-body flex font-sans transition-colors duration-300">
       {/* Sidebar Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -326,14 +325,14 @@ export default function AdminUsers() {
         {/* Header */}
         <header className="h-20 border-b border-main bg-glass backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
           <div className="flex items-center gap-4 sm:gap-6">
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="p-2 hover:bg-hover rounded-xl transition-colors md:hidden text-muted hover:text-title"
             >
               <Menu className="w-6 h-6" />
             </button>
             <h1 className="text-lg sm:text-xl font-bold text-title truncate">Felhasználók</h1>
-            <button 
+            <button
               onClick={handleExportCSV}
               className="hidden sm:flex items-center gap-2 px-4 py-2 bg-hover hover:bg-hover/80 border border-main rounded-xl text-xs font-bold transition-all text-title"
             >
@@ -343,9 +342,9 @@ export default function AdminUsers() {
           <div className="flex items-center gap-4">
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Keresés név vagy email alapján..." 
+              <input
+                type="text"
+                placeholder="Keresés név vagy email alapján..."
                 className="bg-card border border-main rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500/50 w-80 text-title placeholder:text-muted"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -353,19 +352,19 @@ export default function AdminUsers() {
               />
             </div>
             <div className="flex bg-hover border border-main rounded-xl p-1">
-              <button 
+              <button
                 onClick={() => setFilterType('all')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'all' ? 'bg-blue-600 text-white' : 'text-muted hover:text-title'}`}
               >
                 Összes
               </button>
-              <button 
+              <button
                 onClick={() => setFilterType('premium')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'premium' ? 'bg-orange-600 text-white' : 'text-muted hover:text-title'}`}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'premium' ? 'bg-orange-500 text-white' : 'text-muted hover:text-title'}`}
               >
                 Prémium
               </button>
-              <button 
+              <button
                 onClick={() => setFilterType('free')}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filterType === 'free' ? 'bg-card text-title' : 'text-muted hover:text-title'}`}
               >
@@ -377,8 +376,15 @@ export default function AdminUsers() {
 
         {/* Table Container */}
         <div className="flex-1 overflow-auto p-8">
+          {actionError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm">
+              {actionError}
+              <button onClick={() => setActionError(null)} className="float-right font-bold">×</button>
+            </div>
+          )}
+
           {selectedUserIds.length > 0 && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-6 p-4 bg-blue-600 rounded-2xl flex items-center justify-between shadow-lg shadow-blue-600/20"
@@ -386,19 +392,14 @@ export default function AdminUsers() {
               <div className="flex items-center gap-4">
                 <span className="font-bold text-sm text-white">{selectedUserIds.length} felhasználó kijelölve</span>
                 <div className="h-4 w-px bg-white/20" />
-                <button 
+                <button
                   onClick={() => setIsMessageModalOpen(true)}
                   className="flex items-center gap-2 text-xs font-bold hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors text-white"
                 >
                   <MessageSquare className="w-4 h-4" /> Csoportos üzenet
                 </button>
-                <button 
-                  className="flex items-center gap-2 text-xs font-bold hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors text-white"
-                >
-                  <Crown className="w-4 h-4" /> Tagság módosítása
-                </button>
               </div>
-              <button 
+              <button
                 onClick={handleBulkDelete}
                 className="flex items-center gap-2 bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors"
               >
@@ -407,138 +408,174 @@ export default function AdminUsers() {
             </motion.div>
           )}
 
-          <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-hover border-b border-main">
-                  <th className="px-6 py-4 w-12">
-                    <button 
-                      onClick={toggleAllSelection}
-                      className="text-muted hover:text-title transition-colors"
-                    >
-                      {selectedUserIds.length === filteredUsers.length ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5" />}
-                    </button>
-                  </th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Felhasználó</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Szerepkör</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tagság</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Lejárat / Churn</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-main">
-                {filteredUsers.map((user) => {
-                  const churn = getChurnStatus(user.lastActive);
-                  return (
-                    <tr 
-                      key={user.id} 
-                      className={`hover:bg-hover transition-colors group ${selectedUserIds.includes(user.id) ? 'bg-blue-600/5' : ''}`}
-                    >
-                      <td className="px-6 py-4">
-                        <button 
-                          onClick={() => toggleUserSelection(user.id)}
-                          className="text-muted hover:text-title transition-colors"
-                        >
-                          {selectedUserIds.includes(user.id) ? <CheckSquare className="w-5 h-5 text-blue-600" /> : <Square className="w-5 h-5" />}
-                        </button>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full overflow-hidden bg-hover shrink-0 border border-main">
-                            {user.avatar ? (
-                              <img src={user.avatar} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+          {loading ? (
+            <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none p-6 space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : error ? (
+            <EmptyState
+              icon={AlertOctagon}
+              title="Nem sikerült betölteni a felhasználókat"
+              description={error.message}
+            />
+          ) : filteredUsers.length === 0 ? (
+            <EmptyState
+              icon={Users}
+              title={searchTerm ? 'Nincs találat' : 'Még nincsenek felhasználók'}
+              description={
+                searchTerm
+                  ? 'A keresésedre nincs találat. Próbálj más kulcsszót.'
+                  : 'Amikor valaki regisztrál a platformon, itt fog megjelenni.'
+              }
+            />
+          ) : (
+            <div className="bg-card rounded-3xl overflow-hidden shadow-xl border-none">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-hover border-b border-main">
+                    <th className="px-6 py-4 w-12">
+                      <button
+                        onClick={toggleAllSelection}
+                        className="text-muted hover:text-title transition-colors"
+                      >
+                        {selectedUserIds.length === filteredUsers.length ? (
+                          <CheckSquare className="w-5 h-5 text-blue-500" />
+                        ) : (
+                          <Square className="w-5 h-5" />
+                        )}
+                      </button>
+                    </th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Felhasználó</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Szerepkör</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Tagság</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted">Lejárat / Churn</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Műveletek</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-main">
+                  {filteredUsers.map((rawUser) => {
+                    const user = rawUser as UserDataDoc;
+                    const displayName = user.name || user.displayName || 'Ismeretlen';
+                    const userAvatar = user.avatar || user.photoURL;
+                    const lastActive =
+                      user.lastActive ||
+                      formatTimestamp(user.lastSeen) ||
+                      formatTimestamp(user.createdAt) ||
+                      formatTimestamp(user.lastLogin);
+                    const churn = getChurnStatus(lastActive);
+                    return (
+                      <tr
+                        key={user.id}
+                        className={`hover:bg-hover transition-colors group ${selectedUserIds.includes(user.id) ? 'bg-blue-600/5' : ''}`}
+                      >
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => toggleUserSelection(user.id)}
+                            className="text-muted hover:text-title transition-colors"
+                          >
+                            {selectedUserIds.includes(user.id) ? (
+                              <CheckSquare className="w-5 h-5 text-blue-500" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-600">
-                                <User className="w-5 h-5" />
-                              </div>
+                              <Square className="w-5 h-5" />
+                            )}
+                          </button>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-hover shrink-0 border border-main">
+                              {userAvatar ? (
+                                <img src={userAvatar} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-500">
+                                  <UserIcon className="w-5 h-5" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-medium text-title">{displayName}</span>
+                              <span className="text-xs text-muted">{user.email || '—'}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border w-fit ${
+                            user.role === 'admin' ? 'text-purple-500 bg-purple-500/10 border-purple-500/20' :
+                            user.role === 'moderator' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
+                            'text-muted bg-hover border-main'
+                          }`}>
+                            {user.role || 'user'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-1">
+                            {user.isPremium ? (
+                              <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-orange-500 bg-orange-500/10 px-2 py-1 rounded-md border border-orange-500/20 w-fit">
+                                <Crown className="w-3 h-3 fill-current" /> Prémium
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted bg-hover px-2 py-1 rounded-md border border-main w-fit">
+                                Ingyenes
+                              </span>
                             )}
                           </div>
-                          <div className="flex flex-col">
-                            <span className="font-medium text-title">{user.name}</span>
-                            <span className="text-xs text-muted">{user.email}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            {user.isPremium && user.premiumUntil && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-body">Lejár: {user.premiumUntil}</span>
+                                <button
+                                  onClick={() => { setSelectedUser(user); setIsExpirationModalOpen(true); }}
+                                  className="p-1 hover:bg-hover rounded transition-colors text-blue-500"
+                                  title="Hosszabbítás"
+                                >
+                                  <Calendar className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border w-fit ${churn.color}`}>
+                              {churn.label}
+                            </span>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border w-fit ${
-                          user.role === 'admin' ? 'text-purple-500 bg-purple-500/10 border-purple-500/20' :
-                          user.role === 'moderator' ? 'text-blue-600 bg-blue-500/10 border-blue-500/20' :
-                          'text-muted bg-hover border-main'
-                        }`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1">
-                          {user.isPremium ? (
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-orange-500 bg-orange-500/10 px-2 py-1 rounded-md border border-orange-500/20 w-fit">
-                              <Crown className="w-3 h-3 fill-current" /> Prémium
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted bg-hover px-2 py-1 rounded-md border border-main w-fit">
-                              Ingyenes
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-2">
-                          {user.isPremium && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-body">Lejár: {user.premiumUntil}</span>
-                              <button 
-                                onClick={() => { setSelectedUser(user); setIsExpirationModalOpen(true); }}
-                                className="p-1 hover:bg-hover rounded transition-colors text-blue-600"
-                                title="Hosszabbítás"
-                              >
-                                <Calendar className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          )}
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border w-fit ${churn.color.replace('text-green-400', 'text-green-500').replace('text-yellow-400', 'text-yellow-500').replace('text-red-400', 'text-red-500')}`}>
-                            {churn.label}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => { setSelectedUser(user); setIsBillingModalOpen(true); }}
-                            className="p-2 bg-hover hover:bg-hover/80 text-muted hover:text-title rounded-xl transition-all border border-main"
-                            title="Számlázási előzmények"
-                          >
-                            <CreditCard className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => { setSelectedUser(user); setIsMessageModalOpen(true); }}
-                            className="p-2 bg-hover hover:bg-hover/80 text-muted hover:text-title rounded-xl transition-all border border-main"
-                            title="Üzenet küldése"
-                          >
-                            <Mail className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => handleBlockAction(user)}
-                            className={`p-2 rounded-xl transition-all border ${user.isBlocked ? 'bg-green-500/10 text-green-500 border-green-500/20 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20'}`}
-                            title={user.isBlocked ? "Feloldás" : "Blokkolás"}
-                          >
-                            {user.isBlocked ? <Unlock className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {filteredUsers.length === 0 && (
-              <div className="p-12 text-center">
-                <div className="w-16 h-16 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="text-muted w-8 h-8" />
-                </div>
-                <p className="text-muted">Nem található a keresésnek megfelelő felhasználó.</p>
-              </div>
-            )}
-          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => { setSelectedUser(user); setIsBillingModalOpen(true); }}
+                              className="p-2 bg-hover hover:bg-hover/80 text-muted hover:text-title rounded-xl transition-all border border-main"
+                              title="Számlázási előzmények"
+                            >
+                              <CreditCard className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => { setSelectedUser(user); setIsMessageModalOpen(true); }}
+                              className="p-2 bg-hover hover:bg-hover/80 text-muted hover:text-title rounded-xl transition-all border border-main"
+                              title="Üzenet küldése"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleBlockAction(user)}
+                              className={`p-2 rounded-xl transition-all border ${
+                                user.isBlocked
+                                  ? 'bg-green-500/10 text-green-500 border-green-500/20 hover:bg-green-500/20'
+                                  : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20'
+                              }`}
+                              title={user.isBlocked ? 'Feloldás' : 'Blokkolás'}
+                            >
+                              {user.isBlocked ? <Unlock className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
 
@@ -546,26 +583,26 @@ export default function AdminUsers() {
       <AnimatePresence>
         {isBlockModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsBlockModalOpen(false)}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-md bg-card border border-main rounded-xl p-8 shadow-2xl overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 to-orange-600" />
-              
+
               <div className="flex justify-between items-start mb-6">
                 <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center">
                   <ShieldAlert className="text-red-500 w-6 h-6" />
                 </div>
-                <button 
+                <button
                   onClick={() => setIsBlockModalOpen(false)}
                   className="p-2 hover:bg-hover rounded-xl transition-colors text-muted hover:text-title"
                 >
@@ -575,7 +612,7 @@ export default function AdminUsers() {
 
               <h2 className="text-xl font-bold mb-2 text-title">Felhasználó blokkolása</h2>
               <p className="text-muted text-sm mb-8">
-                Biztosan blokkolni szeretnéd <span className="text-title font-medium">{selectedUser?.name}</span> felhasználót? Válaszd ki az időtartamot.
+                Biztosan blokkolni szeretnéd <span className="text-title font-medium">{selectedUser?.name || selectedUser?.displayName}</span> felhasználót? Válaszd ki az időtartamot.
               </p>
 
               <div className="space-y-3 mb-8">
@@ -588,10 +625,10 @@ export default function AdminUsers() {
                 ].map((option) => (
                   <button
                     key={option.id}
-                    onClick={() => setBlockDuration(option.id as any)}
+                    onClick={() => setBlockDuration(option.id as BlockDuration)}
                     className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl border transition-all ${
-                      blockDuration === option.id 
-                        ? 'bg-red-500/10 border-red-500/50 text-title' 
+                      blockDuration === option.id
+                        ? 'bg-red-500/10 border-red-500/50 text-title'
                         : 'bg-hover border-main text-muted hover:bg-hover/80'
                     }`}
                   >
@@ -606,13 +643,13 @@ export default function AdminUsers() {
               </div>
 
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => setIsBlockModalOpen(false)}
                   className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>
-                <button 
+                <button
                   onClick={confirmBlock}
                   className="flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
                 >
@@ -633,18 +670,18 @@ export default function AdminUsers() {
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                    <CreditCard className="text-blue-600 w-5 h-5" />
+                    <CreditCard className="text-blue-500 w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-title">Számlázási előzmények</h2>
-                    <p className="text-muted text-sm">{selectedUser.name}</p>
+                    <p className="text-muted text-sm">{selectedUser.name || selectedUser.displayName || 'Ismeretlen'}</p>
                   </div>
                 </div>
                 <button onClick={() => setIsBillingModalOpen(false)} className="p-2 hover:bg-hover rounded-xl transition-colors text-muted hover:text-title"><CloseIcon className="w-5 h-5" /></button>
               </div>
-              
+
               <div className="space-y-3 max-h-[400px] overflow-auto pr-2 custom-scrollbar">
-                {selectedUser.billingHistory.length > 0 ? selectedUser.billingHistory.map(bill => (
+                {selectedUser.billingHistory && selectedUser.billingHistory.length > 0 ? selectedUser.billingHistory.map((bill) => (
                   <div key={bill.id} className="bg-hover border border-main p-4 rounded-2xl flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className={`w-2 h-2 rounded-full ${bill.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
@@ -653,9 +690,9 @@ export default function AdminUsers() {
                         <p className="text-xs text-muted">{bill.date} • {bill.method}</p>
                       </div>
                     </div>
-                    <button 
+                    <button
                       onClick={() => handleDownloadInvoice(bill.id)}
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-blue-500 hover:underline"
                     >
                       Számla letöltése
                     </button>
@@ -677,13 +714,13 @@ export default function AdminUsers() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-card border border-main rounded-xl p-8 shadow-2xl">
               <h2 className="text-xl font-bold mb-2 text-title">Lejárat kezelése</h2>
               <p className="text-muted text-sm mb-6">Manuális hosszabbítás vagy kedvezményes időszak hozzáadása.</p>
-              
+
               <div className="space-y-4 mb-8">
                 <div>
                   <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Hosszabbítás (nap)</label>
                   <div className="grid grid-cols-2 gap-2">
-                    {[7, 30, 90].map(days => (
-                      <button 
+                    {[7, 30, 90].map((days) => (
+                      <button
                         key={days}
                         onClick={() => setExtensionDays(days)}
                         className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === days ? 'bg-blue-600 border-blue-500 text-white' : 'bg-hover border-main text-muted hover:bg-hover/80'}`}
@@ -691,9 +728,9 @@ export default function AdminUsers() {
                         +{days} nap
                       </button>
                     ))}
-                    <button 
+                    <button
                       onClick={() => setExtensionDays('forever')}
-                      className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === 'forever' ? 'bg-orange-600 border-orange-500 text-white' : 'bg-hover border-main text-muted hover:bg-hover/80'}`}
+                      className={`py-3 rounded-xl border transition-all font-bold text-sm ${extensionDays === 'forever' ? 'bg-orange-500 border-orange-500 text-white' : 'bg-hover border-main text-muted hover:bg-hover/80'}`}
                     >
                       Örökre
                     </button>
@@ -701,8 +738,8 @@ export default function AdminUsers() {
                 </div>
                 <div>
                   <label className="text-xs font-bold text-muted uppercase tracking-widest mb-2 block">Egyedi érték</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={extensionDays === 'forever' ? '' : extensionDays}
                     onChange={(e) => setExtensionDays(parseInt(e.target.value) || 0)}
                     onFocus={(e) => e.target.select()}
@@ -730,9 +767,9 @@ export default function AdminUsers() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-lg bg-card border border-main rounded-xl p-8 shadow-2xl">
               <h2 className="text-xl font-bold mb-2 text-title">Üzenet küldése</h2>
               <p className="text-muted text-sm mb-6">
-                {selectedUserIds.length > 0 
-                  ? `Üzenet küldése ${selectedUserIds.length} kijelölt felhasználónak.` 
-                  : `Üzenet küldése: ${selectedUser?.name}`}
+                {selectedUserIds.length > 0
+                  ? `Üzenet küldése ${selectedUserIds.length} kijelölt felhasználónak.`
+                  : `Üzenet küldése: ${selectedUser?.name || selectedUser?.displayName || 'ismeretlen'}`}
               </p>
 
               <div className="space-y-4 mb-8">
@@ -740,7 +777,7 @@ export default function AdminUsers() {
                   <button onClick={() => setMessageType('system')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${messageType === 'system' ? 'bg-blue-600 text-white' : 'text-muted'}`}>Rendszer értesítés</button>
                   <button onClick={() => setMessageType('email')} className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${messageType === 'email' ? 'bg-blue-600 text-white' : 'text-muted'}`}>E-mail</button>
                 </div>
-                <textarea 
+                <textarea
                   value={messageContent}
                   onChange={(e) => setMessageContent(e.target.value)}
                   onFocus={(e) => e.target.select()}
@@ -763,14 +800,14 @@ export default function AdminUsers() {
       <AnimatePresence>
         {isDeleteConfirmOpen && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsDeleteConfirmOpen(false)}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -781,18 +818,18 @@ export default function AdminUsers() {
               </div>
               <h2 className="text-xl font-bold text-center mb-2 text-title">Biztosan törölni szeretnéd?</h2>
               <p className="text-muted text-center mb-8">
-                {selectedUserIds.length > 0 
+                {selectedUserIds.length > 0
                   ? `Biztosan törölni szeretnél ${selectedUserIds.length} kijelölt felhasználót? Ez a művelet nem vonható vissza.`
-                  : "Ez a művelet nem vonható vissza. A kijelölt adatok véglegesen törlődik."}
+                  : 'Ez a művelet nem vonható vissza. A kijelölt adatok véglegesen törlődik.'}
               </p>
               <div className="flex gap-4">
-                <button 
+                <button
                   onClick={() => setIsDeleteConfirmOpen(false)}
                   className="flex-1 bg-hover hover:bg-hover/80 text-title py-4 rounded-2xl font-bold transition-all border border-main"
                 >
                   Mégse
                 </button>
-                <button 
+                <button
                   onClick={confirmBulkDelete}
                   className="flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
                 >
