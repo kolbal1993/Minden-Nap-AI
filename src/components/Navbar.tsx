@@ -19,9 +19,10 @@ import {
   Moon
 } from 'lucide-react';
 import { auth } from '../lib/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import NotificationCenter from './NotificationCenter';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../lib/useAuth';
 
 interface NavbarProps {
   transparent?: boolean;
@@ -30,11 +31,12 @@ interface NavbarProps {
 export default function Navbar({ transparent = false }: NavbarProps) {
   const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isPremium, setIsPremium] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Role and login state come from useAuth() — backed by Firebase Auth
+  // ID-token custom claims (server-verified), NOT from email or localStorage.
+  const { user, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,23 +46,13 @@ export default function Navbar({ transparent = false }: NavbarProps) {
     };
 
     window.addEventListener('scroll', handleScroll);
-    
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsLoggedIn(true);
-        // Admin check
-        if (user.email === 'admin@mindennapai.hu' || user.email === 'kolesbalazs93@gmail.com') {
-          setUserRole('admin');
-        } else {
-          setUserRole('user');
-        }
-        setUserAvatar(user.photoURL || `https://picsum.photos/seed/${user.uid}/200/200`);
-      } else {
-        setIsLoggedIn(false);
-        setUserRole(null);
-        setUserAvatar(null);
-      }
-    });
+
+    // Keep avatar in sync with auth state
+    if (user) {
+      setUserAvatar(user.photoURL || `https://picsum.photos/seed/${user.uid}/200/200`);
+    } else {
+      setUserAvatar(null);
+    }
 
     const updateProfile = () => {
       const savedProfile = localStorage.getItem('userProfile');
@@ -77,17 +69,13 @@ export default function Navbar({ transparent = false }: NavbarProps) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('storage', updateProfile);
-      unsubscribeAuth();
     };
-  }, []);
+  }, [user]);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userRole');
-      setIsLoggedIn(false);
-      setUserRole(null);
+      // useAuth() will clear localStorage items automatically on auth state change.
       navigate('/');
     } catch (err) {
       console.error('Error signing out:', err);
@@ -140,18 +128,15 @@ export default function Navbar({ transparent = false }: NavbarProps) {
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
 
-            {!isLoggedIn ? (
+            {!isAuthenticated ? (
               <div className="flex items-center gap-6">
-                <Link to="/admin" className="text-[var(--text-muted)] hover:text-[var(--text-title)] text-[10px] font-black transition-colors uppercase tracking-[0.2em]">
-                  Admin
-                </Link>
                 <Link to="/login" className="bg-blue-600 text-white px-8 py-3 rounded-2xl hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20 hover:scale-105 active:scale-95">
                   Belépés
                 </Link>
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                {userRole === 'admin' && (
+                {isAdmin && (
                   <Link to="/admin" className="text-blue-600 hover:text-blue-600 transition-colors font-bold">
                     Admin Panel
                   </Link>
@@ -241,9 +226,8 @@ export default function Navbar({ transparent = false }: NavbarProps) {
               </Link>
             ))}
             
-            {!isLoggedIn ? (
+            {!isAuthenticated ? (
               <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-subtle">
-                <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center py-4 rounded-2xl font-bold text-muted hover:bg-hover hover:text-title transition-all">Admin</Link>
                 <Link to="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-600/20 active:scale-95 transition-all">Belépés</Link>
               </div>
             ) : (
@@ -270,7 +254,7 @@ export default function Navbar({ transparent = false }: NavbarProps) {
                     <span className="text-[10px] text-muted uppercase tracking-widest">Fiókbeállítások</span>
                   </div>
                 </Link>
-                {userRole === 'admin' && (
+                {isAdmin && (
                   <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="p-4 text-blue-600 font-bold hover:bg-blue-500/5 rounded-xl transition-all">Admin Vezérlőpult</Link>
                 )}
                 <button 

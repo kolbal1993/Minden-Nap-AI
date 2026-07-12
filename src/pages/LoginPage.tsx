@@ -43,15 +43,14 @@ export default function LoginPage() {
       navigate(redirectPath);
       return;
     }
-    
-    // Check for admin
-    if (userEmail === 'admin@mindennapai.hu' || userEmail === 'kolesbalazs93@gmail.com') {
-      localStorage.setItem('userRole', 'admin');
-      navigate('/admin');
-    } else {
-      localStorage.setItem('userRole', 'user');
-      navigate('/');
-    }
+
+    // After login, ALWAYS go to the homepage (/)
+    // Admin role is determined by Firebase Auth custom claim (server-verified),
+    // read by useAuth.ts via user.getIdTokenResult().
+    // The role itself does NOT change the post-login destination — admins
+    // also land on /, and can reach /admin via the Navbar's Admin Panel link.
+    // The actual admin claim is set by the service account, not by client code.
+    navigate('/');
   };
 
   useEffect(() => {
