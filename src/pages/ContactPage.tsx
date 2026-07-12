@@ -6,6 +6,8 @@
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import EmojiPickerButton from '../components/EmojiPickerButton';
