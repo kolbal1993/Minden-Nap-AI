@@ -158,7 +158,7 @@ export default function NewsDetailPage() {
       userId: 'admin',
       type: 'comment',
       title: 'Új hozzászólás a hírhez',
-      message: `${userProfile?.name || 'Vendég'} hozzászólt a "${news.title}" hírhez.`,
+      message: `${userProfile?.name || 'Vendég'} hozzászólt a "${newsItem.title}" hírhez.`,
       link: `/news/${id}`
     });
 
@@ -216,7 +216,7 @@ export default function NewsDetailPage() {
         userId: 'admin',
         type: 'reaction',
         title: 'Új reakció a hírre',
-        message: `${userProfile?.name || 'Vendég'} reagált a "${news.title}" hírre: ${emoji}`,
+        message: `${userProfile?.name || 'Vendég'} reagált a "${newsItem.title}" hírre: ${emoji}`,
         link: `/news/${id}`
       });
     }
@@ -255,8 +255,8 @@ export default function NewsDetailPage() {
 
   const handleShare = async () => {
     const shareData = {
-      title: news.title,
-      text: news.excerpt,
+      title: newsItem.title,
+      text: newsItem.excerpt,
       url: window.location.href
     };
 
@@ -316,22 +316,22 @@ export default function NewsDetailPage() {
           >
             <div className="flex items-center gap-3 mb-6">
               <span className="bg-blue-600/20 text-blue-600 dark:text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/20">
-                {news.category}
+                {newsItem.category}
               </span>
-              <span className="text-gray-600 dark:text-gray-100 text-xs font-medium">• {news.readTime} olvasás</span>
+              <span className="text-gray-600 dark:text-gray-100 text-xs font-medium">• {newsItem.readTime} olvasás</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-8 leading-tight text-gray-900 dark:text-white">
-              {news.title}
+              {newsItem.title}
             </h1>
             <div className="flex items-center justify-between border-y border-black/5 dark:border-white/5 py-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold text-white">
-                  {news.author[0]}
+                  {newsItem.author[0]}
                 </div>
                 <div>
-                  <div className="text-gray-900 dark:text-white font-bold">{news.author}</div>
+                  <div className="text-gray-900 dark:text-white font-bold">{newsItem.author}</div>
                   <div className="text-gray-500 text-sm flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5" /> {news.date}
+                    <Calendar className="w-3.5 h-3.5" /> {newsItem.date}
                   </div>
                 </div>
               </div>
@@ -376,8 +376,8 @@ export default function NewsDetailPage() {
             className="rounded-2xl overflow-hidden mb-16 shadow-2xl border border-white/5"
           >
             <img 
-              src={news.imageUrl} 
-              alt={news.title} 
+              src={newsItem.imageUrl} 
+              alt={newsItem.title} 
               className="w-full aspect-[16/9] object-cover"
               referrerPolicy="no-referrer"
             />
@@ -391,10 +391,10 @@ export default function NewsDetailPage() {
             className="prose prose-invert prose-blue max-w-none"
           >
             <p className="text-xl text-gray-700 dark:text-gray-100 leading-relaxed font-medium mb-12 italic border-l-4 border-blue-500 pl-8">
-              {news.excerpt}
+              {newsItem.excerpt}
             </p>
             <div className="text-gray-700 dark:text-gray-100 text-lg leading-relaxed space-y-8 whitespace-pre-line mb-16">
-              {news.content}
+              {newsItem.content}
             </div>
 
             {/* Interaction Buttons */}
