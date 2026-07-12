@@ -20,7 +20,9 @@ import {
   Lock,
   Zap
 } from 'lucide-react';
-import { COURSES } from '../constants/courses';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import Skeleton from '../components/Skeleton';
 import PurchaseModal from '../components/PurchaseModal';
 
 export default function CourseDetailPage() {
@@ -28,7 +30,28 @@ export default function CourseDetailPage() {
   const [isPremium, setIsPremium] = useState(false);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const course = COURSES.find(c => c.id === id);
+  const [course, setCourse] = useState<any>(null);
+  const [detailLoading, setDetailLoading] = useState(true);
+  const [detailError, setDetailError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) { setDetailLoading(false); return; }
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, 'courses', id));
+        if (snap.exists()) {
+          setCourse({ id: snap.id, ...snap.data() });
+        } else {
+          setDetailError('A kurzus nem található.');
+        }
+      } catch (err: any) {
+        console.error('[CourseDetailPage] Firestore error:', err);
+        setDetailError(err.message || 'Hiba a betöltés során.');
+      } finally {
+        setDetailLoading(false);
+      }
+    })();
+  }, [id]);
 
   const refreshProfile = () => {
     const savedProfile = localStorage.getItem('userProfile');

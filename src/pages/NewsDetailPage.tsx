@@ -21,7 +21,9 @@ import {
   X
 } from 'lucide-react';
 
-import { NEWS_ITEMS } from '../constants/news';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import Skeleton from '../components/Skeleton';
 import Reactions from '../components/Reactions';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { addNotification } from '../utils/notifications';
@@ -40,7 +42,28 @@ interface Comment {
 
 export default function NewsDetailPage() {
   const { id } = useParams();
-  const news = NEWS_ITEMS.find(item => item.id === id);
+  const [newsItem, setNewsItem] = useState<any>(null);
+  const [detailLoading, setDetailLoading] = useState(true);
+  const [detailError, setDetailError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) { setDetailLoading(false); return; }
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, 'posts', id));
+        if (snap.exists()) {
+          setNewsItem({ id: snap.id, ...snap.data() });
+        } else {
+          setDetailError('A hír nem található.');
+        }
+      } catch (err: any) {
+        console.error('[NewsDetailPage] Firestore error:', err);
+        setDetailError(err.message || 'Hiba a betöltés során.');
+      } finally {
+        setDetailLoading(false);
+      }
+    })();
+  }, [id]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [userReaction, setUserReaction] = useState<string | undefined>(undefined);

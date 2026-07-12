@@ -21,9 +21,35 @@ import {
   Sparkles,
   Wrench
 } from 'lucide-react';
-import { COURSES } from '../constants/courses';
+import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
+import Skeleton from '../components/Skeleton';
 import PurchaseModal from '../components/PurchaseModal';
 import { useEffect } from 'react';
+
+export default function CoursesPage() {
+  const { data: coursesData, loading, error } = useFirestoreCollection('courses', {
+    realtime: false,
+    orderBy: 'publishDate',
+    max: 500,
+  });
+  const COURSES = (coursesData ?? []).map((c: any) => ({
+    ...c,
+    id: String(c.id || ''),
+    features: Array.isArray(c.features) ? c.features : [],
+    curriculum: Array.isArray(c.curriculum) ? c.curriculum : [],
+  }));
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Összes');
+  const [isPremium, setIsPremium] = useState(false);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+
+  if (loading) {
+    return <div className="min-h-screen bg-transparent text-main font-sans"><Navbar /><div className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-3 gap-8">{Array.from({length:3}).map((_,i) => <Skeleton key={i} className="h-80 w-full rounded-3xl" />)}</div></div>;
+  }
+  if (error) {
+    console.error('[CoursesPage] Firestore error:', error);
+  }
 
 const CATEGORIES = ['Összes', 'Akadémia', 'Eszköztár'];
 
@@ -53,11 +79,7 @@ const MODULE_INFO = [
   }
 ];
 
-export default function CoursesPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Összes');
-  const [isPremium, setIsPremium] = useState(false);
-  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {

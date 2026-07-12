@@ -21,48 +21,36 @@ import {
   Sparkles,
   Calendar
 } from 'lucide-react';
+import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
+import Skeleton from '../components/Skeleton';
 
 // --- Types ---
-interface NewsItem {
-  id: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  category: string;
-  imageUrl: string;
-}
 
-// --- Mock Data ---
-const MOCK_NEWS: NewsItem[] = [
-  {
-    id: '1',
-    title: 'A GPT-5 fejlesztése új mérföldkőhöz érkezett',
-    excerpt: 'A legfrissebb jelentések szerint az OpenAI új modellje minden eddiginél jobb érvelési képességekkel rendelkezik.',
-    date: '2026. április 3.',
-    category: 'Modellek',
-    imageUrl: 'https://picsum.photos/seed/ai1/800/600'
-  },
-  {
-    id: '2',
-    title: 'Az AI szerepe a fenntartható energiagazdálkodásban',
-    excerpt: 'Hogyan segítenek a gépi tanulási algoritmusok az elektromos hálózatok optimalizálásában?',
-    date: '2026. április 2.',
-    category: 'Technológia',
-    imageUrl: 'https://picsum.photos/seed/ai2/800/600'
-  },
-  {
-    id: '3',
-    title: 'Etikai kérdések az autonóm rendszerek világában',
-    excerpt: 'A szakértők szerint sürgős szabályozásra van szükség az AI által vezérelt döntéshozatali folyamatokban.',
-    date: '2026. április 1.',
-    category: 'Etika',
-    imageUrl: 'https://picsum.photos/seed/ai3/800/600'
-  }
-];
 
 export default function LandingPage() {
+  const { data: postsData, loading, error } = useFirestoreCollection('posts', {
+    realtime: false,
+    orderBy: 'publishDate',
+    max: 3,
+  });
+  const MOCK_NEWS = (postsData ?? []).map((p: any) => ({
+    id: String(p.id || ''),
+    title: String(p.title || ''),
+    excerpt: String(p.excerpt || ''),
+    date: String(p.publishDate || p.date || ''),
+    category: String(p.category || ''),
+    imageUrl: String(p.imageUrl || 'https://picsum.photos/seed/ai1/800/600'),
+  }));
+
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  if (loading) {
+    return <div className="min-h-screen bg-transparent text-main font-sans"><Navbar transparent /><div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" /></div></div>;
+  }
+  if (error) {
+    console.error('[LandingPage] Firestore error:', error);
+  }
 
   const handleSubscribe = (e: FormEvent) => {
     e.preventDefault();

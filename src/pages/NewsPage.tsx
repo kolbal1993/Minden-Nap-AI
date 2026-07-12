@@ -19,14 +19,32 @@ import {
 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 
-import { NEWS_ITEMS } from '../constants/news';
+import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
+import Skeleton from '../components/Skeleton';
 
 const CATEGORIES = ['Összes', 'Generatív AI', 'Üzleti Automatizáció', 'AI eszközök', 'Szabályozás'];
 
 export default function NewsPage() {
+  const { data: postsData, loading, error } = useFirestoreCollection('posts', {
+    realtime: false,
+    orderBy: 'publishDate',
+    max: 500,
+  });
+  const NEWS_ITEMS = (postsData ?? []).map((p: any) => ({
+    ...p,
+    id: String(p.id || ''),
+  }));
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Összes');
   const [sharingId, setSharingId] = useState<string | null>(null);
+
+  if (loading) {
+    return <div className="min-h-screen bg-transparent text-main font-sans"><Navbar transparent /><div className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-3 gap-8">{Array.from({length:3}).map((_,i) => <Skeleton key={i} className="h-80 w-full rounded-3xl" />)}</div></div>;
+  }
+  if (error) {
+    console.error('[NewsPage] Firestore error:', error);
+  }
 
   const handleShare = async (e: React.MouseEvent, item: any) => {
     e.preventDefault();
