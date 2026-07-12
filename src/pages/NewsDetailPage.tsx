@@ -286,7 +286,7 @@ export default function NewsDetailPage() {
     localStorage.setItem('news_global_stats', JSON.stringify(stats));
   };
 
-  if (!news) {
+  if (!newsItem) {
     return (
       <div className="min-h-screen bg-[var(--bg-main)] text-gray-100 flex items-center justify-center">
         <div className="text-center">
