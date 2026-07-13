@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
 import Skeleton from '../components/Skeleton';
+import SafeImage from '../components/SafeImage';
 import PurchaseModal from '../components/PurchaseModal';
 import { useEffect } from 'react';
 
@@ -32,12 +33,22 @@ export default function CoursesPage() {
     orderBy: 'publishDate',
     max: 500,
   });
-  const COURSES = (coursesData ?? []).map((c: any) => ({
+  // FÁZIS 12+ (2026-07-13): Deduplikáció (slug-ID + numerikus alias)
+  const dedup = <T extends { title: string; publishDate?: string }>(items: T[]): T[] => {
+    const seen = new Set<string>();
+    return items.filter((item) => {
+      const key = `${item.title}|${item.publishDate || ''}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+  const COURSES = dedup((coursesData ?? []).map((c: any) => ({
     ...c,
     id: String(c.id || ''),
     features: Array.isArray(c.features) ? c.features : [],
     curriculum: Array.isArray(c.curriculum) ? c.curriculum : [],
-  }));
+  })));
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Összes');
@@ -309,16 +320,16 @@ const MODULE_INFO = [
                         transition={{ delay: index * 0.1 }}
                         className="group"
                       >
-                        <Link 
+                        <Link
                           to={`/tudastar/${course.id}`}
                           className="flex flex-col bg-card border-none rounded-2xl overflow-hidden transition-all shadow-lg hover:shadow-2xl h-full group"
                         >
                           <div className="relative aspect-[16/10] overflow-hidden">
-                            <img 
-                              src={course.imageUrl} 
-                              alt={course.title} 
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                              referrerPolicy="no-referrer"
+                            <SafeImage
+                              src={course.imageUrl}
+                              alt={course.title}
+                              aspectRatio="16/10"
+                              priority={index < 2}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#0f0f0f] via-transparent to-transparent opacity-60" />
                             <div className="absolute top-6 left-6 flex flex-col gap-2">

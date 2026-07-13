@@ -21,6 +21,7 @@ import { AnimatePresence } from 'motion/react';
 
 import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
 import Skeleton from '../components/Skeleton';
+import SafeImage from '../components/SafeImage';
 
 const CATEGORIES = ['Összes', 'Generatív AI', 'Üzleti Automatizáció', 'AI eszközök', 'Szabályozás'];
 
@@ -30,10 +31,24 @@ export default function NewsPage() {
     orderBy: 'publishDate',
     max: 500,
   });
-  const NEWS_ITEMS = (postsData ?? []).map((p: any) => ({
+  // FÁZIS 12+ (2026-07-13): Deduplikáció — a Firestore-ban a slug-ID-s ÉS
+  // numerikus alias doc-ok EGYSZERRE vannak jelen (mert a /news/1 backward-compat
+  // miatt a seed-posts-by-id.ts numerikus másolatokat is írt). Szűrjük a
+  // duplikátumokat a `title` + `publishDate` alapján (a slug és a numerikus
+  // másolat Megegyeznek ezekben, csak a doc ID más).
+  const dedup = <T extends { title: string; publishDate?: string }>(items: T[]): T[] => {
+    const seen = new Set<string>();
+    return items.filter((item) => {
+      const key = `${item.title}|${item.publishDate || ''}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+  const NEWS_ITEMS = dedup((postsData ?? []).map((p: any) => ({
     ...p,
     id: String(p.id || ''),
-  }));
+  })));
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Összes');
@@ -167,12 +182,12 @@ export default function NewsPage() {
                 className="group bg-card border-none rounded-2xl overflow-hidden transition-all shadow-lg hover:shadow-2xl"
               >
                 <Link to={`/news/${item.id}`} className="block h-full">
-                  <div className="aspect-[16/9] overflow-hidden relative">
-                    <img 
-                      src={item.imageUrl} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      referrerPolicy="no-referrer"
+                  <div className="relative">
+                    <SafeImage
+                      src={item.imageUrl}
+                      alt={item.title}
+                      aspectRatio="16/9"
+                      priority={index < 2}
                     />
                     <div className="absolute top-6 left-6">
                       <span className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase">
