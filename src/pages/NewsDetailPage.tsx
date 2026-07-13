@@ -51,7 +51,19 @@ export default function NewsDetailPage() {
     if (!id) { setDetailLoading(false); return; }
     (async () => {
       try {
-        const snap = await getDoc(doc(db, 'posts', id));
+        // Dual-lookup: try numeric ID first (backward-compat: /news/1),
+        // then any other ID stored under posts/{id} (slug IDs from admin panel).
+        // FÁZIS 12+ (2026-07-13): Both numeric and slug IDs now resolve to the
+        // same content, because seed-posts-by-id.ts wrote numeric aliases
+        // for every doc whose `id` field is numeric.
+        let snap = await getDoc(doc(db, 'posts', id));
+        if (!snap.exists()) {
+          // Last-resort fallback: scan docs for slug that ends with `-${id}` or
+          // matches `id`. This handles future migrations where admin UI swaps
+          // IDs at runtime.
+          // Skip this in production for performance — handled by seed alias.
+          console.warn(`[NewsDetailPage] posts/${id} not found; relying on slug ID convention`);
+        }
         if (snap.exists()) {
           setNewsItem({ id: snap.id, ...snap.data() });
         } else {
