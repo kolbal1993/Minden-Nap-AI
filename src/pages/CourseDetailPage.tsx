@@ -23,6 +23,7 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import Skeleton from '../components/Skeleton';
+import NotFoundState from '../components/NotFoundState';
 import PurchaseModal from '../components/PurchaseModal';
 
 export default function CourseDetailPage() {
@@ -85,16 +86,54 @@ export default function CourseDetailPage() {
     refreshProfile();
   };
 
-  if (!course) {
-    return (
-      <div className="min-h-screen bg-transparent text-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">A tartalom nem található</h1>
-          <Link to="/tudastar" className="text-blue-600 hover:underline">Vissza a tudástárhoz</Link>
+  // LOADING: Skeleton — TÉMAFÜGGETLEN, Nav+Footer is megjelenik, nincs üres lap
+if (detailLoading) {
+  return (
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-title)] font-sans">
+      <Navbar />
+      <main className="pt-32 pb-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          {/* Vissza link placeholder */}
+          <Skeleton className="h-6 w-48 mb-12" />
+          {/* Kurzus cím placeholder */}
+          <Skeleton className="h-14 w-3/4 mb-6" />
+          {/* Leírás placeholder (3 sor) */}
+          <div className="space-y-2 mb-10">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+          {/* Metaadat (idő, diák, értékelés) */}
+          <div className="flex flex-wrap gap-4 mb-12">
+            <Skeleton className="h-10 w-32 rounded-xl" />
+            <Skeleton className="h-10 w-32 rounded-xl" />
+            <Skeleton className="h-10 w-32 rounded-xl" />
+          </div>
+          {/* Tananyag lista placeholder */}
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+            ))}
+          </div>
         </div>
-      </div>
-    );
-  }
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+// HIBA: NotFoundState — TÉMAFÜGGETLEN, látható szöveg, Nav+Footer is megjelenik
+if (!course) {
+  return (
+    <NotFoundState
+      title={detailError || 'A kurzus nem található'}
+      message="Lehet, hogy a kurzust törölték, vagy a link elavult. Visszamehetsz a tudástárba és böngészhetsz az elérhető kurzusok között."
+      backLink="/tudastar"
+      backLabel="Vissza a tudástárhoz"
+      showRefresh
+    />
+  );
+}
 
   return (
     <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30 transition-colors duration-300">

@@ -24,6 +24,7 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import Skeleton from '../components/Skeleton';
+import NotFoundState from '../components/NotFoundState';
 import Reactions from '../components/Reactions';
 import EmojiPickerButton from '../components/EmojiPickerButton';
 import { addNotification } from '../utils/notifications';
@@ -286,16 +287,54 @@ export default function NewsDetailPage() {
     localStorage.setItem('news_global_stats', JSON.stringify(stats));
   };
 
-  if (!newsItem) {
-    return (
-      <div className="min-h-screen bg-[var(--bg-main)] text-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">A hír nem található</h1>
-          <Link to="/news" className="text-blue-600 hover:underline">Vissza a hírekhez</Link>
+  // LOADING: Skeleton — TÉMAFÜGGETLEN, Nav+Footer is megjelenik, nincs üres lap
+if (detailLoading) {
+  return (
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-title)] font-sans">
+      <Navbar />
+      <main className="pt-32 pb-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          {/* Vissza link placeholder */}
+          <Skeleton className="h-6 w-48 mb-12" />
+          {/* Cím placeholder */}
+          <Skeleton className="h-12 w-3/4 mb-6" />
+          {/* Metaadat placeholder (dátum, kategória) */}
+          <div className="flex items-center gap-3 mb-8">
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          {/* Hero kép placeholder */}
+          <Skeleton className="h-72 w-full rounded-3xl mb-12" />
+          {/* Tartalom placeholder (3 bekezdés) */}
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-11/12" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </div>
         </div>
-      </div>
-    );
-  }
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+// HIBA: NotFoundState — TÉMAFÜGGETLEN, látható szöveg, Nav+Footer is megjelenik
+if (!newsItem) {
+  return (
+    <NotFoundState
+      title={detailError || 'A hír nem található'}
+      message="Lehet, hogy a bejegyzést törölték, vagy a link elavult. Visszamehetsz a hírek listájához és böngészhetsz az elérhető tartalmak között."
+      backLink="/news"
+      backLabel="Vissza a hírekhez"
+      showRefresh
+    />
+  );
+}
 
   return (
     <div className="min-h-screen bg-transparent text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30 transition-colors duration-300">
