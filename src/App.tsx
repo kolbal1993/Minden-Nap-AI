@@ -31,6 +31,7 @@ const AdminSettings = lazy(() => import('./pages/AdminSettings'));
 const AdminUsers = lazy(() => import('./pages/AdminUsers'));
 const AdminCampaigns = lazy(() => import('./pages/AdminCampaigns'));
 const AdminNotifications = lazy(() => import('./pages/AdminNotifications'));
+const AdminNewsPage = lazy(() => import('./pages/AdminNewsPage'));
 
 // Background + scroll + auth-sync are needed at top level
 import ScrollToTop from './components/ScrollToTop';
@@ -58,6 +59,8 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/news/:id" element={<NewsDetailPage />} />
+              <Route path="/hirek" element={<NewsPage />} />
+              <Route path="/hirek/:id" element={<NewsDetailPage />} />
               <Route path="/community" element={<AuthGuard><CommunityPage /></AuthGuard>} />
               <Route path="/tudastar" element={<CoursesPage />} />
               <Route path="/tudastar/szotar" element={<AIDictionaryPage />} />
@@ -73,6 +76,7 @@ export default function App() {
               <Route path="/messages" element={<AuthGuard><MessagesPage /></AuthGuard>} />
               <Route path="/admin" element={<AuthGuard requireRole="admin"><AdminAnalytics /></AuthGuard>} />
               <Route path="/admin/posts" element={<AuthGuard requireRole="admin"><AdminDashboard /></AuthGuard>} />
+              <Route path="/admin/hirek" element={<AuthGuard requireRole="admin"><AdminNewsPage /></AuthGuard>} />
               <Route path="/admin/tudastar" element={<AuthGuard requireRole="admin"><AdminCourses /></AuthGuard>} />
               <Route path="/admin/contacts" element={<AuthGuard requireRole="admin"><AdminContacts /></AuthGuard>} />
               <Route path="/admin/users" element={<AuthGuard requireRole="admin"><AdminUsers /></AuthGuard>} />

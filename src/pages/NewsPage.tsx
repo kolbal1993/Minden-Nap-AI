@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { 
-  Search, 
-  Calendar, 
-  User, 
-  Clock, 
+import {
+  Search,
+  Calendar,
+  User,
+  Clock,
   MessageSquare,
   Share2,
   Check
@@ -22,6 +22,7 @@ import { AnimatePresence } from 'motion/react';
 import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
 import Skeleton from '../components/Skeleton';
 import SafeImage from '../components/SafeImage';
+import { NEWS_ITEMS as FALLBACK_NEWS } from '../constants/news';
 
 const CATEGORIES = ['Összes', 'Generatív AI', 'Üzleti Automatizáció', 'AI eszközök', 'Szabályozás'];
 
@@ -31,6 +32,7 @@ export default function NewsPage() {
     orderBy: 'publishDate',
     max: 500,
   });
+
   // FÁZIS 12+ (2026-07-13): Deduplikáció — a Firestore-ban a slug-ID-s ÉS
   // numerikus alias doc-ok EGYSZERRE vannak jelen (mert a /news/1 backward-compat
   // miatt a seed-posts-by-id.ts numerikus másolatokat is írt). Szűrjük a
@@ -45,10 +47,19 @@ export default function NewsPage() {
       return true;
     });
   };
-  const NEWS_ITEMS = dedup((postsData ?? []).map((p: any) => ({
+
+  // JAVÍTÁS (2026-07-14, Balázs "új tartalom = azonnal látszik"):
+  // Fallback a constants/news.ts-re, ha a Firestore query hibás VAGY üres.
+  // A useFirestoreCollection hook NEM tartalmaz fallback-et (intentional),
+  // ezért a NewsPage felelőssége, hogy a constants/news.ts-ből dolgozzon,
+  // ha a Firestore nem ad vissza adatot.
+  const firestoreItems = (postsData ?? []).map((p: any) => ({
     ...p,
     id: String(p.id || ''),
-  })));
+  }));
+  const useFirestore = !error && firestoreItems.length > 0;
+  const sourceItems = useFirestore ? firestoreItems : FALLBACK_NEWS;
+  const NEWS_ITEMS = dedup(sourceItems);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Összes');
